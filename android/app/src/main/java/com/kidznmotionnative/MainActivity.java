@@ -1,11 +1,23 @@
 package com.kidznmotionnative;
-import expo.modules.ReactActivityDelegateWrapper;
 
+// import expo.modules.ReactActivityDelegateWrapper; // Unsure of Origin
+
+// expo install post SDK 44 https://github.com/expo/fyi/blob/main/expo-modules-migration.md
+import android.os.Bundle;
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
 import com.facebook.react.ReactRootView;
+//
 
 public class MainActivity extends ReactActivity {
+
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    // Set the theme to AppTheme BEFORE onCreate to support
+    // coloring the background, status bar, and navigation bar.
+    // This is required for expo-splash-screen.
+    setTheme(R.style.AppTheme);
+    super.onCreate(null);
 
   /**
    * Returns the name of the main component registered from JavaScript. This is used to schedule
@@ -24,7 +36,19 @@ public class MainActivity extends ReactActivity {
   @Override
   protected ReactActivityDelegate createReactActivityDelegate() {
     // return new ReactActivityDelegateWrapper(this, BuildConfig.IS_NEW_ARCHITECTURE_ENABLED, new MainActivityDelegate(this, getMainComponentName())); // DEFAULT
-    return new ReactActivityDelegateWrapper(this, new MainActivityDelegate(this, getMainComponentName())); // EXPO DOCS https://docs.expo.dev/bare/installing-expo-modules/?redirected
+    // return new ReactActivityDelegateWrapper(this, new MainActivityDelegate(this, getMainComponentName())); // EXPO DOCS https://docs.expo.dev/bare/installing-expo-modules/?redirected
+
+    // expo https://github.com/expo/fyi/blob/main/expo-modules-migration.md
+    return new ReactActivityDelegateWrapper(
++      this,
++      new ReactActivityDelegate(this, getMainComponentName()) {
++        @Override
++        protected ReactRootView createRootView() {
++          return new RNGestureHandlerEnabledRootView(MainActivity.this);
++        }
++      }
++    );
+    // 
   }
 
   public static class MainActivityDelegate extends ReactActivityDelegate {
