@@ -8,6 +8,9 @@ apply from: file("../node_modules/@react-native-community/cli-platform-android/n
 // applyNativeModulesSettingsGradle(settings)
 // //
 
+// NOT EXPO-MODELS -- This is REACT UNIMODELS
+apply from: '../node_modules/react-native-unimodules/gradle.groovy'; includeUnimodulesProjects ()
+
 include ':app'
 includeBuild('../node_modules/react-native-gradle-plugin')
 
