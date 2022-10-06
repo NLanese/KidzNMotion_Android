@@ -1,13 +1,21 @@
 package com.kidznmotionnative;
 
-// https://docs.expo.dev/bare/installing-expo-modules/?redirected
-import android.content.res.Configuration;
-import expo.modules.ApplicationLifecycleDispatcher;
-import expo.modules.ReactNativeHostWrapper;
-//
+// // expo-modules https://docs.expo.dev/bare/installing-expo-modules/?redirected
+// import android.content.res.Configuration;
+// import expo.modules.ApplicationLifecycleDispatcher;
+// import expo.modules.ReactNativeHostWrapper;
+// //
 
 import android.app.Application;
 import android.content.Context;
+
+import android.content.res.Configuration; // expo https://github.com/expo/fyi/blob/main/expo-modules-migration.md
+import androidx.annotation.NonNull;       // expo https://github.com/expo/fyi/blob/main/expo-modules-migration.md
+
+import expo.modules.ApplicationLifecycleDispatcher; // expo https://github.com/expo/fyi/blob/main/expo-modules-migration.md
+import expo.modules.ReactNativeHostWrapper;         // expo https://github.com/expo/fyi/blob/main/expo-modules-migration.md
+
+
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
@@ -16,13 +24,17 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.config.ReactFeatureFlags;
 import com.facebook.soloader.SoLoader;
 import com.kidznmotionnative.newarchitecture.MainApplicationReactNativeHost;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 public class MainApplication extends Application implements ReactApplication {
 
   private final ReactNativeHost mReactNativeHost =
-      new ReactNativeHostWrapper(this, new ReactNativeHost(this) {  // https://docs.expo.dev/bare/installing-expo-modules/?redirected
+      // new ReactNativeHostWrapper(this, new ReactNativeHost(this) {  // expo-modules https://docs.expo.dev/bare/installing-expo-modules/?redirected
+      private final ReactNativeHost mReactNativeHost = new ReactNativeHostWrapper( // expo https://github.com/expo/fyi/blob/main/expo-modules-migration.md
+        this,
+        new ReactNativeHost(this) {
         @Override
         public boolean getUseDeveloperSupport() {
           return BuildConfig.DEBUG;
@@ -96,7 +108,9 @@ public class MainApplication extends Application implements ReactApplication {
     }
   }
 
-  // https://docs.expo.dev/bare/installing-expo-modules/?redirected
+  // expo https://github.com/expo/fyi/blob/main/expo-modules-migration.md
+  //      AND 
+  // expo-modules https://docs.expo.dev/bare/installing-expo-modules/?redirected
   @Override
   public void onConfigurationChanged(Configuration newConfig) {
     super.onConfigurationChanged(newConfig);
