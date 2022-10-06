@@ -1,8 +1,8 @@
 apply plugin: "com.android.application"
-apply plugin: 'maven-publish'
+// apply plugin: 'maven-publish'
 
 import com.android.build.OutputFile
-import org.apache.tools.ant.taskdefs.condition.Os
+// import org.apache.tools.ant.taskdefs.condition.Os // Unsure of Origin
 
 /**
  * The react.gradle file registers a task for each build variant (e.g. bundleDebugJsAndAssets
@@ -81,7 +81,14 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 project.ext.react = [
     enableHermes: true,  // clean and rebuild if changing
+
+    // Expo https://github.com/expo/fyi/blob/main/expo-modules-migration.md
+    cliPath: new File(["node", "--print", "require.resolve('react-native/package.json')"].execute(null, rootDir).text.trim()).getParentFile().getAbsolutePath() + "/cli.js",
+    hermesCommand: new File(["node", "--print", "require.resolve('hermes-engine/package.json')"].execute(null, rootDir).text.trim()).getParentFile().getAbsolutePath() + "/%OS-BIN%/hermesc",
+    composeSourceMapsPath: new File(["node", "--print", "require.resolve('react-native/package.json')"].execute(null, rootDir).text.trim()).getParentFile().getAbsolutePath() + "/scripts/compose-source-maps.js",
+    // 
 ]
+apply from: new File(["node", "--print", "require.resolve('react-native/package.json')"].execute(null, rootDir).text.trim(), "../react.gradle") // Expo https://github.com/expo/fyi/blob/main/expo-modules-migration.md
 
 // // Added from npmjs.com
 // apply from: new File(["node", "--print", "require.resolve('expo-modules-core/package.json')"].execute(null, rootDir).text.trim(), "../gradle.groovy")
@@ -269,6 +276,12 @@ dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
+    // Expo https://github.com/expo/fyi/blob/main/expo-modules-migration.md
+    def isGifEnabled = (findProperty('expo.gif.enabled') ?: "") == "true";
+    def isWebpEnabled = (findProperty('expo.webp.enabled') ?: "") == "true";
+    def isWebpAnimatedEnabled = (findProperty('expo.webp.animated') ?: "") == "true";
+    //
+
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
@@ -289,6 +302,10 @@ dependencies {
         implementation("com.facebook.react:hermes-engine:+") { // From node_modules
             exclude group:'com.facebook.fbjni'
         }
+        // Expo https://github.com/expo/fyi/blob/main/expo-modules-migration.md
+        debugImplementation files(new File(["node", "--print", "require.resolve('hermes-engine/package.json')"].execute(null, rootDir).text.trim(), "../android/hermes-debug.aar"))
+        releaseImplementation files(new File(["node", "--print", "require.resolve('hermes-engine/package.json')"].execute(null, rootDir).text.trim(), "../android/hermes-release.aar"))
+        //
     } else {
         implementation jscFlavor
     }
@@ -317,7 +334,11 @@ task copyDownloadableDepsToLibs(type: Copy) {
     into 'libs'
 }
 
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+// apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+// Expo https://github.com/expo/fyi/blob/main/expo-modules-migration.md
+apply from: new File(["node", "--print", "require.resolve('@react-native-community/cli-platform-android/package.json')"].execute(null, rootDir).text.trim(), "../native_modules.gradle");
+applyNativeModulesAppBuildGradle(project)
+//
 
 def isNewArchitectureEnabled() {
     // To opt-in for the New Architecture, you can either:
