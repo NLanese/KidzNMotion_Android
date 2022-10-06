@@ -40,14 +40,14 @@ public class MainActivity extends ReactActivity {
 
     // expo https://github.com/expo/fyi/blob/main/expo-modules-migration.md
     return new ReactActivityDelegateWrapper(
-+      this,
-+      new ReactActivityDelegate(this, getMainComponentName()) {
-+        @Override
-+        protected ReactRootView createRootView() {
-+          return new RNGestureHandlerEnabledRootView(MainActivity.this);
-+        }
-+      }
-+    );
+      this,
+      new ReactActivityDelegate(this, getMainComponentName()) {
+        @Override
+        protected ReactRootView createRootView() {
+          return new RNGestureHandlerEnabledRootView(MainActivity.this);
+        }
+      }
+    );
     // 
   }
 

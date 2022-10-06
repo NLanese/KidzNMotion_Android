@@ -9,7 +9,12 @@ apply from: file("../node_modules/@react-native-community/cli-platform-android/n
 // //
 
 // NOT EXPO-MODELS -- This is REACT UNIMODELS
-// apply from: '../node_modules/react-native-unimodules/gradle.groovy'; includeUnimodulesProjects () // Found this on GitHub Solutions
+// apply from: '../node_modules/react-native-unimodules/gradle.groovy'; includeUnimodulesProjects () // Found this on GitHub Solutions https://developer.android.com/studio/build/multidex#mdex-gradle
+
+//  Expo 
+    apply from: new File(["node", "--print", "require.resolve('expo/package.json')"].execute(null, rootDir).text.trim(), "../scripts/autolinking.gradle");
+    useExpoModules()
+// 
 
 include ':app'
 includeBuild('../node_modules/react-native-gradle-plugin')
@@ -21,7 +26,7 @@ if (settings.hasProperty("newArchEnabled") && settings.newArchEnabled == "true")
     project(":ReactAndroid:hermes-engine").projectDir = file('../node_modules/react-native/ReactAndroid/hermes-engine')
 }
 
-// https://docs.expo.dev/bare/installing-expo-modules/?redirected
-apply from: new File(["node", "--print", "require.resolve('expo/package.json')"].execute(null, rootDir).text.trim(), "../scripts/autolinking.gradle")
-useExpoModules()
-//
+// // https://docs.expo.dev/bare/installing-expo-modules/?redirected
+// apply from: new File(["node", "--print", "require.resolve('expo/package.json')"].execute(null, rootDir).text.trim(), "../scripts/autolinking.gradle")
+// useExpoModules()
+// //
