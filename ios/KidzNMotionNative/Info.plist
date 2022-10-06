@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>NSCameraUsageDescription</key>
+        <string>Enable Kidz-n-Motion access to your camera?</string>
+        <key>NSPhotoLibraryAddUsageDescription</key>
+        <string>Enable Kidz-n-Motion access to add to your Photos?</string>
+        <key>NSPhotoLibraryUsageDescription</key>
+        <string>Enable Kidz-n-Motion access to your Camera Roll?</string>
+        <key>NSMicrophoneUsageDescription</key>
+        <string>Enable Kidz-n-Motion access to your microphone during recording?</string>
+	<key>CFBundleDisplayName</key>
+	<string>Kidz-N-Motion</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>1.0</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>localhost</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string></string>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<false/>
+	<!-- This is (these are?) fonts, this is NOT from react-native init -->
+	<key>UIAppFonts</key>
+	<array>
+		<string>Gilroy-Black.ttf</string>
+		<string>Gilroy-Bold.ttf</string>
+		<string>Gilroy-ExtraBold.ttf</string>
+		<string>Gilroy-Heavy.ttf</string>
+		<string>Gilroy-Light.ttf</string>
+		<string>Gilroy-Medium.ttf</string>
+		<string>Gilroy-Regular.ttf</string>
+		<string>Gilroy-SemiBold.ttf</string>
+		<string>Gilroy-Thin.ttf</string>
+		<string>Gilroy-UltraLight.ttf</string>
+		<string>Lato-Bold.ttf</string>
+		<string>Lato-Medium.ttf</string>
+		<string>Lato-Regular.ttf</string>
+		<string>Lato-Semibold.ttf</string>
+		<string>LeagueSpartan-Bold.ttf</string>
+		<string>LeagueSpartan-Medium.ttf</string>
+		<string>LeagueSpartan-Regular.ttf</string>
+		<string>LeagueSpartan-SemiBold.ttf</string>
+		<string>Spartan-Black.ttf</string>
+		<string>Spartan-Bold.ttf</string>
+		<string>Spartan-ExtraBold.ttf</string>
+		<string>Spartan-ExtraLight.ttf</string>
+		<string>Spartan-Light.ttf</string>
+		<string>Spartan-Medium.ttf</string>
+		<string>Spartan-Regular.ttf</string>
+		<string>Spartan-SemiBold.ttf</string>
+		<string>Spartan-Thin.ttf</string>
+	</array>
+</dict>
+</plist>
