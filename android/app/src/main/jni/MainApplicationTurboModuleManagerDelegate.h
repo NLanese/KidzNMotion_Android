@@ -2,7 +2,7 @@
 #include <string>
 
 #include <ReactCommon/TurboModuleManagerDelegate.h>
-// #include <fbjni/fbjni.h>
+#include <fbjni/fbjni.h>
 
 namespace facebook {
 namespace react {

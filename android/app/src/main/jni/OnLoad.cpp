@@ -1,4 +1,4 @@
-// #include <fbjni/fbjni.h>
+#include <fbjni/fbjni.h>
 #include "MainApplicationTurboModuleManagerDelegate.h"
 #include "MainComponentsRegistry.h"
 
