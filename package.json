@@ -25,6 +25,7 @@
     "expo-mail-composer": "^11.3.0",
     "expo-media-library": "^14.2.0",
     "graphql": "^16.6.0",
+    "hypertrack-sdk-react-native": "^8.2.1",
     "install": "^0.13.0",
     "jest-expo": "^46.0.1",
     "linear-gradient": "^1.0.6",

@@ -5985,6 +5985,11 @@ humanize-ms@^1.2.1:
   dependencies:
     ms "^2.0.0"
 
+hypertrack-sdk-react-native@^8.2.1:
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/hypertrack-sdk-react-native/-/hypertrack-sdk-react-native-8.2.1.tgz#01e381b19735ea5751652e44c5b720abb6760d54"
+  integrity sha512-lnl4WrCzs2hEV6tqPkbVPR6I6Fo2eIYr74afTx3qeigvaWsxOwzMO7G5N7HrAU3SNCO2NEXuk+Ra0/oaQPHHhA==
+
 hyphenate-style-name@^1.0.2, hyphenate-style-name@^1.0.3:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/hyphenate-style-name/-/hyphenate-style-name-1.0.4.tgz#691879af8e220aea5750e8827db4ef62a54e361d"
