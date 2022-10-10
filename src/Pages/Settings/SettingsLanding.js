@@ -389,7 +389,7 @@ export default function SettingsLanding() {
                     <>
                         <SelectionButton
                             title={"Organization Settings"}
-                            plainCenter={true}
+                            // plainCenter={true}
                             onSelect={() => navigation.navigate("orgSettings")}
                         />
                     </>
@@ -405,7 +405,7 @@ export default function SettingsLanding() {
                 <SelectionButton 
                     title={"Request a Meeting"}
                     onSelect={() => navigation.navigate("ScheduleMeeting")}
-                    plainCenter={true}
+                    // plainCenter={true}
                 />
             )
         }
@@ -416,23 +416,102 @@ export default function SettingsLanding() {
         if (user.role === "GUARDIAN"){
             return(
                 <View>
-                    {/* <SelectionButton 
+                    <SelectionButton 
                         title={"Edit Profile"}
                         onSelect={() => navigation.navigate("ProfileEdit")}
-                        plainCenter={true}
-                    /> */}
+                        // plainCenter={true}
+                    />
+                    <SelectionButton 
+                        title={"Settings"}
+                        // plainCenter={true}
+                        onSelect={() => navigation.navigate("GeneralSettings")}
+                    />
+                    <SelectionButton 
+                        title={"Screen Color"}
+                        // plainCenter={true}
+                        onSelect={()=> setShowColorModal(true)}
+                    />
+                    {renderRequestMeeting()}
+                    <SelectionButton 
+                        title={"Sign Out"}
+                        // plainCenter={true}
+                        onSelect={() => setshowSignOutModal(true)}
+                    />
                 </View>
             )
         }
-        else if (user.role === "CHILD" && user.accessSettings){
-
-        }
-        else if (user.role === "CHILD"){
-
-        }
-        else if (user.role === "THERAPIST" || user.role === "ADMIN"){
-            
-        }
+        // else if (user.role === "CHILD" && user.accessSettings){
+        //     return(
+        //         <View style={{marginLeft: -4}}>
+        //             <SelectionButton 
+        //                 title={"Edit Profile"}
+        //                 onSelect={() => navigation.navigate("ProfileEdit")}
+        //                 // plainCenter={true}
+        //             />
+        //             <SelectionButton 
+        //                 title={"Settings"}
+        //                 // plainCenter={true}
+        //                 onSelect={() => navigation.navigate("GeneralSettings")}
+        //             />
+        //             <SelectionButton 
+        //                 title={"Screen Color"}
+        //                 // plainCenter={true}
+        //                 onSelect={()=> setShowColorModal(true)}
+        //             />
+        //             {renderRequestMeeting()}
+        //             <SelectionButton 
+        //                 title={"Sign Out"}
+        //                 // plainCenter={true}
+        //                 onSelect={() => setshowSignOutModal(true)}
+        //             />
+        //         </View>
+                
+        //     )
+        // }
+        // else if (user.role === "CHILD"){
+        //     return(
+        //         <View>
+        //             <SelectionButton 
+        //                 title={"Screen Color"}
+        //                 // plainCenter={true}
+        //                 onSelect={()=> setShowColorModal(true)}
+        //             />
+        //             <SelectionButton 
+        //                 title={"Sign Out"}
+        //                 // plainCenter={true}
+        //                 onSelect={() => setshowSignOutModal(true)}
+        //             />
+        //         </View>
+        //     )
+        // }
+        // else if (user.role === "THERAPIST" || user.role === "ADMIN"){
+        //     return(
+        //         <>
+        //             <SelectionButton 
+        //                 title={"Screen Color"}
+        //                 // plainCenter={true}
+        //                 onSelect={()=> setShowColorModal(true)}
+                        
+        //             />
+        //             <SelectionButton
+        //                 title={"Account Settings"}
+        //                 // plainCenter={true}
+        //                 onSelect={() => navigation.navigate("GeneralSettings")}
+        //             />
+        //             <SelectionButton 
+        //                 title={"Edit Profile"}
+        //                 onSelect={() => navigation.navigate("ProfileEdit")}
+        //                 // plainCenter={true}
+        //             />
+        //             {renderOrganizationSettings()}
+        //             <SelectionButton 
+        //                 title={"Sign Out"}
+        //                 // plainCenter={true}
+        //                 onSelect={() => setshowSignOutModal(true)}
+        //             />
+        //         </>
+        //     )
+        // }
     }
 
 ///////////////////////

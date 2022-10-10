@@ -591,7 +591,7 @@ export default function GeneralSettings() {
                 return(
                     <SelectionButton 
                         title={"Organization Settings"}
-                        plainCenter={true}
+                        // plainCenter={true}
                     />
                 )
             }
