@@ -414,7 +414,15 @@ export default function SettingsLanding() {
     // Renders the inputs that are appropriate for user access
     function renderButtons(){
         if (user.role === "GUARDIAN"){
-
+            return(
+                <View>
+                    {/* <SelectionButton 
+                        title={"Edit Profile"}
+                        onSelect={() => navigation.navigate("ProfileEdit")}
+                        plainCenter={true}
+                    /> */}
+                </View>
+            )
         }
         else if (user.role === "CHILD" && user.accessSettings){
 
