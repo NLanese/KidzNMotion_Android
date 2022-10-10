@@ -375,8 +375,8 @@ export default function SettingsLanding() {
             <ScrollView>
                 {renderHeader()}
                 {renderImageAndName()}
-                {renderButtons()}
-                {/* {renderSignOutModal()} */}
+                {/* {renderButtons()} */}
+                {renderSignOutModal()}
             </ScrollView>
         )
     }
@@ -413,7 +413,35 @@ export default function SettingsLanding() {
 
     // Renders the inputs that are appropriate for user access
     function renderButtons(){
-        if (user.role === "GUARDIAN" || (user.role === "CHILD" && user.accessSettings)){  //role === "GUARDIAN"
+        if (user.role === "GUARDIAN"){ 
+            return(
+                <View>
+                    <SelectionButton 
+                        title={"Edit Profile"}
+                        onSelect={() => navigation.navigate("ProfileEdit")}
+                        plainCenter={true}
+                    />
+                    <SelectionButton 
+                        title={"Settings"}
+                        plainCenter={true}
+                        onSelect={() => navigation.navigate("GeneralSettings")}
+                    />
+                    <SelectionButton 
+                        title={"Screen Color"}
+                        plainCenter={true}
+                        onSelect={()=> setShowColorModal(true)}
+                    />
+                    {renderRequestMeeting()}
+                    <SelectionButton 
+                        title={"Sign Out"}
+                        plainCenter={true}
+                        onSelect={() => setshowSignOutModal(true)}
+                    />
+                </View>
+                
+            )
+        }
+        else if (user.role === "CHILD" && user.accessSettings){  
             return(
                 <View style={{marginLeft: -4}}>
                     <SelectionButton 
