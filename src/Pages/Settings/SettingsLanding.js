@@ -1,5 +1,5 @@
 // React
-import { View, Text, SafeAreaView, ScrollView, TouchableOpacity } from "react-native";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import Modal from "react-native-modal";
@@ -376,7 +376,7 @@ export default function SettingsLanding() {
                 {renderHeader()}
                 {renderImageAndName()}
                 {renderButtons()}
-                {renderSignOutModal()}
+                {/* {renderSignOutModal()} */}
             </ScrollView>
         )
     }
@@ -539,17 +539,15 @@ export default function SettingsLanding() {
     }
 
     return (
-        // <SafeAreaView style={{ flex: 1, ...AREA.AndroidSafeArea }}>
-             <Gradient
-                colorOne={COLORS.gradientColor1}
-                colorTwo={COLORS.gradientColor2}
-                style={{height: '100%'}}
-            >
-                <View style={{marginLeft: 3}}>
-                    {MainRender()}
-                    {renderColorModal()}
-                </View>
+            <Gradient
+            colorOne={COLORS.gradientColor1}
+            colorTwo={COLORS.gradientColor2}
+            style={{height: '100%'}}
+        >
+            <View style={{marginLeft: 3}}>
+                {MainRender()}
+                {renderColorModal()}
+            </View>
             </Gradient>
-        // </SafeAreaView>
     );
 }

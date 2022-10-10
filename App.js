@@ -193,9 +193,10 @@ const Stack = createNativeStackNavigator();
         
 
           <KeyboardAvoidingView
-          behavior="padding"
+          keyboardVerticalOffset={10}
+          // behavior="padding"
           enabled
-          style={{flexGrow:1,height:'100%'}}
+          style={{flexGrow:1,height:'0%'}}
           >
             <View style={{width: '100%', height: '100%'}}>
               <Stack.Navigator 
