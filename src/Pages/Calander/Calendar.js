@@ -652,13 +652,17 @@ export default function CalendarPage() {
             return(
                 <>
                     {renderHeader()}
-                    {renderCalendar()}
-                    {renderAssignmentModal()}
-                    <View style={{backgroundColor: 'rgba(255, 255, 255, 0.25)', margin: 10, marginTop: 50, borderRadius: 10, padding: 10}}>
-                        {renderSelectedDate()}
-                        {renderAssignmentsOrMeetingsTab()}
-                        {renderMeetingsOrAssignmnets()}
-                    </View>
+                    <ScrollView 
+                    style={{height: '110%'}}
+                    contentContainerStyle={{height: '120%'}}>
+                        {renderCalendar()}
+                        {renderAssignmentModal()}
+                        <View style={{backgroundColor: 'rgba(255, 255, 255, 0.25)', margin: 10, marginTop: 50, borderRadius: 10, padding: 10}}>
+                            {renderSelectedDate()}
+                            {renderAssignmentsOrMeetingsTab()}
+                            {renderMeetingsOrAssignmnets()}
+                        </View>
+                    </ScrollView>
                 </>
             )
         }
