@@ -9,7 +9,7 @@ import DatePicker from "../../../OstrichComponents/DatePicker";
 import { Header, } from "../../../NutonComponents";
 
 // Apollo GraphQl
-import { GET_USER, CREATE_ASSIGNMENT, CREATE_MEETING } from "../../../GraphQL/operations";
+import { GET_USER, GET_MEETINGS, CREATE_ASSIGNMENT, CREATE_MEETING } from "../../../GraphQL/operations";
 import { useMutation } from "@apollo/client";
 import client from "../../utils/apolloClient"
 
@@ -30,6 +30,7 @@ import getAllTherapistClients from "../../Hooks/value_extractors/getAllTherapist
 import getAllTherapistClientGuardians from "../../Hooks/value_extractors/getAllTherapistClientGuardians"
 import convertMonthIntoNumber from "../../Hooks/date_and_time/convertMonthIntoNumber"
 import convertDateTimeToJavaScript from "../../Hooks/date_and_time/convertDateTimeToJavaScript"
+import getAllTherapistAssignments from "../../Hooks/value_extractors/getAllTherapistAssignments";
 
 // Dimensions
 let maxWidth = Dimensions.get('window').width
@@ -91,6 +92,9 @@ export default function SchedulingLanding() {
         // Loading
         const [loading, setLoading] = useState(false)
 
+        // Refresh (After mutations to trigger requery)
+        const [refresh, setRefresh] = useState(false)
+
         // Resets DatePicker
         const [reset, setReset] = useState(false)
 
@@ -124,13 +128,11 @@ export default function SchedulingLanding() {
 
 
             // Videos //
-
                 const [startDate, setStartDate] = useState(today)
 
                 const [endDate, setEndDate] = useState(today)
 
             // Meetings //
-
                 const [meetingDateObj, setMeetingDateObj] = useState(today)
 
                 const [meetingType, setMeetingType] = useState(false)
@@ -152,11 +154,27 @@ export default function SchedulingLanding() {
                     fetchPolicy: 'network-only'  
                 })
                 .then(async (resolved) => {
+                    // Sets new User //
                     await setUser(resolved.data.getUser)
-                })
-                .catch((error) => {
-                    console.log(error)
-                })
+
+                    // Sets new Assignments //
+                    await setAssignments(getAllTherapistAssignments(user))
+
+                    // Get and Sets Meetings //
+                    await client.query({
+                        query: GET_MEETINGS,
+                        fetchPolicy: 'network-only'
+                    })
+                        .catch(err => {
+                            setLoading(false)
+                            return null
+                        })
+                        .then(async (resolved) => {
+                            await setMeetings(resolved.data.getMeetings)
+                        })
+                    })
+                    .catch((error) => {
+                    })
             }
 
 ///////////////////////
@@ -165,14 +183,22 @@ export default function SchedulingLanding() {
 ///                 ///
 ///////////////////////
 
+    // Clears all selections when a different toggle is selected
     useEffect(() => {
         setSelectedClients([])
         setSelectedVideos([])
     },[showMeetingsModal, showAssignmentsModal])
 
+    // Triggers a date reset
     useEffect(() => {
         setReset(!reset)
     }, [startDateOpen, endDateOpen, showAssignmentsModal, showMeetingsModal])
+
+    // Triggers the Requery when refresh is changed post mutation
+    useEffect(() => {
+        getAndSetUser()
+        setLoading(false)
+    }, [refresh])
 
 //////////////////////
 ///                ///
@@ -284,7 +310,11 @@ const Styles = StyleSheet.create({
 
         // Renders each assignment card
         function renderAssignmentCards(){
-            return assignments[0].filter(ass => {
+            if (!assignments || assignments.length < 1){
+                return null
+            }
+            console.log("Assignmnets in scheduling ==>", assignments)
+            return assignments.filter(ass => {
                 // if (!ass.completed && !ass.canceled){
 
                     // Have it check against date
@@ -787,9 +817,6 @@ const Styles = StyleSheet.create({
             )
         }
 
-
-
-
 ///////////////////////
 ///                 ///
 ///     Handlers    ///
@@ -949,8 +976,7 @@ const Styles = StyleSheet.create({
                 setShowAssignmentsModal(false)
             })
             .then(() => {
-                getAndSetUser()
-                setLoading(false)
+                setRefresh(!refresh)
             })
         })
     }
@@ -968,7 +994,6 @@ const Styles = StyleSheet.create({
             }
         })
         .catch(err => {
-            console.log(err)
             setLoading(false)
         })
     }
@@ -988,8 +1013,7 @@ const Styles = StyleSheet.create({
            .then( (resolved) => {
            })
            .then(() => {
-                getAndSetUser()
-                setLoading(false)
+                setRefresh(!refresh)
            })
         })
         setShowMeetingsModal(false)
@@ -1006,7 +1030,6 @@ const Styles = StyleSheet.create({
             }
         })
         .catch(err => {
-            console.log(err)
             setLoading(false)
         })
     }
@@ -1029,6 +1052,11 @@ const Styles = StyleSheet.create({
             {renderAssignmentsModal()}
             {renderMeetingsModal()}
             {renderCreationButtons()}
+            {/* <TouchableOpacity onPress={() => setRefresh(!refresh)}>
+                <View style={{height: 100, width: 100, backgroundColor: 'green'}}>
+                    <Text>Refresh</Text>
+                </View>
+            </TouchableOpacity> */}
         </Gradient>
     )
 }
