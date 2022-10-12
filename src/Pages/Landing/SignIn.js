@@ -168,6 +168,91 @@ export default function SignIn() {
     // Mutations //
     ///////////////
 
+        // Clears login errors
+        function clearErrors(){
+            setErrors({                                     
+                username: false,                            // Remove Error Messages
+                password: false                             // Remove Error Messages
+            })
+        }
+
+        // Sets Tokens and Async Data
+        async function setTokenAsyncAndRegular(resolved){
+            await setToken(resolved.data.loginUser.token)
+            return await AsyncStorage.setItem('@token', resolved.data.loginUser.token)
+        }
+
+        // Sets the user object and all other statea that are dependent on the user Object
+        async function getAndSetUserAndUserProps(){
+            return await client.query({
+                query: GET_USER,
+                fetchPolicy: 'network-only'  
+            })
+            .then(async(resolved) => {
+                // User //
+                await setUser(resolved.data.getUser)
+
+                // Avatar //
+                if (resolved.data.getUser.profilePic){
+                    await setAvatar(resolved.data.getUser.profilePic)
+                    console.log("Avatar exists")
+                }
+                else{
+                    await setAvatar({...DEFAULT_AVATAR})
+                    console.log("Inside avatar section of getUser, avatar does not exist")
+                }
+
+                // Assignments //
+                await findUserAssignments(resolved.data.getUser)
+
+                // Sets Colors //
+                await handleColorInput(resolved.data.getUser.colorSettings)
+            })
+        }
+
+        // Determines how to grab assignments based on User Role 
+        async function findUserAssignments(user){
+            console.log(user)
+            if (user.role === "CHILD"){
+                await setAssign(getAllChildAssignments(user))
+            }
+            else if (user.role === "GUARDIAN"){
+                await setAssign(getAllGuardianAssignments(user))
+            }
+            else if (user.role === "THERAPIST"){
+                await setAssign(getAllTherapistAssignments(user))
+            }
+            else{
+                console.log("findUserAssignments failed, there was no user.role for some reason")
+            }
+        }
+
+        // Gets all of the Videos from the API
+        async function getVideos(){
+            await client.query({
+                query: GET_VIDEOS,
+                fetchPolicy: 'network-only'
+            })
+            .then((resolved) => {
+                setVideos(resolved.data.getAllVideoFiles)
+            })
+        }
+
+        // Gets all of a User's Meetings
+        async function getUserMeetings(){
+            await client.query({
+                query: GET_MEETINGS,
+                fetchPolicy: 'network-only'
+            })
+            .catch(err => {
+                setLoading(false)
+                return null
+            })
+            .then((resolved) => {
+                setMeetings(resolved.data.getMeetings)
+            })      
+        }
+
         // Process that occurs upon Sign-In attempt
         const handleSignIn = async () => {
             setLoading(true)
@@ -177,136 +262,52 @@ export default function SignIn() {
             // Successful Login //   
             .then( async (resolved) => {
 
-            //////////////////////
-            // Successful Login //
-            if (resolved){
+                // Successful Login //
+                if (resolved){
 
-                /////////////////////////
-                // Clears Login Errors //
-                setErrors({                                     
-                    username: false,                            // Remove Error Messages
-                    password: false                             // Remove Error Messages
-                })
+                    // Clears Login Errors //
+                    await clearErrors()
 
-                /////////////////
-                // Async Stuff //
-                await AsyncStorage.setItem('@token', resolved.data.loginUser.token)
-
-                ////////////////////
-                // Sets the token //
-                await setToken(resolved.data.loginUser.token)
-                console.log(resolved.data.loginUser.token, "Set the Token, moving on")
-
-                //////////////
-                // Get User //
-                await client.query({
-                    query: GET_USER,
-                    fetchPolicy: 'network-only'  
-                })
-                .then(async (resolved) => {
-                    // console.log(resolved)
-                    await setUser(resolved.data.getUser)
-                    console.log("Set the user object, moving on")
-
-                    /////////////////
-                    // Sets Avatar //
-                    if (user.profilePic){
-                        console.log("Profile pic found and assigned. Moving on")
-                        await setAvatar(user.profilePic)
-                    }
-                    else{
-                        console.log("No profile pic, moving on")
-                        await setAvatar({...DEFAULT_AVATAR})
-                    }
-
-                    /////////////////
-                    // Sets Colors //
-                    console.log("Setting colors...")
-                    await handleColorInput(user.colorSettings)
-                })
-                .catch((error) => {
-                    console.log(error)
-                })
-                .then(() => {
+                    // Async Stuff and Token //
+                    await setTokenAsyncAndRegular(resolved)
                     
-                    /////////////////////
-                    // Get Assignments //
-                    console.log("getting Assignments")
-                    if (user.role === "CHILD"){
-                        console.log(getAllChildAssignments(user), "\nASSIGNMENTS")
-                        setAssign(getAllChildAssignments(user))
-                    }
-                    else if (user.role === "GUARDIAN"){
-                        console.log(getAllGuardianAssignments(user)), "\NASSIGNMENTS"
-                        setAssign(getAllGuardianAssignments(user))
-                    }
-                    else if (user.role === "THERAPIST"){
-                        console.log(getAllTherapistAssignments(user))
-                        setAssign(getAllTherapistAssignments(user))
-                    }
-                    else{
-                        console.log(user.role)
-                        console.log("No user?")
-                    }
-                })
+                    // Get User, Avatar, and Colors //
+                    await getAndSetUserAndUserProps()
 
+                    // Gets Videos //
+                    await getVideos()
 
-                ////////////////
-                // Get Videos //
-                await client.query({
-                    query: GET_VIDEOS,
-                    fetchPolicy: 'network-only'
-                })
-                .then(async (resolved) => {
-                    await setVideos(resolved.data.getAllVideoFiles)
-                    await console.log("Setting Videos, moving on")
-                })
+                    // Get Meetings //
+                    await getUserMeetings()
 
-                //////////////////
-                // Get Meetings //
-                await client.query({
-                    query: GET_MEETINGS,
-                    fetchPolicy: 'network-only'
-                })
-                .catch(err => {
-                    console.log(err)
-                    setLoading(false)
-                    return null
-                })
-                .then(async (resolved) => {
-                    console.log(resolved.data.getMeetings)
-                    await setMeetings(resolved.data.getMeetings)
-                    await console.log("Setting Meetings, moving on")
-                })         
-                
-                ////////////////
-                // Sets Token //
-                await setToken(user.token)
-                // If Therapist User
-                if (user.role === "THERAPIST"){     
-                    setClientList(user.patientCarePlans)     // Sets Client List
+                    // Determines Client List //
+                    if (user.role === "THERAPIST"){     
+                        setClientList(user.patientCarePlans)     // Sets Client List
+                    }
+
+                    // Positive Return
+                    return true
                 }
-
-
-                return true
-            }
-            else {
-                return false
-            }
+                
+                // FAILED LOGIN //
+                else {
+                    return false
+                }
 
            ////////////////////////
            // Sends to Home Page //
            }).then( (resolved) => {
+
+                // If failed login, do not reroute
                 if (!resolved){
                     return "Error, you done goofed"
                 }
-                console.log("Should navigate next...")
+
+                // On Successful Login, reroute
                 setLoading(false)
                 navigation.navigate("Home")
 
-           ////////////////////////
-           // Unsuccessful Login //
-           })
+            })
         }
 
         // Determines which login Mutation to use 

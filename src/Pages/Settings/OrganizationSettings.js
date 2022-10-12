@@ -1,5 +1,5 @@
 // Reaact
-import { View, Text, SafeAreaView, ScrollView, Image, ImageBackground, TouchableOpacity } from "react-native";
+import { View, Text, SafeAreaView, ScrollView, Image, ImageBackground, TouchableOpacity, TextInput } from "react-native";
 import React, {useState} from "react";
 import { useNavigation } from "@react-navigation/native";
 
@@ -74,8 +74,10 @@ export default function OrganizationSettings() {
     function renderOrganizationTextFields() {
         return(
             <View style={{width: '80%', marginLeft: '10%'}}>
-                <ProfileEditCategoryComponent
-                    title="Organization Name"
+                <Text style={{...FONTS.Title, color: COLORS.iconLight}}>
+                    Name:
+                </Text>
+                <TextInput
                     placeholder={user.ownedOrganization.name}
                     onChangeText={(e) => onChangeText(e,'phoneNumer')}
                 />
