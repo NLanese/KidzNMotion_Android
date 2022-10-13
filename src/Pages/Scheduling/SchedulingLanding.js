@@ -168,6 +168,7 @@ export default function SchedulingLanding() {
     // Triggers a date reset
     useEffect(() => {
         setReset(!reset)
+        setLoading(false)
     }, [startDateOpen, endDateOpen, showAssignmentsModal, showMeetingsModal])
 
     // Triggers the Requery when refresh is changed post mutation
@@ -186,7 +187,7 @@ const Styles = StyleSheet.create({
     upcomingView: {
         height: maxHeight * 0.4, 
         borderColor: COLORS.iconLight, borderWidth: 1, borderRadius: 15, 
-        marginLeft: 10, marginRight: 10, marginBottom: 15
+        marginLeft: 10, marginRight: 10, marginBottom: 15,
     }
 })
         
@@ -214,9 +215,9 @@ const Styles = StyleSheet.create({
                     >
                         {renderHeader()}
                         {renderMeetingsAssignmentsTabBar()}
-                        <SchedulingModal showAssignmentsModal={showAssignmentsModal} setShowAssignmentsModal={setShowAssignmentsModal} showMeetingsModal={showMeetingsModal} setShowMeetingsModal={setShowMeetingsModal} refresh={refresh} setRefresh={setRefresh} setLoading={setLoading} />
                         {renderUpcomingDisplay()}
                         {renderCreationButtons()}
+                        <SchedulingModal showAssignmentsModal={showAssignmentsModal} setShowAssignmentsModal={setShowAssignmentsModal} showMeetingsModal={showMeetingsModal} setShowMeetingsModal={setShowMeetingsModal} refresh={refresh} setRefresh={setRefresh} setLoading={setLoading} />
                     </Gradient>
                 )
             }
