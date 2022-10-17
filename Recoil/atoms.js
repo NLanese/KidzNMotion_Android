@@ -68,6 +68,16 @@ import { COLORS, FONTS, SIZES, DEFAULT_AVATAR } from '../NutonConstants';
 		default: false
 	})
 
+///////////////
+// Chatrooms //
+///////////////
+
+	// Tracks the current chatroom
+	export const activeChatroom = atom({
+		key: 'activeChatroom',
+		default: {}
+	})
+
 /////////////////
 // VIDEO STATE //
 /////////////////
@@ -78,7 +88,7 @@ import { COLORS, FONTS, SIZES, DEFAULT_AVATAR } from '../NutonConstants';
 		default: []
 	})
 
-	// Tracks all videos from API upon login
+	// Tracks whether or not a single video has been accessed on this session
 	export const firstVideoAccessState = atom({
 		key: "firstVideoAccessState",
 		default: false

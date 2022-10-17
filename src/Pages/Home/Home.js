@@ -9,7 +9,7 @@ import Modal from "react-native-modal";
 
 // Recoil
 import { useRecoilState, useRecoilValue } from "recoil";
-import { colorState, fontState, sizeState, userState, avatarState, tokenState, videoDataState, assignState, meetingState } from '../../../Recoil/atoms';
+import { colorState, fontState, sizeState, userState, avatarState, tokenState, videoDataState, assignState, meetingState, activeChatroom } from '../../../Recoil/atoms';
 
 // Nuton
 import { Header, ProfileCategoryComponent, Button } from "../../../NutonComponents";
@@ -18,7 +18,7 @@ import { COLORS as colorConstant }  from "../../../NutonConstants"
 
 // GraphQL Apollo
 import { useMutation } from "@apollo/client";
-import { GET_USER, SWAP_TO_CHILD_ACCOUNT, USER_LOGIN } from "../../../GraphQL/operations";
+import { GET_USER, SWAP_TO_CHILD_ACCOUNT, USER_LOGIN, GET_NOTIFICATIONS } from "../../../GraphQL/operations";
 import client from '../../utils/apolloClient';
 
 // Ostrich
@@ -27,8 +27,10 @@ import SelectionButton from "../../../OstrichComponents/SelectionButton";
 import OptionsButtons from "../../../OstrichComponents/OptionsButtons"
 
 // Hooks
-import getAllChildAssignments from "../../Hooks/value_extractors/getAllChildAssignments"
-import getAllGuardianAssignments from "../../Hooks/value_extractors/getAllGuardianAssignments"
+import getAllChildAssignments from "../../Hooks/value_extractors/childAndGuardianValues/getAllChildAssignments"
+import getAllGuardianAssignments from "../../Hooks/value_extractors/childAndGuardianValues/getAllGuardianAssignments"
+import getAllTherapistAssignments from "../../Hooks/value_extractors/therapistValues/getAllTherapistAssignments"
+import getUserChatroom from "../../Hooks/value_extractors/getChatroom"
 
 // Dimensions
 let maxWidth = Dimensions.get('window').width
@@ -65,28 +67,47 @@ export default function Home() {
     //  State //
     ////////////
 
-        // Duh
-        const [user, setUser] = useRecoilState(userState)
+        //////////
+        // User //
+        //////////
 
+            // Duh
+            const [user, setUser] = useRecoilState(userState)
 
-        // Sets Selected Child if relevant
-        let XSelected
-        if (user.role === "GUARDIAN"){
-            XSelected = user.children[0]
-        }
-        else{
-            XSelected = false
-        }
-        const [selectedChild, setSelectedChild] = useState(XSelected)
+            // Sets Selected Child if relevant
+            let XSelected
+            if (user.role === "GUARDIAN"){
+                XSelected = user.children[0]
+            }
+            else{
+                XSelected = false
+            }
+            const [selectedChild, setSelectedChild] = useState(XSelected)
 
-        // Videos for Display and 
-        const [videos, setVideos] = useRecoilState(videoDataState)
+        ////////////
+        // Videos //
+        ////////////
 
-        // Determines the Video to be displayed in Video Button
-        const rand = Math.floor(Math.random() * videos.length);
+            // Videos for Display and 
+            const [videos, setVideos] = useRecoilState(videoDataState)
 
+            // Determines the Video to be displayed in Video Button
+            const rand = Math.floor(Math.random() * videos.length);
+            
+            // Determines which video will be shown as a preview
+            const [videoForPicture, setVideoForPicture] = useState(videos[rand])
 
-        const [videoForPicture, setVideoForPicture] = useState(videos[rand])
+        ///////////////
+        // Chatrooms //
+        ///////////////
+
+            // Tracks the Chatroom(s) that are active. Parents will have one by default, children will be false, therapists will have an array
+            const [activeChat, setActiveChat] = useRecoilState(activeChatroom)
+
+            // Uses a hook to fill in active chat value upon reaching home
+            useEffect(() => {
+                setActiveChat(getUserChatroom(user))
+            }, [])
 
 
         /////////////////////
@@ -113,6 +134,8 @@ export default function Home() {
 
             const [meetings, setMeetings] = useRecoilState(meetingState)
 
+
+            // Fires wehen switching accounts
             useEffect(() => {
                 handleColorInput(user.colorSettings)
                 setAvatar(user.profilePic)
@@ -122,7 +145,31 @@ export default function Home() {
                 else if (user.role === "CHILD"){
                     setAssign(getAllChildAssignments(user))
                 }
+                else if (user.role === "THERAPIST"){
+                    setAssign(getAllTherapistAssignments(user))
+                }
             }, [user])
+
+        ///////////////////
+        // NOTIFICATIONS //
+        ///////////////////
+
+            const [msgNotis, setMsgNotis] = useState([])
+
+            const [schedNotis, setSchedNotis] = useState([])
+
+            // Fires every reload in order to retain notifications
+            useEffect(() => {
+                getAndSetNotifications()
+            }, [])
+
+        /////////////
+        // Testing //
+        /////////////
+
+            useEffect(() => {
+                getUserChatroom(user)
+            }, [])
 
 ///////////////////////
 ///                 ///
@@ -702,9 +749,9 @@ export default function Home() {
             }).catch(err => {console.log(err)})
         }
     
-    //////////////////////////////
-    // General Switch Functions //
-    //////////////////////////////
+    /////////////////////////////
+    // General Query Functions //
+    /////////////////////////////
 
         // Gets and Sets the entire User Object
         async function getUserQuery(){
@@ -717,6 +764,25 @@ export default function Home() {
             })
             .catch((error) => {
                 console.log(error)
+            })
+        }
+
+        async function getAndSetNotifications(){
+            await client.query({
+                query: GET_NOTIFICATIONS,
+                fetchPolicy: 'network-only'
+            })
+            .then((resolved) => {
+                resolved.data.getNotifications.forEach(noti => {
+
+                    // If this is a message notification, adds it to noti state
+                    if (noti.includs ("New Message")){
+                        setMsgNotis(msgNotis => {
+                            [...msgNotis, noti]
+                        })
+                    }
+                    console.log(noti)
+                })
             })
         }
 
