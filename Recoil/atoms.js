@@ -16,7 +16,23 @@ import { COLORS, FONTS, SIZES, DEFAULT_AVATAR } from '../NutonConstants';
 	export const tokenState = atom({
 		key: 'tokenState',
 		default: false
-	})
+	});
+
+	// Tracks All Meetings (therapist and user)
+	export const meetingState = atom({
+		key: "meetingState",
+		default: []
+	});
+
+	// Gets all Assignments
+	export const assignState = atom({
+		key: "assignState",
+		default: []
+	});
+
+/////////////////////
+// THERAPIST STATE //
+/////////////////////
 
 	// Holds Client List Data
 	export const clientListState = atom({
@@ -30,35 +46,42 @@ import { COLORS, FONTS, SIZES, DEFAULT_AVATAR } from '../NutonConstants';
 		default: false
 	})
 
+//////////////////
+// MEDAL STATES //
+//////////////////
+
+	// Tracks all earned medals
+	export const medalsDataState = atom({
+		key: "medalDataState",
+		default: []
+	})
+
+	// Tracks what type of medal you are currently looking at
+	export const medalsTypeState = atom({
+		key: "medalTypeState",
+		default: false
+	})
+
+	// If Therapist, tracks which child is being viewed for Medals
+	export const selectedClientForMedals = atom({
+		key: "clientForMedals",
+		default: false
+	})
+
+/////////////////
+// VIDEO STATE //
+/////////////////
+
 	// Tracks all videos from API upon login
 	export const videoDataState = atom({
 		key: "videoDataState",
 		default: []
 	})
 
-
 	// Tracks all videos from API upon login
 	export const firstVideoAccessState = atom({
 		key: "firstVideoAccessState",
 		default: false
-	})
-
-	// Tracks all Medals from API upon medal page entry
-	export const medalState = atom({
-		key: "medalState",
-		default: []
-	})
-
-	// Tracks All Meetings (therapist and user)
-	export const meetingState = atom({
-		key: "meetingState",
-		default: []
-	})
-
-	// Gets all Assignments
-	export const assignState = atom({
-		key: "assignState",
-		default: []
 	})
 
 

@@ -4,20 +4,17 @@ import React, {useState} from "react";
 import { useNavigation } from "@react-navigation/native";
 
 // Nuton
-import { Header, Button, ProfileEditCategoryComponent } from "../../../NutonComponents";
-import { AREA, COLORS } from "../../../NutonConstants";
-import { Camera } from "../../../svg";
+import { Header } from "../../../NutonComponents";
 
 // Recoil
 import { useRecoilValue, useRecoilState } from "recoil";
-import {sizeState, clientListState, userState, colorState, fontState, videoDataState } from '../../../Recoil/atoms';
+import {sizeState, userState, colorState, videoDataState, medalsDataState } from '../../../Recoil/atoms';
 
 // SVG
-import { MedalBronze, MedalGold, MedalLarge, MedalSilver, MedalTab, LargeBronzeMedal } from "../../../svg";
+import { MedalTab } from "../../../svg";
 
 // Ostrich
 import Gradient from "../../../OstrichComponents/Gradient";
-import OptionsButtons from "../../../OstrichComponents/OptionsButtons"
 
 export default function MedalDisplay(props) {
 
@@ -34,9 +31,9 @@ export default function MedalDisplay(props) {
 
         const type = props.route.params.type
 
-        const medals = props.route.params.medals
+        const medals = useRecoilValue(medalsDataState)
 
-        // const medals = {"beam_balancing": {"bronze": 1, "gold": 0, "silver": 0}, "chair_elevation": {"bronze": 1, "gold": 1, "silver": 1}, "hand_to_knees": {"bronze": 1, "gold": 0, "silver": 1}, "leg_lifts": {"bronze": 3, "gold": 0, "silver": 2}}
+        console.log(props.route.params)
 
         const [videos, setVideos] = useRecoilState(videoDataState)
 
@@ -109,8 +106,8 @@ export default function MedalDisplay(props) {
 
             // Renders a single row of Medals
             function renderMedalRow(rArray) {
-                let rComp = () => rArray.map(video => {
-                    return renderMedal(video)
+                let rComp = () => rArray.map( (video, index)  => {
+                    return renderMedal(video, index)
                 })
                 return(
                     <View style={{flexDirection: 'row', justifyContent: 'space-evenly', marginTop: 15}}>
@@ -120,7 +117,7 @@ export default function MedalDisplay(props) {
             }
 
             // Renders a single medal
-            function renderMedal(video){
+            function renderMedal(video, i){
 
                 /////////////////////
                 // Prepping Styles //
@@ -141,7 +138,7 @@ export default function MedalDisplay(props) {
                             alignItems: 'center', width: 120, height: 90, 
                             backgroundColor: 'rgba(255, 255, 255, 0.25)',
                             borderRadius: 15, padding: 6, paddingTop: 10
-                        }}>
+                        }} key={i}>
                             <MedalTab fillColor={color} strokeColor={COLORS.iconDark}/>
                             <Text style={{textAlign: 'center', marginTop :10, fontFamily: 'Gilroy-Regular', color: COLORS.iconLight, fontSize: 16}}>{title}</Text>
                         </View>
@@ -153,7 +150,7 @@ export default function MedalDisplay(props) {
                             alignItems: 'center', width: 120, height: 90, 
                             backgroundColor: 'rgba(255, 255, 255, 0.25)',
                             borderRadius: 15, padding: 6, paddingTop: 10
-                        }}>
+                        }} key={i}>
                             <MedalTab fillColor={'rgba(0, 0, 0, 0.5)'} strokeColor={COLORS.iconDark}/>
                             <Text style={{textAlign: 'center', marginTop: 10, fontFamily: 'Gilroy-Regular', color: COLORS.iconLight, fontSize: 16}}>{title}</Text>
                         </View>
