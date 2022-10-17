@@ -1,14 +1,14 @@
 // Reaact
-import { View, Text, SafeAreaView, ScrollView, Image, TextInput, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
 import React, {useState} from "react";
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
+// Pusher
+import pusherClient from "../../utils/pusherClient";
 
 // Nuton
-import { Header, Button, ProfileEditCategoryComponent, InputField } from "../../../NutonComponents";
-import { AREA, COLORS } from "../../../NutonConstants";
-import { Camera } from "../../../svg";
+import { Header } from "../../../NutonComponents";
 
 // GraphQL
 import { useMutation } from "@apollo/client";
@@ -17,14 +17,14 @@ import client from "../../utils/apolloClient";
 
 // Recoil
 import { useRecoilValue, useRecoilState } from "recoil";
-import {sizeState, userState, colorState, fontState, avatarState } from '../../../Recoil/atoms';
+import {sizeState, userState, colorState, fontState, avatarState, tokenState, activeChatroom } from '../../../Recoil/atoms';
 
 
 // Ostrich
 import Gradient from "../../../OstrichComponents/Gradient";
 import { useEffect } from "react";
-import { render } from "react-dom";
 
+// Dimensions 
 let maxWidth = Dimensions.get('window').width
 let maxHeight = Dimensions.get('window').height
 
@@ -39,27 +39,9 @@ export default function MessageThread(props) {
     const FONTS = useRecoilValue(fontState)
     const SIZES = useRecoilValue(sizeState)
     const AVATAR = useRecoilValue(avatarState)
+    const token = useRecoilValue(tokenState)
     const navigation = useNavigation();
 
-    let OgChatroom 
-    let color2
-    let imported
-    let hardCodedAndOwned = false
-
-    if (!props.hardCodedChat){
-        OgChatroom = props.route.params?.item
-        color2 = COLORS.gradientColor1
-        imported = true
-    }
-    else{
-        OgChatroom = props.hardCodedChat[0]
-        color2 = COLORS.gradientColor2
-        imported = false
-    }
-
-    if (props.isItMe){
-        hardCodedAndOwned = true
-    }
 
     const [user, setUser] = useRecoilState(userState)
 
@@ -69,7 +51,9 @@ export default function MessageThread(props) {
         profilePic: "null"
     })
 
-    const [chatroom, setChatroom] = useState(OgChatroom)
+    const [chatroom, setChatroom] = useRecoilState(activeChatroom)
+
+    console.log(chatroom)
 
     const [chatToRender, setChatToRender] = useState(chatroom)
 
@@ -84,7 +68,7 @@ export default function MessageThread(props) {
 ///                 ///
 ///////////////////////
 
-    // Populates Contact
+    // Populates Contact State
     useEffect(() => {
         setContact(chatroom.users.filter(person => {
             if (person.id !== user.id){
@@ -93,35 +77,28 @@ export default function MessageThread(props) {
         })[0])
     }, [])
 
-    // Resets feed on render
-    // useEffect(() => {
-    //     user.chatRooms.forEach(chat => {
-    //         if (chat.id === chatroom.id){
-    //             setChatroom(chat)
-    //             return null
-    //         }
-    //     })
-    // }, [user])
-
+    // Utilizes Pusher API in order to refresh chat on newly recieved messages
     useEffect(() => {
-        let OgChatroom 
-        let color2
-        let imported
-        let hardCodedAndOwned = false
-
+        // Creates a connection to pusher, which will send a signal here once IT recieves a signal from another message sender
+        // For example, if this is a chat between person X and person Y, and this file is being used by person X, 
+        // if person Y were to send a messaage, that message is now in the db (duh) and a signal is sent to pusher
+        // which sends a signal to this new client. This will then allow me to trigger a rerender on signal recieving
+        const chatRoomChannel = pusherClient.subscribe(
+          chatroom.id.toString()
+        );
     
-        if (!props.hardCodedChat){
-            OgChatroom = props.route.params?.item
-            color2 = COLORS.gradientColor1
-            imported = true
-        }
-        else{
-            OgChatroom = props.hardCodedChat[0]
-            color2 = COLORS.gradientColor2
-            imported = false
-        }
-        setChatroom(OgChatroom)
-    }, [reset])
+        chatRoomChannel.bind("new-message", function (data) {
+          fetchChatDetail();
+        });
+    
+        return () => {
+          pusherClient.unsubscribe(chatroom.id.toString());
+        };
+      }, [chatroom.id]);
+    
+      useEffect(() => {
+        fetchChatDetail();
+      }, [chatroom.id]);
 
 
 
@@ -132,6 +109,27 @@ export default function MessageThread(props) {
 ///////////////////////
 
     const [sendMessage, { loading: loadingAdd, error: errorAdd, data: typeAdd }] =useMutation(SEND_MESSAGE);
+
+    const fetchChatDetail = async () => {
+        if (token) {
+          await client
+            .query({
+              query: GET_CHAT_FROM_ID,
+              fetchPolicy: "network-only",
+              variables: {
+                id: chatroom.id,
+              },
+            })
+            .then(async (resolved) => {
+              setChatroom(resolved.data.getChatFromId);
+            })
+            .catch((error) => {
+                console.log("Sorry, there was an error getting this information\n", error);
+            });
+        } else {
+            console.log("No token?")
+        }
+    };
 
 ///////////////////////
 ///                 ///
@@ -144,10 +142,7 @@ export default function MessageThread(props) {
             padding: maxWidth * 0.01,
             paddingLeft: maxWidth * 0.03,
             backgroundColor: COLORS.gradientColor1,
-            // backgroundColor: 'rgba(255, 255, 255, .40)',
             borderRadius: 10,
-            // borderWidth: 1,
-            // borderColor: 'black',
             flex: 7,
             marginBottom: 8
         },
@@ -221,9 +216,9 @@ export default function MessageThread(props) {
 
     // Renders the Header guy
     function renderHeader() {
-        if (!imported){
-            return null
-        }
+        // if (!imported){
+        //     return null
+        // }
         return (
             <View style={{marginTop: 40}}>
                 <Header
@@ -238,7 +233,7 @@ export default function MessageThread(props) {
     }
 
     // Renders a single message
-    function renderSingleMessage(message, thisUser, first, last){
+    function renderSingleMessage(message, thisUser, first, last, i){
 
 
         if (!message.sentBy){
@@ -253,7 +248,7 @@ export default function MessageThread(props) {
             // This is the first of the clump //
             if (first){
                 return(
-                    <View style={{display: 'flex', flexDirection: 'row'}}>
+                    <View style={{display: 'flex', flexDirection: 'row'}} key={i}>
                         <View style={Styles.messageProfilePic} />
 
                         <View style={Styles.theirMessageBubbleNA} />
@@ -273,7 +268,7 @@ export default function MessageThread(props) {
             // This is the last of the clump //
             if (last){
                 return(
-                    <View style={{display: 'flex', flexDirection: 'row'}}>
+                    <View style={{display: 'flex', flexDirection: 'row'}} key={i}>
                         <View style={Styles.messageProfilePic} />
 
                         <View style={Styles.theirMessageBubbleNA}>
@@ -295,7 +290,7 @@ export default function MessageThread(props) {
             // Neither first nor last of the clump //
             if (!last && !first){
                 return(
-                    <View style={{display: 'flex', flexDirection: 'row'}}>
+                    <View style={{display: 'flex', flexDirection: 'row'}} key={i}>
                         <View style={Styles.messageProfilePic} />
 
                         <View style={Styles.theirMessageBubbleNA}>
@@ -323,7 +318,7 @@ export default function MessageThread(props) {
             // This is the first of the clump //
             if (first){
                 return(
-                    <View style={{display: 'flex', flexDirection: 'row'}}>
+                    <View style={{display: 'flex', flexDirection: 'row'}} key={i}>
 
                         <View style={Styles.messageProfilePic}>
 
@@ -344,7 +339,7 @@ export default function MessageThread(props) {
             // This is the last of the clump //
             if (last){
                 return(
-                    <View style={{display: 'flex', flexDirection: 'row'}}>
+                    <View style={{display: 'flex', flexDirection: 'row'}} key={i}>
                         <View style={Styles.messageProfilePic} />
 
                         <View style={Styles.theirMessageBubble}>
@@ -363,7 +358,7 @@ export default function MessageThread(props) {
             // Neither first nor last of the clump //
             if (!last && !first){
                 return(
-                    <View style={{display: 'flex', flexDirection: 'row'}}>
+                    <View style={{display: 'flex', flexDirection: 'row'}} key={i}>
                         <View style={Styles.messageProfilePic} />
 
                         <View style={Styles.theirMessageBubble}>
@@ -389,9 +384,7 @@ export default function MessageThread(props) {
     function renderMessagesBySameSender(messageArray){
 
         let thisSend = user.id
-        if (!imported){
-            thisSend = props.hardCoderUserId
-        }
+
         ////////////////////////////////////////////
         // Iterates through all Supplied Messages //
         return messageArray.map((message, index) => {
@@ -411,16 +404,19 @@ export default function MessageThread(props) {
 
             ////////////
             // RETURN //
-            return renderSingleMessage(message, thisUser, first, last)
+            return renderSingleMessage(message, thisUser, first, last, index)
         })
     }
 
     // Renders all of the messages
     function renderAllMessages(){
 
+        let messageArray = [...chatroom.messages]
+        // messageArray = messageArray.reverse()
+
         /////////////////////////////////////////
         // Gets all consecutive message clumps //
-        let messageClumps = chopAtDifferentSenders(chatroom.messages)
+        let messageClumps = chopAtDifferentSenders(messageArray)
 
         //////////////////////////////////////////////////////////////////////////////////
         // Breaks up each message clump into an individual render to return all message //
@@ -470,30 +466,27 @@ export default function MessageThread(props) {
 
     // Main Render
     function MainRender(){
-        if (!imported){
-            if (hardCodedAndOwned){
-                console.log("1")
-                return(
-                    <View style={{height: maxHeight * 0.85, marginRight: 7, backgroundColor: COLORS.gradientColor2, borderRadius: 15, marginRight: 7,}}>
-                        {/* All messages */}
-                        <ScrollView style={{...Styles.messageSpace, height: '90%'}} contentContainerStyle={{height: 'auto', paddingBottom: maxHeight * .10, }}>
-                            {renderAllMessages()}
-                        </ScrollView>
-                        {renderInputSpace()}
-                    </View>
-                )
-            }
-            console.log("2")
-            return(
-                <View>
-                    <ScrollView style={Styles.messageSpace} contentContainerStyle={{height: 'auto', paddingBottom: maxHeight * .10, }}>
-                        {renderAllMessages()}
-                    </ScrollView>
-                </View>
-            )
-        }
-        else{
-            console.log("#")
+        // if (!imported){
+        //     if (hardCodedAndOwned){
+        //         return(
+        //             <View style={{height: maxHeight * 0.85, marginRight: 7, backgroundColor: COLORS.gradientColor2, borderRadius: 15, marginRight: 7,}}>
+        //                 {/* All messages */}
+        //                 <ScrollView style={{...Styles.messageSpace, height: '90%'}} contentContainerStyle={{height: 'auto', paddingBottom: maxHeight * .10, }}>
+        //                     {renderAllMessages()}
+        //                 </ScrollView>
+        //                 {renderInputSpace()}
+        //             </View>
+        //         )
+        //     }
+        //     return(
+        //         <View>
+        //             <ScrollView style={Styles.messageSpace} contentContainerStyle={{height: 'auto', paddingBottom: maxHeight * .10, }}>
+        //                 {renderAllMessages()}
+        //             </ScrollView>
+        //         </View>
+        //     )
+        // }
+        // else{
             return(
                 <View>
                     {/* All messages */}
@@ -503,10 +496,8 @@ export default function MessageThread(props) {
                     {renderInputSpace()}
                 </View>
             )
-        }
+        // }
     }
-
-
 
 
 ///////////////////////
@@ -580,6 +571,7 @@ export default function MessageThread(props) {
         .then( async (resolved) => {
             setTextEntered("")
             await getAndSetUser()
+            await fetchChatDetail()
         })
     }
 
@@ -611,6 +603,7 @@ export default function MessageThread(props) {
 ///    Main Render  ///
 ///                 ///
 ///////////////////////
+
     return(
         <KeyboardAwareScrollView
             showsVerticalScrollIndicator={false}

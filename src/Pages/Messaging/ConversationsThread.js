@@ -5,18 +5,21 @@ import { useNavigation } from "@react-navigation/native";
 
 // Recoil
 import { useRecoilValue, useRecoilState } from "recoil";
-import {sizeState, clientListState, userState, colorState, fontState } from '../../../Recoil/atoms';
+import { userState, activeChatroom } from '../../../Recoil/atoms';
 
 // GraphQL
-import { GET_USER, CREATE_CHATROOM } from "../../../GraphQL/operations";
+import { CREATE_CHATROOM } from "../../../GraphQL/operations";
 import { useMutation } from "@apollo/client";
 import client from "../../utils/apolloClient";
+
+// Hooks
+import getTherapistChatFronContacts from "../../Hooks/value_extractors/therapistValues/getTherapistChatFromContact";
 
 // Ostrich
 import Gradient from "../../../OstrichComponents/Gradient";
 import SelectionButton from "../../../OstrichComponents/SelectionButton";
 
-export default function ConversationsThread({user, setUser, guardian=false}) {
+export default function ConversationsThread() {
 ///////////////////////
 ///                 ///
 ///   Preliminary   ///
@@ -30,6 +33,10 @@ export default function ConversationsThread({user, setUser, guardian=false}) {
         const navigation = useNavigation();
 
         const [allContacts, setAllContacts] = useState([])
+
+        const [user, setUser] = useRecoilState(userState)
+        
+        const [activeChat, setActiveChat] = useRecoilState(activeChatroom)
 
     ///////////////
     // useEffect //
@@ -47,11 +54,7 @@ export default function ConversationsThread({user, setUser, guardian=false}) {
                     }
 
                     ////////////////////////////////
-                    // Adds the Child to Contacts //
-                    contacts.push({...pcp.child, plan: {...pcp, child: null}})
-
-                    /////////////////////////////////////////////////////////
-                    // Determines if the Child's parent needs to get added //
+                    // Adds the Guardian to Contacts //
                     let potentialGuardianContact = pcp.child.guardian
                     let arrayWithParent = contacts.filter(contact => {
                         if (contact.id === potentialGuardianContact.id){
@@ -80,14 +83,13 @@ export default function ConversationsThread({user, setUser, guardian=false}) {
 
     // Renders all contacts
     function renderAllContacts() {
-        return allContacts.map(contact => {
-            return renderContact(contact)
+        return allContacts.map((contact, index) => {
+            return renderContact(contact, index)
         })
     }
 
-
     // Renders a single Contact
-    function renderContact(contact){
+    function renderContact(contact, i){
         return(
             <SelectionButton 
                 title={`${contact.firstName} ${contact.lastName}`}
@@ -95,6 +97,7 @@ export default function ConversationsThread({user, setUser, guardian=false}) {
                 hasProfilePic={true}
                 profilePic={contact.profilePic}
                 onSelect={() => navigateOrCreateChat(contact)}
+                key={i}
             />
         )
     }
@@ -110,36 +113,36 @@ export default function ConversationsThread({user, setUser, guardian=false}) {
     ///////////////////////////
 
         // Creates the Chatroom, Updates the User, and Navigates to the new chatroom
-        function handleCreateChatroom(contact){
-            createChatroomMutation(contact)
-            .then( async (resolved) => {
-                await getUserQuery()
-                // navigation.navigate("MessageThread", {chatroom: null})
-            })
-        }
+        // function handleCreateChatroom(contact){
+        //     createChatroomMutation(contact)
+        //     .then( async (resolved) => {
+        //         await getUserQuery()
+        //         // navigation.navigate("MessageThread", {chatroom: null})
+        //     })
+        // }
 
         // Creates the Chatroom Mutation
-        async function createChatroomMutation(contact){
-            return await createChatRoom({
-                variables: {
-                    otherParticipantID: contact.id
-                }
-            }).catch(error => console.log(error))
-        }
+        // async function createChatroomMutation(contact){
+        //     return await createChatRoom({
+        //         variables: {
+        //             otherParticipantID: contact.id
+        //         }
+        //     }).catch(error => console.log(error))
+        // }
 
         // Gets the entire User Object
-        async function getUserQuery(){
-            await client.query({
-                query: GET_USER,
-                fetchPolicy: 'network-only'  
-            })
-            .then(async (resolved) => {
-                await setUser(resolved.data.getUser)
-            })
-            .catch((error) => {
-                console.log(error)
-            })
-        }
+        // async function getUserQuery(){
+        //     await client.query({
+        //         query: GET_USER,
+        //         fetchPolicy: 'network-only'  
+        //     })
+        //     .then(async (resolved) => {
+        //         await setUser(resolved.data.getUser)
+        //     })
+        //     .catch((error) => {
+        //         console.log(error)
+        //     })
+        // }
 
 
     ///////////////////
@@ -148,38 +151,40 @@ export default function ConversationsThread({user, setUser, guardian=false}) {
 
         // Runs on SelectionButton Click, navigates or creates
         function navigateOrCreateChat(contact){
-            if (!user.chatRooms){
-                handleCreateChatroom(contact)
-            }
-            else if (!determineIfChatroomExists(contact)){
-                handleCreateChatroom(contact)
-            }
-            else{
-                navigation.navigate("MessageThread", {item: determineIfChatroomExists(contact)})
-            }
+            // if (!user.chatRooms){
+            //     handleCreateChatroom(contact)
+            // }
+            // else if (!determineIfChatroomExists(contact)){
+            //     handleCreateChatroom(contact)
+            // }
+            // else{
+            setActiveChat(getTherapistChatFronContacts(user, contact))
+            console.log(activeChat)
+            navigation.navigate("MessageThread")
+            // }
         }
 
         // Runs when a contact card is selected. Determines if this contact has a thread with this therapist
-        function determineIfChatroomExists(contact){
-            let foundChat = false
+        // function determineIfChatroomExists(contact){
+        //     let foundChat = false
 
-            ///////////////////////////////////////////////////////////////////
-            // Goes through each chatroom to find a guest with ther right ID //
-            user.chatRooms.forEach(chatroom => {
-                if (foundChat){
-                    return foundChat
-                }
-                chatroom.users.forEach( user => {
-                    if (user.id === contact.id){
-                        foundChat = chatroom
-                    }
-                })
-            })
+        //     ///////////////////////////////////////////////////////////////////
+        //     // Goes through each chatroom to find a guest with ther right ID //
+        //     user.chatRooms.forEach(chatroom => {
+        //         if (foundChat){
+        //             return foundChat
+        //         }
+        //         chatroom.users.forEach( user => {
+        //             if (user.id === contact.id){
+        //                 foundChat = chatroom
+        //             }
+        //         })
+        //     })
 
-            ///////////////////////////////
-            // Returns false or Chatroom //
-            return foundChat
-        }
+        //     ///////////////////////////////
+        //     // Returns false or Chatroom //
+        //     return foundChat
+        // }
 
 
 

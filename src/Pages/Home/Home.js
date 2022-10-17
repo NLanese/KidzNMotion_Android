@@ -333,18 +333,29 @@ export default function Home() {
                     title={"Messaging"}
                     subtitle={"Communicate with your Therapist"}
                     image={"notification"}
-                    onSelect={() => navigation.navigate("MessagesLanding")}
+                    onSelect={() => navigation.navigate("MessageThread")}
                     icon={<Bell fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} style={{transform: [{ scale: 2 }, {translateX: 3.5}]}}/>}
                 />
             )
         }
-        else if (user.role === "CHILD" && user.accessMessages){
+        // else if (user.role === "CHILD" && user.accessMessages){
+        //     return(
+        //         <SelectionButton
+        //             title={"Messaging"}
+        //             subtitle={"Communicate with your Therapist"}
+        //             image={"notification"}
+        //             onSelect={() => navigation.navigate("MessagesLanding")}
+        //             icon={<Bell fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} style={{transform: [{ scale: 2 }, {translateX: 3.5}]}}/>}
+        //         />
+        //     )
+        // }
+        else if (user.role === "THERAPIST"){
             return(
                 <SelectionButton
                     title={"Messaging"}
-                    subtitle={"Communicate with your Therapist"}
+                    subtitle={"Communicate with your Client Guardians"}
                     image={"notification"}
-                    onSelect={() => navigation.navigate("MessagesLanding")}
+                    onSelect={() => navigation.navigate("Conversations")}
                     icon={<Bell fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} style={{transform: [{ scale: 2 }, {translateX: 3.5}]}}/>}
                 />
             )

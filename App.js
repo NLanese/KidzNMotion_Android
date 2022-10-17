@@ -67,6 +67,7 @@ import {
   // Messages
   MessagesLanding,
   MessageThread,
+  ConversationsThread,
 
   // Creators
   AddClient,
@@ -80,7 +81,10 @@ import {
   MedalDisplay,
 
   // Camera
-  VisionComp
+  VisionComp,
+
+  // Comments
+  ClientVideoComments
 
  } from './src/Pages';
 
@@ -193,10 +197,9 @@ const Stack = createNativeStackNavigator();
         
 
           <KeyboardAvoidingView
-          keyboardVerticalOffset={10}
-          // behavior="padding"
+          behavior="padding"
           enabled
-          style={{flexGrow:1,height:'0%'}}
+          style={{flexGrow:1,height:'100%'}}
           >
             <View style={{width: '100%', height: '100%'}}>
               <Stack.Navigator 
@@ -255,6 +258,7 @@ const Stack = createNativeStackNavigator();
                 {/* Messages */}
                 <Stack.Screen name="MessagesLanding" component={MessagesLanding} options={{orientation: 'portrait'}} />
                 <Stack.Screen name="MessageThread" component={MessageThread} options={{orientation: 'portrait'}} />
+                <Stack.Screen name="Conversations" component={ConversationsThread} options={{orientation: 'portrait'}} />
 
                 {/* Medals */}
                 <Stack.Screen name="Medals" component={MyMedals} options={{orientation: 'portrait'}} />
@@ -264,8 +268,10 @@ const Stack = createNativeStackNavigator();
                 <Stack.Screen name="SchedulingLanding" component={SchedulingLanding} options={{orientation: 'portrait'}} />
 
                 {/* Camera */}
-                <Stack.Screen name="CameraComponent" component={VisionComp} options={{orientation: 'portrait'}} />           
+                <Stack.Screen name="CameraComponent" component={VisionComp} options={{orientation: 'portrait'}} />    
 
+                {/* Comments */}
+                <Stack.Screen name="Comments" component={ClientVideoComments} options={{orientation: 'portrait'}} />
 
                 <Stack.Screen name="AddANewCard" component={AddANewCard} options={{orientation: 'portrait'}}/> 
                 <Stack.Screen name="CategoryGrid" component={CategoryGrid} options={{orientation: 'portrait'}}/> 

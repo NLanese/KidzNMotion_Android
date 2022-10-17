@@ -81,6 +81,7 @@ export default function MessagesLanding() {
     useEffect( () => {
         setLoading(true)
         setReset(!reset)
+        
         ///////////////////////
         // Guardian Messages //
         if (msgUser.role === "GUARDIAN"){
@@ -157,7 +158,7 @@ export default function MessagesLanding() {
         }
         else if (user.role === "THERAPIST"){
             return(
-                <ConversationsThread user={user} setUser={setUser}/>
+                <ConversationsThread/>
             )
         }
     }

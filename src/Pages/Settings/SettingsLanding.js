@@ -530,10 +530,13 @@ export default function SettingsLanding() {
         // if CANCEL
         if (input === "cancel"){
             if (colorsBeenChanged){
-                await setLoading(true)
-                await setColors(previousColors)
-                await setShowColorModal(false)
-                await setLoading(false)
+                setLoading(true)
+                setColors(previousColors)
+                setShowColorModal(false)
+                setLoading(false)
+            }
+            else{
+                setShowColorModal(false)
             }
         }
 
