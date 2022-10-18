@@ -12,13 +12,15 @@ import { Header } from "../../../NutonComponents";
 
 // GraphQL
 import { useMutation } from "@apollo/client";
-import { SEND_MESSAGE, GET_CHAT_FROM_ID, GET_USER } from "../../../GraphQL/operations";
+import { SEND_MESSAGE, GET_CHAT_FROM_ID, GET_USER, DISMISS_NOTIFICATION, GET_NOTIFICATIONS } from "../../../GraphQL/operations";
 import client from "../../utils/apolloClient";
 
 // Recoil
 import { useRecoilValue, useRecoilState } from "recoil";
-import {sizeState, userState, colorState, fontState, avatarState, tokenState, activeChatroom } from '../../../Recoil/atoms';
+import {sizeState, userState, colorState, fontState, avatarState, tokenState, activeChatroom, messageNotifications } from '../../../Recoil/atoms';
 
+// Hooks
+import getMsgNotificationsToBeDismissed from "../../Hooks/notifications/getMsgNotificationsToBeDismissed";
 
 // Ostrich
 import Gradient from "../../../OstrichComponents/Gradient";
@@ -42,20 +44,20 @@ export default function MessageThread(props) {
     const token = useRecoilValue(tokenState)
     const navigation = useNavigation();
 
-
+    // User
     const [user, setUser] = useRecoilState(userState)
 
+    // Chatroom (active)
+    const [chatroom, setChatroom] = useRecoilState(activeChatroom)
+
+    // Contact Filler
     const [contact, setContact] = useState({
-        firstName: "null",
-        lastName: "null",
+        firstName: false,
+        lastName: false,
         profilePic: "null"
     })
 
-    const [chatroom, setChatroom] = useRecoilState(activeChatroom)
-
-    console.log(chatroom)
-
-    const [chatToRender, setChatToRender] = useState(chatroom)
+    const [notis, setNotis] = useRecoilState(messageNotifications)
 
     const [textEntered, setTextEntered] = useState()
 
@@ -96,10 +98,15 @@ export default function MessageThread(props) {
         };
       }, [chatroom.id]);
     
-      useEffect(() => {
+    // Backup for live refresh
+    useEffect(() => {
         fetchChatDetail();
-      }, [chatroom.id]);
+    }, [chatroom.id]);
 
+    // Handles Notification Dismissal
+    useEffect(() => {
+        handleNotifications()
+    }, [contact])
 
 
 ///////////////////////
@@ -109,6 +116,8 @@ export default function MessageThread(props) {
 ///////////////////////
 
     const [sendMessage, { loading: loadingAdd, error: errorAdd, data: typeAdd }] =useMutation(SEND_MESSAGE);
+
+    const [dismissNotifications, { loading: loadingDis, error: errorDis, data: typeDis }] =useMutation(DISMISS_NOTIFICATION);
 
     const fetchChatDetail = async () => {
         if (token) {
@@ -557,6 +566,7 @@ export default function MessageThread(props) {
         }).catch(err => console.log(err))
     }
 
+    // Gets Refreshed User Object and Updates the User Atom
     async function getAndSetUser(){
         await client.query({
             query: GET_USER,
@@ -569,6 +579,48 @@ export default function MessageThread(props) {
             console.log(error)
         })
     }
+
+    // Handles Notifications -- Fired right away upon loading this page
+    function handleNotifications(){
+        let notisToDismiss = getMsgNotificationsToBeDismissed(notis, contact)
+        notisToDismiss.forEach((noti) => {
+            dismissNotificationsMutation(noti)
+        })
+        getAndSetNotifications()
+    }
+
+    // Handles the actual dismissal mutation
+    async function dismissNotificationsMutation(notification){
+        return await dismissNotifications({
+            variables: {
+                notificationID: notification.id
+            }
+        })
+        .then((resolved) => {
+            console.log(resolved)
+        })
+        .catch(err => console.log(err))
+    }
+
+    // Gets and Sets Notifications, sets categorical notis too
+    async function getAndSetNotifications(){
+        setNotis( notis => [])
+        await client.query({
+            query: GET_NOTIFICATIONS,
+            fetchPolicy: 'network-only'
+        })
+        .catch(err => console.log(err))
+        .then((resolved) => {
+            let msgN = resolved.data.getNotifications.filter((noti, index) => {
+                if (noti.title.includes("New Message")){
+                    return noti
+                }
+            })
+            setNotis( msgNotis => ([...msgN]))
+            setLoading(false)
+        })
+    }
+
 
 ///////////////////////
 ///                 ///

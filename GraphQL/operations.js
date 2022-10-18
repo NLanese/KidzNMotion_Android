@@ -9,7 +9,6 @@ import { gql } from '@apollo/client';
 
 
 const GET_USER = gql`
-# Write your query or mutation here
 query Query{
     getUser{
       id
@@ -239,6 +238,13 @@ query Query{
           id
           contentfulID
         }
+        childCarePlan{
+          id
+          child{
+            firstName
+            lastName
+          }
+        }
       }
     }
     
@@ -345,28 +351,24 @@ const GET_CHATS = gql`
 `
 
 const GET_CHAT_FROM_ID = gql`
-  query Query(
-    $id: String
-  ){
-    getChatFromId(
-      id: String
-    ){
+query Query($id: String!) {
+  getChatFromId(id: $id) {
+    id
+    users {
       id
-      users{
-          firstName
-          lastName
-          title
-          id
-        }
-      messages{
-          content
-          createdAt
-          sentAt
-          sentBy
-      }
+      firstName
+      lastName
+      role
+    }
+    messages {
+      createdAt
+      content
+      sentAt
+      sentBy
     }
   }
-`
+}
+`;
 
 const GET_CHILD_VIDEO_STATISTICS = gql`
   query Query(
@@ -378,13 +380,18 @@ const GET_CHILD_VIDEO_STATISTICS = gql`
   }
 `
 
-// const GET_CHILD_VIDEO_STATISTICS = gql`
-//   query Query{
-//     getChildVideoStatistics(
-//       childID: $childID
-//     )
-//   }
-// `
+const GET_NOTIFICATIONS = gql `
+  query Query{
+    getNotifications{
+      id
+      createdAt
+      title
+      description
+      toUserId
+      fromUserId
+    }
+  }
+`
 
 
 //////////////////////////////////////////
@@ -677,7 +684,7 @@ const CREATE_MEETING = gql`
 
 //////////////////////////////////////////
 //                                      //
-//              MESSAGES                //   
+//      MESSAGES AND NOTIFICATIONS      //   
 //                                      //
 //////////////////////////////////////////
 
@@ -701,6 +708,16 @@ const SEND_MESSAGE = gql`
     sendMessage(
       content: $content,
       chatRoomID: $chatRoomID
+    )
+  }
+`
+
+const DISMISS_NOTIFICATION = gql`
+  mutation Mutation(
+    $notificationID: String!
+  ){
+    getNotifications(
+      notificationID: $notificationID
     )
   }
 `
@@ -788,8 +805,6 @@ const CREATE_ASSIGNMENT = gql`
   }
 `
 
-
-
 /////////////
 // EXPORTS //
 export {   //
@@ -799,6 +814,8 @@ export {   //
   GET_CHATS,
   GET_CHAT_FROM_ID,
   GET_CHILD_VIDEO_STATISTICS,
+
+  GET_NOTIFICATIONS,
 
   USER_SIGN_UP,
   USER_LOGIN,
@@ -822,6 +839,7 @@ export {   //
 
   CREATE_CHATROOM,
   SEND_MESSAGE,
+  DISMISS_NOTIFICATION,
 
   CREATE_ASSIGNMENT,
   CREATE_MEETING,
