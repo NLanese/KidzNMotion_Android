@@ -75,7 +75,7 @@ export default function MessageThread(props) {
                 return person
             }
         })[0])
-    }, [])
+    }, [chatroom])
 
     // Utilizes Pusher API in order to refresh chat on newly recieved messages
     useEffect(() => {
@@ -216,9 +216,6 @@ export default function MessageThread(props) {
 
     // Renders the Header guy
     function renderHeader() {
-        // if (!imported){
-        //     return null
-        // }
         return (
             <View style={{marginTop: 40}}>
                 <Header
@@ -412,7 +409,6 @@ export default function MessageThread(props) {
     function renderAllMessages(){
 
         let messageArray = [...chatroom.messages]
-        // messageArray = messageArray.reverse()
 
         /////////////////////////////////////////
         // Gets all consecutive message clumps //
@@ -466,37 +462,15 @@ export default function MessageThread(props) {
 
     // Main Render
     function MainRender(){
-        // if (!imported){
-        //     if (hardCodedAndOwned){
-        //         return(
-        //             <View style={{height: maxHeight * 0.85, marginRight: 7, backgroundColor: COLORS.gradientColor2, borderRadius: 15, marginRight: 7,}}>
-        //                 {/* All messages */}
-        //                 <ScrollView style={{...Styles.messageSpace, height: '90%'}} contentContainerStyle={{height: 'auto', paddingBottom: maxHeight * .10, }}>
-        //                     {renderAllMessages()}
-        //                 </ScrollView>
-        //                 {renderInputSpace()}
-        //             </View>
-        //         )
-        //     }
-        //     return(
-        //         <View>
-        //             <ScrollView style={Styles.messageSpace} contentContainerStyle={{height: 'auto', paddingBottom: maxHeight * .10, }}>
-        //                 {renderAllMessages()}
-        //             </ScrollView>
-        //         </View>
-        //     )
-        // }
-        // else{
-            return(
-                <View>
-                    {/* All messages */}
-                    <ScrollView style={Styles.messageSpace} contentContainerStyle={{height: 'auto', paddingBottom: maxHeight * .10, }}>
-                        {renderAllMessages()}
-                    </ScrollView>
-                    {renderInputSpace()}
-                </View>
-            )
-        // }
+        return(
+            <View>
+                {/* All messages */}
+                <ScrollView style={Styles.messageSpace} contentContainerStyle={{height: 'auto', paddingBottom: maxHeight * .10, }}>
+                    {renderAllMessages()}
+                </ScrollView>
+                {renderInputSpace()}
+            </View>
+        )
     }
 
 
@@ -509,8 +483,6 @@ export default function MessageThread(props) {
 
     // Returns all of the messages, but grouped by sender
     function chopAtDifferentSenders(messageArray){
-
-        console.clear()
 
         ///////////////
         // Constants //
@@ -591,7 +563,7 @@ export default function MessageThread(props) {
             fetchPolicy: 'network-only'  
         })
         .then(async (resolved) => {
-            await setUser(resolved.data.getUser)
+            setUser(resolved.data.getUser)
         })
         .catch((error) => {
             console.log(error)

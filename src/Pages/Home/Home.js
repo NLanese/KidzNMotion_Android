@@ -67,6 +67,9 @@ export default function Home() {
     //  State //
     ////////////
 
+        // Loading
+        const [loading, setLoading] = useState(true)
+
         //////////
         // User //
         //////////
@@ -107,7 +110,7 @@ export default function Home() {
             // Uses a hook to fill in active chat value upon reaching home
             useEffect(() => {
                 setActiveChat(getUserChatroom(user))
-            }, [])
+            }, [user])
 
 
         /////////////////////
@@ -161,7 +164,7 @@ export default function Home() {
             // Fires every reload in order to retain notifications
             useEffect(() => {
                 getAndSetNotifications()
-            }, [])
+            }, [user])
 
         /////////////
         // Testing //
@@ -169,7 +172,7 @@ export default function Home() {
 
             useEffect(() => {
                 getUserChatroom(user)
-            }, [])
+            }, [user])
 
 ///////////////////////
 ///                 ///
@@ -186,6 +189,12 @@ export default function Home() {
                         Please wait while we switch accounts
                     </Text>
                 </View>
+            )
+        }
+
+        if (loading){
+            return(
+                <View />
             )
         }
 
@@ -335,20 +344,10 @@ export default function Home() {
                     image={"notification"}
                     onSelect={() => navigation.navigate("MessageThread")}
                     icon={<Bell fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} style={{transform: [{ scale: 2 }, {translateX: 3.5}]}}/>}
+                    notificationCount={msgNotis.length}
                 />
             )
         }
-        // else if (user.role === "CHILD" && user.accessMessages){
-        //     return(
-        //         <SelectionButton
-        //             title={"Messaging"}
-        //             subtitle={"Communicate with your Therapist"}
-        //             image={"notification"}
-        //             onSelect={() => navigation.navigate("MessagesLanding")}
-        //             icon={<Bell fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} style={{transform: [{ scale: 2 }, {translateX: 3.5}]}}/>}
-        //         />
-        //     )
-        // }
         else if (user.role === "THERAPIST"){
             return(
                 <SelectionButton
@@ -357,6 +356,7 @@ export default function Home() {
                     image={"notification"}
                     onSelect={() => navigation.navigate("Conversations")}
                     icon={<Bell fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} style={{transform: [{ scale: 2 }, {translateX: 3.5}]}}/>}
+                    notificationCount={msgNotis.length}
                 />
             )
         }
@@ -364,6 +364,9 @@ export default function Home() {
 
     // Renders all of the Menu Buttons
     function renderLinks() {
+        if (loading){
+            return null
+        }
         if (user.role === "GUARDIAN" || user.role === "CHILD"){  // role === "GUARDIAN"
             return(
                 <>
@@ -412,6 +415,7 @@ export default function Home() {
                         image={"notification"}
                         onSelect={() => navigation.navigate("/")}
                         icon={<Bell fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} style={{transform: [{ scale: 2 }, {translateX: 3.5}]}}/>}
+                        notificationCount={msgNotis.length}
                     />
                     
                 </>
@@ -778,21 +782,24 @@ export default function Home() {
             })
         }
 
+        // Gets and Sets Notifications, sets categorical notis too
         async function getAndSetNotifications(){
+            setMsgNotis( msgNotis => ([]))
+            setSchedNotis( schedNotis => ([]))
             await client.query({
                 query: GET_NOTIFICATIONS,
                 fetchPolicy: 'network-only'
             })
+            .catch(err => console.log(err))
             .then((resolved) => {
-                resolved.data.getNotifications.forEach(noti => {
-
-                    // If this is a message notification, adds it to noti state
-                    if (noti.includs ("New Message")){
-                        setMsgNotis(msgNotis => {
-                            [...msgNotis, noti]
-                        })
+                resolved.data.getNotifications.forEach((noti, index) => {
+                    if (noti.title.includes("New Message")){
+                        let nArray = [...msgNotis, noti]
+                        setMsgNotis(msgNotis => ([...nArray]))
                     }
-                    console.log(noti)
+                    if (index = resolved.data.getNotifications.length - 1){
+                        setLoading(false)
+                    }
                 })
             })
         }
@@ -830,15 +837,15 @@ export default function Home() {
 ///////////////////////
 
     return (
-            <Gradient
-                colorOne={COLORS.gradientColor1}
-                colorTwo={COLORS.gradientColor2}
-                style={{height: '110%', paddingTop: 5}}
-            >
-                {renderHeader()}
-                <ScrollView contentContainerStyle={{height: '120%', paddingBottom: '10%'}}>
-                    {MainRender()}
-                </ScrollView>
-            </Gradient>
+        <Gradient
+            colorOne={COLORS.gradientColor1}
+            colorTwo={COLORS.gradientColor2}
+            style={{height: '110%', paddingTop: 5}}
+        >
+            {renderHeader()}
+            <ScrollView contentContainerStyle={{height: '120%', paddingBottom: '10%'}}>
+                {MainRender()}
+            </ScrollView>
+        </Gradient>
     );
 }
