@@ -9,7 +9,7 @@ import Modal from "react-native-modal";
 
 // Recoil
 import { useRecoilState, useRecoilValue } from "recoil";
-import { colorState, fontState, sizeState, userState, avatarState, tokenState, videoDataState, assignState, meetingState, activeChatroom } from '../../../Recoil/atoms';
+import { colorState, fontState, sizeState, userState, avatarState, tokenState, videoDataState, assignState, meetingState, activeChatroom, messageNotifications, scheduleNotifications } from '../../../Recoil/atoms';
 
 // Nuton
 import { Header, ProfileCategoryComponent, Button } from "../../../NutonComponents";
@@ -157,14 +157,30 @@ export default function Home() {
         // NOTIFICATIONS //
         ///////////////////
 
-            const [msgNotis, setMsgNotis] = useState([])
+            const [msgNotis, setMsgNotis] = useRecoilState(messageNotifications)
 
-            const [schedNotis, setSchedNotis] = useState([])
+            const [schedNotis, setSchedNotis] = useState(scheduleNotifications)
+
+            const [msgNotiLen, setMsgNotiLen] = useState(msgNotis.length)
+
+            const [schedNotisLen, setSchedNotisLen] = useState(schedNotis.length)
+
+            const clearNotiData = async () => {
+                let clear = []
+                setMsgNotis( msgNotis => ([...clear]))
+                setSchedNotis( schedNotis => ([...clear]))
+            } 
 
             // Fires every reload in order to retain notifications
             useEffect(() => {
                 getAndSetNotifications()
             }, [user])
+
+            // Firess whenever there is a change to notifications so to properly measure the lengths for the counter
+            useEffect(() => {
+                setMsgNotiLen(msgNotis.length)
+                setSchedNotisLen(schedNotis.length)
+            }, [msgNotis, schedNotis])
 
         /////////////
         // Testing //
@@ -344,7 +360,7 @@ export default function Home() {
                     image={"notification"}
                     onSelect={() => navigation.navigate("MessageThread")}
                     icon={<Bell fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} style={{transform: [{ scale: 2 }, {translateX: 3.5}]}}/>}
-                    notificationCount={msgNotis.length}
+                    notificationCount={msgNotiLen}
                 />
             )
         }
@@ -356,7 +372,7 @@ export default function Home() {
                     image={"notification"}
                     onSelect={() => navigation.navigate("Conversations")}
                     icon={<Bell fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} style={{transform: [{ scale: 2 }, {translateX: 3.5}]}}/>}
-                    notificationCount={msgNotis.length}
+                    notificationCount={msgNotiLen}
                 />
             )
         }
@@ -374,10 +390,9 @@ export default function Home() {
                         title={"Calendar"}
                         subtitle={"View weekly or monthly Calandar"}
                         image={"calandar"}
-                        onSelect={() => {
-                             navigation.navigate("Calendar")
-                        }}
+                        onSelect={() => { navigation.navigate("Calendar")} }
                         icon={<CalendarTab fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} />}
+                        notificationCount={schedNotisLen}
                     />
                     <SelectionButton
                         title={"Medals"}
@@ -415,7 +430,7 @@ export default function Home() {
                         image={"notification"}
                         onSelect={() => navigation.navigate("/")}
                         icon={<Bell fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} style={{transform: [{ scale: 2 }, {translateX: 3.5}]}}/>}
-                        notificationCount={msgNotis.length}
+                        notificationCount={msgNotisLen}
                     />
                     
                 </>
@@ -775,7 +790,7 @@ export default function Home() {
                 fetchPolicy: 'network-only'  
             })
             .then(async (resolved) => {
-                await setUser(resolved.data.getUser)
+                setUser(resolved.data.getUser)
             })
             .catch((error) => {
                 console.log(error)
@@ -784,8 +799,7 @@ export default function Home() {
 
         // Gets and Sets Notifications, sets categorical notis too
         async function getAndSetNotifications(){
-            setMsgNotis( msgNotis => ([]))
-            setSchedNotis( schedNotis => ([]))
+            await clearNotiData()
             await client.query({
                 query: GET_NOTIFICATIONS,
                 fetchPolicy: 'network-only'
