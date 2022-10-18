@@ -25,11 +25,10 @@ import LoadingComponent from "../../Global/LoadingComponent"
 import SchedulingModal from "./SchedulingModal";
 
 // Hooks
-import getAllTherapistClients from "../../Hooks/value_extractors/getAllTherapistClients"
-import getAllTherapistClientGuardians from "../../Hooks/value_extractors/getAllTherapistClientGuardians"
-import convertMonthIntoNumber from "../../Hooks/date_and_time/convertMonthIntoNumber"
+import getAllTherapistClients from "../../Hooks/value_extractors/therapistValues/getAllTherapistClients"
+import getAllTherapistClientGuardians from "../../Hooks/value_extractors/therapistValues/getAllTherapistClientGuardians"
 import convertDateTimeToJavaScript from "../../Hooks/date_and_time/convertDateTimeToJavaScript"
-import getAllTherapistAssignments from "../../Hooks/value_extractors/getAllTherapistAssignments";
+import getAllTherapistAssignments from "../../Hooks/value_extractors/therapistValues/getAllTherapistAssignments";
 
 // Dimensions
 let maxWidth = Dimensions.get('window').width

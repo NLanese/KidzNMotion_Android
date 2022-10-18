@@ -84,7 +84,7 @@ import {
   VisionComp,
 
   // Comments
-  ClientVideoComments
+  // ClientVideoComments
 
  } from './src/Pages';
 
@@ -271,7 +271,7 @@ const Stack = createNativeStackNavigator();
                 <Stack.Screen name="CameraComponent" component={VisionComp} options={{orientation: 'portrait'}} />    
 
                 {/* Comments */}
-                <Stack.Screen name="Comments" component={ClientVideoComments} options={{orientation: 'portrait'}} />
+                {/* <Stack.Screen name="Comments" component={ClientVideoComments} options={{orientation: 'portrait'}} /> */}
 
                 <Stack.Screen name="AddANewCard" component={AddANewCard} options={{orientation: 'portrait'}}/> 
                 <Stack.Screen name="CategoryGrid" component={CategoryGrid} options={{orientation: 'portrait'}}/> 

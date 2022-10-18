@@ -26,9 +26,9 @@ import { COLORS as colorConstant }  from "../../../NutonConstants"
 import Gradient from "../../../OstrichComponents/Gradient";
 
 // Hooks
-import getAllChildAssignments from '../../Hooks/value_extractors/getAllChildAssignments';
-import getAllGuardianAssignments from '../../Hooks/value_extractors/getAllGuardianAssignments';
-import getAllTherapistAssignments from '../../Hooks/value_extractors/getAllTherapistAssignments';
+import getAllChildAssignments from '../../Hooks/value_extractors/childAndGuardianValues/getAllChildAssignments';
+import getAllGuardianAssignments from '../../Hooks/value_extractors/childAndGuardianValues/getAllGuardianAssignments';
+import getAllTherapistAssignments from '../../Hooks/value_extractors/therapistValues/getAllTherapistAssignments';
 
 import LoadingComponent from "./LoadingComponent"
 
