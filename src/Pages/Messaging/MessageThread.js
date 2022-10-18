@@ -72,6 +72,7 @@ export default function MessageThread(props) {
 
     // Populates Contact State
     useEffect(() => {
+        console.log("Use Effect 75")
         setContact(chatroom.users.filter(person => {
             if (person.id !== user.id){
                 return person
@@ -81,6 +82,7 @@ export default function MessageThread(props) {
 
     // Utilizes Pusher API in order to refresh chat on newly recieved messages
     useEffect(() => {
+        console.log("Use Effect 85")
         // Creates a connection to pusher, which will send a signal here once IT recieves a signal from another message sender
         // For example, if this is a chat between person X and person Y, and this file is being used by person X, 
         // if person Y were to send a messaage, that message is now in the db (duh) and a signal is sent to pusher
@@ -100,11 +102,13 @@ export default function MessageThread(props) {
     
     // Backup for live refresh
     useEffect(() => {
+        console.log("Use Effect 105")
         fetchChatDetail();
     }, [chatroom.id]);
 
     // Handles Notification Dismissal
     useEffect(() => {
+        console.log("Use Effect 111")
         handleNotifications()
     }, [contact])
 
@@ -121,6 +125,7 @@ export default function MessageThread(props) {
 
     const fetchChatDetail = async () => {
         if (token) {
+          console.log("About to query chat (7 - 124)")
           await client
             .query({
               query: GET_CHAT_FROM_ID,
@@ -545,13 +550,17 @@ export default function MessageThread(props) {
 
     // Does all the mutations, queries, and state changes related nwith sending a message
     function handleSendMessage(){
+        console.log("STARTING handleSendMessage (1 - 549)")
         if (textEntered === "" || !textEntered){
             return null
         }
         handleSendMessageMutation()
         .then( async (resolved) => {
+            console.log("setting text to be blank (3 - 555)")
             setTextEntered("")
+            console.log("Text is blank, running getAndSetUser (4 - 557")
             await getAndSetUser()
+            console.log("About to fetch chat details (6 - 559")
             await fetchChatDetail()
         })
     }
@@ -563,7 +572,8 @@ export default function MessageThread(props) {
                 content: textEntered,
                 chatRoomID: chatroom.id
             }
-        }).catch(err => console.log(err))
+        }).catch(err => console.log(err, "============\n575\n==========="))
+        .then(() => console.log("message sent technically (2 - 572"))
     }
 
     // Gets Refreshed User Object and Updates the User Atom
@@ -573,10 +583,14 @@ export default function MessageThread(props) {
             fetchPolicy: 'network-only'  
         })
         .then(async (resolved) => {
-            setUser(resolved.data.getUser)
+            console.log("Got the user (5 - 582)")
+            console.log(user)
+            console.log(resolved.data.getUser)
+            // setUser(resolved.data.getUser)
+            console.log("Set the user (5.5 - 589)")
         })
         .catch((error) => {
-            console.log(error)
+            console.log(error, "============\n591\n===========")
         })
     }
 
@@ -599,7 +613,7 @@ export default function MessageThread(props) {
         .then((resolved) => {
             console.log(resolved)
         })
-        .catch(err => console.log(err))
+        .catch(err => console.log(err, "============\n614\n==========="))
     }
 
     // Gets and Sets Notifications, sets categorical notis too
@@ -609,7 +623,7 @@ export default function MessageThread(props) {
             query: GET_NOTIFICATIONS,
             fetchPolicy: 'network-only'
         })
-        .catch(err => console.log(err))
+        .catch(err => console.log(err, "============\n624\n==========="))
         .then((resolved) => {
             let msgN = resolved.data.getNotifications.filter((noti, index) => {
                 if (noti.title.includes("New Message")){
@@ -617,7 +631,6 @@ export default function MessageThread(props) {
                 }
             })
             setNotis( msgNotis => ([...msgN]))
-            setLoading(false)
         })
     }
 
