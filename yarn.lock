@@ -1839,6 +1839,11 @@
     mkdirp "^1.0.4"
     rimraf "^3.0.2"
 
+"@pusher/pusher-websocket-react-native@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@pusher/pusher-websocket-react-native/-/pusher-websocket-react-native-1.1.0.tgz#c79fad6f7b6112ffa90ee6f7f3ad0801e3bc5d9d"
+  integrity sha512-7LbV0xAuHE103J61Yu8pDSGVqi4a7IZjakeXtpoPDuC58emSXS7wNf626G1S/xiktmCd7wboX93Bem/FcCt7qg==
+
 "@react-native-async-storage/async-storage@^1.17.10":
   version "1.17.10"
   resolved "https://registry.yarnpkg.com/@react-native-async-storage/async-storage/-/async-storage-1.17.10.tgz#8d6a4771912be8454a9e215eebd469b1b8e2e638"
