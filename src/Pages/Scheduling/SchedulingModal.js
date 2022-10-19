@@ -17,11 +17,11 @@ import Dropdown from "../../../OstrichComponents/Dropdown";
 import OptionsButtons from "../../../OstrichComponents/OptionsButtons"
 
 // Hooks
-import getAllTherapistClients from "../../Hooks/value_extractors/getAllTherapistClients"
-import getAllTherapistClientGuardians from "../../Hooks/value_extractors/getAllTherapistClientGuardians"
+import getAllTherapistClients from "../../Hooks/value_extractors/therapistValues/getAllTherapistClients"
+import getAllTherapistClientGuardians from "../../Hooks/value_extractors/therapistValues/getAllTherapistClientGuardians"
 import convertMonthIntoNumber from "../../Hooks/date_and_time/convertMonthIntoNumber"
 import convertDateTimeToJavaScript from "../../Hooks/date_and_time/convertDateTimeToJavaScript"
-import getAllTherapistAssignments from "../../Hooks/value_extractors/getAllTherapistAssignments";
+import getAllTherapistAssignments from "../../Hooks/value_extractors/therapistValues/getAllTherapistAssignments";
 
 // Dimensions
 let maxWidth = Dimensions.get('window').width
