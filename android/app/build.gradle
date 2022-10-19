@@ -267,10 +267,6 @@ dependencies {
 
     //noinspection GradleDynamicVersion
 
-    // gitHub Solutions
-    implementation project(':@react-native-community_netinfo')
-    // 
-    
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
