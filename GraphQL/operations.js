@@ -198,6 +198,10 @@ query Query{
         dateDue
         title
         description
+        videos{
+          id
+          contentfulID
+        }
       }
     }
 
@@ -208,6 +212,11 @@ query Query{
       active
       level
       childId
+      comments{
+        id
+        content
+        createdAt
+      }
       child{
         id
         role
@@ -251,6 +260,8 @@ query Query{
     organizations {
       id
       organization{
+        name
+        phoneNumber
       	organizationUsers{
         id
         userId
@@ -519,16 +530,12 @@ const EDIT_CHILD_SETTINGS = gql`
 `
 
 const EDIT_ORGANIZATION_SETTINGS = gql`
-  mutation Mutation(
-    $name: String,
-    $phoneNumber: String
-  ){
-    editOrganizationSettings(
-      name: $name,
-      phoneNumber: $phoneNumber
-    )
+  mutation Mutation($name: String!, $phoneNumber: String!) {
+    editOrganizationSettings(name: $name, phoneNumber: $phoneNumber) {
+      id
+    }
   }
-`
+`;
 
 const EDIT_USER_NOTIFICATION_SETTINGS = gql`
   mutation Mutation(
@@ -716,7 +723,7 @@ const DISMISS_NOTIFICATION = gql`
   mutation Mutation(
     $notificationID: String!
   ){
-    getNotifications(
+    dismissNotification(
       notificationID: $notificationID
     )
   }
@@ -805,6 +812,33 @@ const CREATE_ASSIGNMENT = gql`
   }
 `
 
+const CREATE_COMMENT = gql`
+  mutation Mutation(
+    $childCarePlanID: String!
+    $commentContent: String!
+    $videoID: String
+    $assignmentID: String
+  ){
+    createComment(
+      childCarePlanID: $childCarePlanID,
+      commentContent: $commentContent,
+      videoID: $videoID,
+      assignmentID: $assignmentID
+    ){
+      id
+      level
+      active
+      allVideoStatus
+      blockedVideos
+      comments{
+        id
+        content
+        videoId
+      }
+    }
+  }
+`
+
 /////////////
 // EXPORTS //
 export {   //
@@ -843,8 +877,9 @@ export {   //
 
   CREATE_ASSIGNMENT,
   CREATE_MEETING,
+  CREATE_COMMENT,
 
-  SET_VIDEO_COMPLETED
+  SET_VIDEO_COMPLETED,
 }
 
 

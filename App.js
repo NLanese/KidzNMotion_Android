@@ -25,6 +25,11 @@ import { createHttpLink } from 'apollo-link-http';
 /////////////////
 import ErrorBoundary from 'react-native-error-boundary'
 
+////////////////////////
+// NOTIFICATION Stuff //
+////////////////////////
+import registerNNPushToken from 'native-notify';
+
 ///////////
 // PAGES //
 ///////////
@@ -84,7 +89,7 @@ import {
   VisionComp,
 
   // Comments
-  // ClientVideoComments
+  ClientVideoComments
 
  } from './src/Pages';
 
@@ -148,6 +153,8 @@ import {
 
 export default function App() {
 
+registerNNPushToken(4507, 'i6bSDKHHLii5DAhsIjDbgW');
+
 let state
 
 ////////////////
@@ -189,7 +196,7 @@ const Stack = createNativeStackNavigator();
 
   return(
     <ErrorBoundary
-      onError={(error) => console.log(error)}
+      onError={(error) => console.log("\n===========================\nAPP.JS ERROR REPORTING REPORTING\n===========================\n", error)}
     >
       <NavigationContainer>
         <ApolloProvider client={client}>
@@ -271,7 +278,7 @@ const Stack = createNativeStackNavigator();
                 <Stack.Screen name="CameraComponent" component={VisionComp} options={{orientation: 'portrait'}} />    
 
                 {/* Comments */}
-                {/* <Stack.Screen name="Comments" component={ClientVideoComments} options={{orientation: 'portrait'}} /> */}
+                <Stack.Screen name="Comments" component={ClientVideoComments} options={{orientation: 'portrait'}} />
 
                 <Stack.Screen name="AddANewCard" component={AddANewCard} options={{orientation: 'portrait'}}/> 
                 <Stack.Screen name="CategoryGrid" component={CategoryGrid} options={{orientation: 'portrait'}}/> 

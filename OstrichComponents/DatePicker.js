@@ -245,8 +245,18 @@ export default function DatePicker({
             // Changes the Hour of the full date object
             setNow(new Date(now.setMinutes(now.getMinutes() + (15 * op))))
         }
+        else if (time === "am/pm"){
+            let currentHours = now.getHours()
+            let newHours = false
+            if (now.getHours() >= 12){
+                newHours = currentHours - 12
+            }
+            else{
+                newHours = currentHours + 12
+            }
+            setNow(new Date(now.setHours(newHours)))
+        }
     }
-
 
     // Runs in UseEffect to set all numeric states to match date
     async function setAllStates(){
@@ -304,16 +314,13 @@ export default function DatePicker({
 
         // Sets the Individual Numeric States based off of `now` changes
         useEffect(() => {
-
             //////////////////////
             // Sets the Numbers //
             setAllStates()
             .then(() => {
-
                 /////////////////////////////
                 // Fires the Prop Function //
                 runOnDateChange()
-
             })
         }, [now])
 
@@ -340,7 +347,7 @@ export default function DatePicker({
                     <View style={{flexDirection: 'row', justifyContent: 'space-evenly', backgroundColor: baseColor, ...baseStyle, marginTop: 10}}>
                         {renderSelection(getHours, "Hour")}
                         {renderSelection(getMinutes, "Minute")}
-                        {renderSelection(amPm, "none")}
+                        {renderSelection(amPm, "am/pm")}
                     </View>
                 </View>
             )

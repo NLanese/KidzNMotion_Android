@@ -41,7 +41,7 @@ import SchedulingLanding from "./Scheduling/SchedulingLanding";
 
 import VisionComp from "./Camera/VisionComp";
 
-// import ClientVideoComments from "./Documentation/ClientVideoComments";
+import ClientVideoComments from "./Documentation/ClientVideoComments";
 
 
 
@@ -73,6 +73,6 @@ export {
     MedalDisplay,
     VisionComp,
     ClientPool,
-    // ClientVideoComments,
+    ClientVideoComments,
     ConversationsThread
 };
