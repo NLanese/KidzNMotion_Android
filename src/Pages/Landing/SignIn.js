@@ -29,6 +29,8 @@ import Gradient from "../../../OstrichComponents/Gradient";
 import getAllChildAssignments from '../../Hooks/value_extractors/childAndGuardianValues/getAllChildAssignments';
 import getAllGuardianAssignments from '../../Hooks/value_extractors/childAndGuardianValues/getAllGuardianAssignments';
 import getAllTherapistAssignments from '../../Hooks/value_extractors/therapistValues/getAllTherapistAssignments';
+import filterMeetings from '../../Hooks/value_extractors/filterMeetings';
+import filterAssignments from '../../Hooks/value_extractors/filterAssignments';
 
 import LoadingComponent from "./LoadingComponent"
 
@@ -195,11 +197,9 @@ export default function SignIn() {
                 // Avatar //
                 if (resolved.data.getUser.profilePic){
                     await setAvatar(resolved.data.getUser.profilePic)
-                    console.log("Avatar exists")
                 }
                 else{
                     await setAvatar({...DEFAULT_AVATAR})
-                    console.log("Inside avatar section of getUser, avatar does not exist")
                 }
 
                 // Assignments //
@@ -212,15 +212,17 @@ export default function SignIn() {
 
         // Determines how to grab assignments based on User Role 
         async function findUserAssignments(user){
-            console.log(user)
             if (user.role === "CHILD"){
-                await setAssign(getAllChildAssignments(user))
+                let assign = filterAssignments(getAllChildAssignments(user))
+                await setAssign(assign)
             }
             else if (user.role === "GUARDIAN"){
-                await setAssign(getAllGuardianAssignments(user))
+                let assign = filterAssignments(getAllGuardianAssignments(user)[0])
+                await setAssign(assign)
             }
             else if (user.role === "THERAPIST"){
-                await setAssign(getAllTherapistAssignments(user))
+                let assign = filterAssignments(getAllTherapistAssignments(user))
+                await setAssign(assign)
             }
             else{
                 console.log("findUserAssignments failed, there was no user.role for some reason")
@@ -249,7 +251,8 @@ export default function SignIn() {
                 return null
             })
             .then((resolved) => {
-                setMeetings(resolved.data.getMeetings)
+                let meetings = filterMeetings(resolved.data.getMeetings)
+                setMeetings(meetings)
             })      
         }
 
@@ -321,7 +324,6 @@ export default function SignIn() {
             ///////////////////
             // Catches Error //
             .catch(error => {
-                console.log("hit")
                 if (error.toString().includes("Error: Email/Password are incorrect.")){
                     setErrors({
                         email: "Email and Password do not match any users",
@@ -336,7 +338,6 @@ export default function SignIn() {
 
         // Determines color based on input
         function handleColorInput(color){
-            console.log(color)
             if (color === "Orange"){
                 setColors({...colorConstant.scheme0})
             }
