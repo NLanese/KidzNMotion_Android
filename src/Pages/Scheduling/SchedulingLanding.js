@@ -29,6 +29,9 @@ import getAllTherapistClients from "../../Hooks/value_extractors/therapistValues
 import getAllTherapistClientGuardians from "../../Hooks/value_extractors/therapistValues/getAllTherapistClientGuardians"
 import convertDateTimeToJavaScript from "../../Hooks/date_and_time/convertDateTimeToJavaScript"
 import getAllTherapistAssignments from "../../Hooks/value_extractors/therapistValues/getAllTherapistAssignments";
+import pusherClient from "../../utils/pusherClient";
+import filterAssignments from "../../Hooks/value_extractors/filterAssignments"
+import filterMeetings from "../../Hooks/value_extractors/filterMeetings"
 
 // Dimensions
 let maxWidth = Dimensions.get('window').width
@@ -103,9 +106,6 @@ export default function SchedulingLanding() {
             // Tracks Meeting Modal Trigger
             const [showMeetingsModal, setShowMeetingsModal] = useState(false)
 
-            // Tracks Client Dropdown
-            const [showClientDropdown, setShowClientDropdown] = useState(false)
-
             // Tracks whether setting start date
             const [startDateOpen, setStartDateOpen] = useState(false)
 
@@ -130,10 +130,10 @@ export default function SchedulingLanding() {
                 })
                 .then(async (resolved) => {
                     // Sets new User //
-                    await setUser(resolved.data.getUser)
+                    setUser(resolved.data.getUser)
 
                     // Sets new Assignments //
-                    await setAssignments(getAllTherapistAssignments(user))
+                    setAssignments(filterAssignments(getAllTherapistAssignments(resolved.data.getUser)))
 
                     // Get and Sets Meetings //
                     await client.query({
@@ -145,7 +145,7 @@ export default function SchedulingLanding() {
                             return null
                         })
                         .then(async (resolved) => {
-                            await setMeetings(resolved.data.getMeetings)
+                            setMeetings(filterMeetings(resolved.data.getMeetings))
                         })
                     })
                     .catch((error) => {
@@ -171,6 +171,22 @@ export default function SchedulingLanding() {
     }, [startDateOpen, endDateOpen, showAssignmentsModal, showMeetingsModal])
 
     // Triggers the Requery when refresh is changed post mutation
+    useEffect(() => {
+        const schedulingChannel = pusherClient.subscribe(
+            user.id.toString()
+        )
+
+        schedulingChannel.bind("updated-schedule", function(data){
+            getAndSetUser()
+        })
+
+        return () => {
+            pusherClient.unsubscribe(user.id.toString())
+        }
+
+        setLoading(false)
+    }, [user.id])
+
     useEffect(() => {
         getAndSetUser()
         setLoading(false)
@@ -265,10 +281,10 @@ const Styles = StyleSheet.create({
                 if (!meeting.completed && !meeting.canceled){
                     return meeting
                 }
-            }).map(meeting => {
+            }).map( (meeting , index)=> {
                 let dt = convertDateTimeToJavaScript(meeting.meetingDateTime)
                 return(
-                    <TouchableOpacity>
+                    <TouchableOpacity key={index}>
                         <View style={{flexDirection: 'row', margin: 8, borderWidth: 1, borderRadius: 15, borderColor: COLORS.iconLight, padding: 8}}>
                             <View style={{flex: 1, margin: 5}}>
                                 <Text style={{...FONTS.SubTitle, color: COLORS.iconLight}}>
@@ -315,17 +331,17 @@ const Styles = StyleSheet.create({
             if (!assignments || assignments.length < 1){
                 return null
             }
-            return assignments.filter(ass => {
+            return assignments.filter( (ass) => {
                 // if (!ass.completed && !ass.canceled){
 
                     // Have it check against date
                     return ass
                 // }
-            }).map(ass => {
+            }).map( (ass, index) => {
                 let ds = ass.dateStart
                 let de = ass.dateDue
                 return(
-                    <TouchableOpacity>
+                    <TouchableOpacity key={index}>
                         <View style={{flexDirection: 'row', margin: 8, borderWidth: 1, borderRadius: 15, borderColor: COLORS.iconLight, padding: 8}}>
                             <View style={{flex: 2, margin: 5}}>
                                 <Text style={{...FONTS.SubTitle, color: COLORS.iconLight, marginBottom: 5}}>

@@ -12,6 +12,12 @@ import convertDateTimeToJavaScript from "../../Hooks/date_and_time/convertDateTi
 import convertMonthToNumber from "../../Hooks/date_and_time/convertMonthIntoNumber";
 import deslugVideoTitle from "../../Hooks/deslugVideoTitles";
 import fullStringToDateFormat from "../../Hooks/date_and_time/fullStringTimeToDateFormat";
+import getSchedNotificationsToBeDismissed from "../../Hooks/notifications/getSchedNotificationsToBeDismissed";
+
+// GraphQL
+import { useMutation } from "@apollo/client";
+import client from "../../utils/apolloClient";
+import { GET_NOTIFICATIONS, DISMISS_NOTIFICATION } from "../../../GraphQL/operations";
 
 
 // Nuton
@@ -19,7 +25,7 @@ import { Header, Button } from "../../../NutonComponents";
 
 // Recoil
 import { useRecoilValue, useRecoilState } from "recoil";
-import {sizeState, userState, colorState, fontState, avatarState, meetingState, assignState } from '../../../Recoil/atoms';
+import {sizeState, userState, colorState, fontState, avatarState, meetingState, assignState, scheduleNotifications } from '../../../Recoil/atoms';
 
 // Ostrich
 import Gradient from "../../../OstrichComponents/Gradient";
@@ -64,6 +70,7 @@ export default function CalendarPage() {
 
             const [assignments, setAssignments] = useRecoilState(assignState)
 
+            const [schedNotis, setSchedNotis] = useRecoilState(scheduleNotifications)
 
     /////////////////
     // Local State //
@@ -124,6 +131,7 @@ export default function CalendarPage() {
 
                 findAndSetAllTodaysMeetings()
                 findAndSetAllTodaysAssignments()
+                handleNotifications(selectedFullDate)
                 
                 // Changes the 'today' marked indicator to the day you clicked on
                 let allDays = Object.keys(markedDateObjects)
@@ -158,6 +166,20 @@ export default function CalendarPage() {
 
             }, [selectedFullDate])
 
+            ///////////////////////////////////////////////////
+            // Dismisses All Notifications on View All State //
+            useEffect(() => {
+                if (tabState === "all"){
+                    handleNotifications("all")
+                }
+            }, [])
+
+    ///////////////
+    // Mutations //
+    ///////////////
+
+    // Dismisses Notifications
+    const [dismissNotifications, { loading: loadingDis, error: errorDis, data: typeDis }] =useMutation(DISMISS_NOTIFICATION);
 
 ///////////////////////
 ///                 ///
@@ -262,13 +284,10 @@ export default function CalendarPage() {
         function renderDaysAssignments(all){
             assForThisFunction = selectedAss
             if (all){
-                if (user.role === "GUARDIAN"){
-                    assForThisFunction = assignments[0]
-                }
-                else{
-                    assForThisFunction = assignments
-                }
+                assForThisFunction = assignments
             }
+
+            console.log(assForThisFunction[0])
 
             ////////////////
             // Not Loaded //
@@ -278,7 +297,7 @@ export default function CalendarPage() {
 
             /////////////////////////////////
             // No Assignments on this date //
-            if (assForThisFunction.length < 1){ 
+            if (!assForThisFunction[0]){ 
                 return( 
                     <Text style={{fontFamily: 'Gilroy-SemiBold', fontSize: 18, color: COLORS.iconLight, textAlign: 'center', margin: 10}}>
                         Your children have no assignments on this date!
@@ -494,9 +513,6 @@ export default function CalendarPage() {
         async function handleAllAssignmnets(){
 
             let theseAssignments = assignments
-            if (user.role === "GUARDIAN"){
-                theseAssignments = assignments[0]
-            }
 
             /////////////////////
             // All Assignments //
@@ -533,6 +549,46 @@ export default function CalendarPage() {
                 }))
             })
             return true
+        }
+
+        // Handles Notifications -- Fired right away upon loading this page
+        function handleNotifications(date){
+            let notisToDismiss = getSchedNotificationsToBeDismissed(schedNotis, date)
+            notisToDismiss.forEach((noti) => {
+                dismissNotificationsMutation(noti)
+            })
+            // getAndSetNotifications()
+        }
+
+        // Handles the actual dismissal mutation
+        async function dismissNotificationsMutation(notification){
+            return await dismissNotifications({
+                variables: {
+                    notificationID: notification.id
+                }
+            })
+            .then((resolved) => {
+                getAndSetNotifications()
+            })
+            .catch(err => console.log(err, "============\n614\n==========="))
+        }
+
+        // Gets and Sets Notifications, sets categorical notis too
+        async function getAndSetNotifications(){
+            setSchedNotis( schedNotis => [])
+            await client.query({
+                query: GET_NOTIFICATIONS,
+                fetchPolicy: 'network-only'
+            })
+            .catch(err => console.log(err, "============\n624\n==========="))
+            .then((resolved) => {
+                let msgN = resolved.data.getNotifications.filter((noti, index) => {
+                    if (noti.title.includes("New Message")){
+                        return noti
+                    }
+                })
+                setSchedNotis( schedNotis => ([...msgN]))
+            })
         }
 
     //////////////
@@ -614,9 +670,7 @@ export default function CalendarPage() {
 
             // Finds the assignment stack
             let theseAssignments = assignments
-            if (user.role === "GUARDIAN"){
-                theseAssignments = assignments[0]
-            }
+            
 
             // Determines which of all the assignments are today
             let todaysAssignments = theseAssignments.filter(assign => {

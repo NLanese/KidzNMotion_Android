@@ -9,12 +9,13 @@ import Modal from "react-native-modal";
 
 // Recoil
 import { useRecoilState, useRecoilValue } from "recoil";
-import { colorState, fontState, sizeState, userState, avatarState, tokenState, videoDataState, assignState, meetingState, activeChatroom, messageNotifications, scheduleNotifications } from '../../../Recoil/atoms';
+import { colorState, fontState, sizeState, userState, avatarState, tokenState, videoDataState, assignState, meetingState, activeChatroom, messageNotifications, scheduleNotifications, organizationState } from '../../../Recoil/atoms';
 
 // Nuton
 import { Header, ProfileCategoryComponent, Button } from "../../../NutonComponents";
 import { Heart, Logo, CalendarTab, Bell, Play, MedalTab, UserTab, SettingsLarge, Message } from "../../../svg";
 import { COLORS as colorConstant }  from "../../../NutonConstants"
+import { DEFAULT_AVATAR } from '../../../NutonConstants';
 
 // GraphQL Apollo
 import { useMutation } from "@apollo/client";
@@ -31,6 +32,7 @@ import getAllChildAssignments from "../../Hooks/value_extractors/childAndGuardia
 import getAllGuardianAssignments from "../../Hooks/value_extractors/childAndGuardianValues/getAllGuardianAssignments"
 import getAllTherapistAssignments from "../../Hooks/value_extractors/therapistValues/getAllTherapistAssignments"
 import getUserChatroom from "../../Hooks/value_extractors/getChatroom"
+import filterAssignments from "../../Hooks/value_extractors/filterAssignments"
 
 // Dimensions
 let maxWidth = Dimensions.get('window').width
@@ -137,20 +139,26 @@ export default function Home() {
 
             const [meetings, setMeetings] = useRecoilState(meetingState)
 
+            const [org, setOrg] = useRecoilState(organizationState)
+
 
             // Fires wehen switching accounts
             useEffect(() => {
                 handleColorInput(user.colorSettings)
                 setAvatar(user.profilePic)
-                if (user.role === "GUARDIAN" && !user.solo){
-                    setAssign(getAllGuardianAssignments(user))
+                if (user.role === "CHILD"){
+                    let assign = filterAssignments(getAllChildAssignments(user))
+                    setAssign(assign)
                 }
-                else if (user.role === "CHILD"){
-                    setAssign(getAllChildAssignments(user))
+                else if (user.role === "GUARDIAN"){
+                    let assign = filterAssignments(getAllGuardianAssignments(user)[0])
+                    setAssign(assign)
                 }
                 else if (user.role === "THERAPIST"){
-                    setAssign(getAllTherapistAssignments(user))
+                    let assign = filterAssignments(getAllTherapistAssignments(user))
+                    setAssign(assign)
                 }
+                setOrg(user.organizations[0].organization)
             }, [user])
 
         ///////////////////
@@ -159,7 +167,7 @@ export default function Home() {
 
             const [msgNotis, setMsgNotis] = useRecoilState(messageNotifications)
 
-            const [schedNotis, setSchedNotis] = useState(scheduleNotifications)
+            const [schedNotis, setSchedNotis] = useRecoilState(scheduleNotifications)
 
             const [msgNotiLen, setMsgNotiLen] = useState(msgNotis.length)
 
@@ -185,10 +193,6 @@ export default function Home() {
         /////////////
         // Testing //
         /////////////
-
-            useEffect(() => {
-                getUserChatroom(user)
-            }, [user])
 
 ///////////////////////
 ///                 ///
@@ -479,48 +483,6 @@ export default function Home() {
                 </>
             )
         }
-        // Defunct Return
-        return (
-            <View style={{ marginBottom: 30, marginLeft: -4}}>
-                 <ProfileCategoryComponent
-                    title="Calendar"
-                    icon={<Heart fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} />}
-                    onPress={() => navigation.navigate("MyCalendar")}
-                    arrow={true}
-                />
-                 <ProfileCategoryComponent
-                    title="Videos"
-                    icon={<Heart fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} />}
-                    onPress={() => navigation.navigate("/")}
-                    arrow={true}
-                />
-                 <ProfileCategoryComponent
-                    title="Notifications"
-                    icon={<Heart fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} />}
-                    onPress={() => navigation.navigate("/")}
-                    arrow={true}
-                />
-                 <ProfileCategoryComponent
-                    title="Medals"
-                    icon={<Heart fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} />}
-                    onPress={() => navigation.navigate("MyMedals")}
-                    arrow={true}
-                />
-                 <ProfileCategoryComponent
-                    title="Therapists"
-                    icon={<Heart fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} />}
-                    onPress={() => navigation.navigate("TherapistList")}
-                    arrow={true}
-                />
-                 <ProfileCategoryComponent
-                    title="Clients"
-                    icon={<Heart fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} />}
-                    onPress={() => navigation.navigate("ClientList")}
-                    arrow={true}
-                />
-                
-            </View>
-        );
     }
 
     // Renders the modal for switching accounts
@@ -806,15 +768,21 @@ export default function Home() {
             })
             .catch(err => console.log(err))
             .then((resolved) => {
-                resolved.data.getNotifications.forEach((noti, index) => {
+                let msgN = resolved.data.getNotifications.filter((noti, index) => {
                     if (noti.title.includes("New Message")){
-                        let nArray = [...msgNotis, noti]
-                        setMsgNotis(msgNotis => ([...nArray]))
-                    }
-                    if (index = resolved.data.getNotifications.length - 1){
-                        setLoading(false)
+                        return noti
                     }
                 })
+                let schedN = resolved.data.getNotifications.filter((noti, index) => {
+                    if (noti.title.includes("New Meeting") || noti.title.includes("New Assignment")){
+                        return noti
+                    }
+                    else{
+                    }
+                })
+                setMsgNotis( msgNotis => ([...msgN]))
+                setSchedNotis( schedNotis => ([...schedN]))
+                setLoading(false)
             })
         }
 
