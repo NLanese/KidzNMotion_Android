@@ -367,7 +367,6 @@ export default function VideoLibrary(props) {
 
         // Renders an Individual Level Box
         function renderSingleLevelBox(obj) {
-            console.log(childState)
             if (obj.id === 2 && childState.childCarePlans[0].level === 1){
                 return null
             }

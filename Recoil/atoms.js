@@ -94,6 +94,26 @@ import { COLORS, FONTS, SIZES, DEFAULT_AVATAR } from '../NutonConstants';
 		default: false
 	})
 
+	export const accessibleVideos = atom({
+		key: 'accessibleVideos',
+		default: []
+	})
+
+/////////////////////////
+// NOTIFICATIONS STATE //
+/////////////////////////
+
+	// Tracks the Message Related Notifications
+	export const messageNotifications = atom({
+		key: 'messageNotifications',
+		default: []
+	})
+
+	//
+	export const scheduleNotifications = atom({
+		key: 'scheduleNotifications',
+		default: []
+	})
 
 //////////////////
 // STYLE STATES //
@@ -123,6 +143,7 @@ import { COLORS, FONTS, SIZES, DEFAULT_AVATAR } from '../NutonConstants';
 		}
 	})
 
+	// Loads the props that determine the displayed avatar
 	export const avatarState = atom({
 		key: 'avatarState',
 		default:{
