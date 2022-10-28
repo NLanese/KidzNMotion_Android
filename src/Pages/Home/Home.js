@@ -9,7 +9,7 @@ import Modal from "react-native-modal";
 
 // Recoil
 import { useRecoilState, useRecoilValue } from "recoil";
-import { colorState, fontState, sizeState, userState, avatarState, tokenState, videoDataState, assignState, meetingState, activeChatroom, messageNotifications, scheduleNotifications, organizationState } from '../../../Recoil/atoms';
+import { colorState, fontState, sizeState, userState, avatarState, tokenState, videoDataState, assignState, meetingState, activeChatroom, messageNotifications, scheduleNotifications, organizationState, accessibleVideos } from '../../../Recoil/atoms';
 
 // Nuton
 import { Header, ProfileCategoryComponent, Button } from "../../../NutonComponents";
@@ -33,6 +33,7 @@ import getAllGuardianAssignments from "../../Hooks/value_extractors/childAndGuar
 import getAllTherapistAssignments from "../../Hooks/value_extractors/therapistValues/getAllTherapistAssignments"
 import getUserChatroom from "../../Hooks/value_extractors/getChatroom"
 import filterAssignments from "../../Hooks/value_extractors/filterAssignments"
+import findAllAssignedVideos from "../../Hooks/value_extractors/childAndGuardianValues/findAllAssignedVideos"
 
 // Dimensions
 let maxWidth = Dimensions.get('window').width
@@ -141,6 +142,8 @@ export default function Home() {
 
             const [org, setOrg] = useRecoilState(organizationState)
 
+            const [validVids, setValidVids] = useRecoilState(accessibleVideos)
+
 
             // Fires wehen switching accounts
             useEffect(() => {
@@ -182,6 +185,8 @@ export default function Home() {
             // Fires every reload in order to retain notifications
             useEffect(() => {
                 getAndSetNotifications()
+                let acceptable = findAllAssignedVideos(user)
+                setValidVids(validVids => ([...acceptable]))
             }, [user])
 
             // Firess whenever there is a change to notifications so to properly measure the lengths for the counter
