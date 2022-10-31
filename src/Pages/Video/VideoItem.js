@@ -10,7 +10,7 @@ import { Camera, Check, CircleSvg } from "../../../svg";
 
 // Recoil
 import { useRecoilValue, useRecoilState } from "recoil";
-import {sizeState, clientListState, userState, colorState, fontState, accessibleVideos } from '../../../Recoil/atoms';
+import {sizeState, clientListState, userState, colorState, fontState, accessibleVideos} from '../../../Recoil/atoms';
 import { Translate } from "@material-ui/icons";
 
 
@@ -83,13 +83,13 @@ export default function VideoItem(props) {
             <View style={{  width: "100%", alignItems: "center", paddingTop: 10, flex: 2, flexDirection: "row", justifyContent: "space-between"}}>
                 <Text style={{textAlign: 'center', color: "white", textShadowColor: COLORS.gradientColor2, textShadowOffset: {width: -1, height: 1}, textShadowRadius: 10, zIndex: 5, fontSize: 14, fontWeight: "700"}}>{video.title}</Text>
                 {/* <Text style={{textAlign: 'center'}}>{video.title}</Text> */}
-                {user.role === "THERAPIST" && <TouchableOpacity
+                {/* {user.role === "THERAPIST" && <TouchableOpacity
                     onPress={() => handleTherapistSelectVideo(video.id)}>
                         <CircleSvg style={{alignSelf: "flex-end", margin: 5, }} fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} selected={videoState[video.id]}>
                             <Check  fillColor="red" strokeColor={COLORS.iconLight} style={{ transform: [{ scale: 1.5 }, {translateX: 5}, {translateY: 6}]}}/>
                         </CircleSvg>
                         
-                </TouchableOpacity>}
+                </TouchableOpacity>} */}
             </View>
         </TouchableOpacity>
         )
@@ -142,7 +142,7 @@ export default function VideoItem(props) {
 ///////////////////////
 
     function MAIN(){
-        if (isValid){
+        if (isValid || user.role === "THERAPIST"){
             return validRender()
         }
         else{
