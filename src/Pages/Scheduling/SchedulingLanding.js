@@ -340,6 +340,7 @@ const Styles = StyleSheet.create({
             }).map( (ass, index) => {
                 let ds = ass.dateStart
                 let de = ass.dateDue
+                console.log(ass)
                 return(
                     <TouchableOpacity key={index}>
                         <View style={{flexDirection: 'row', margin: 8, borderWidth: 1, borderRadius: 15, borderColor: COLORS.iconLight, padding: 8}}>
@@ -353,7 +354,10 @@ const Styles = StyleSheet.create({
                             </View>
                             <View style={{flex: 1, margin: 5, alignItems: 'flex-end'}}>
                                 <Text style={{...FONTS.SubTitle, color: COLORS.iconLight}}>
-                                    Name
+                                    {ass.childCarePlan.child.firstName}
+                                </Text>
+                                <Text style={{...FONTS.SubTitle, color: COLORS.iconLight}}>
+                                    {ass.childCarePlan.child.lastName}
                                 </Text>
                             </View>
                         </View>
