@@ -204,9 +204,9 @@ const Stack = createNativeStackNavigator();
         
 
           <KeyboardAvoidingView
-          behavior="padding"
+          // behavior="padding"
           enabled
-          style={{flexGrow:1,height:'100%'}}
+          // style={{flexGrow:1,height:'100%'}}
           >
             <View style={{width: '100%', height: '100%'}}>
               <Stack.Navigator 
