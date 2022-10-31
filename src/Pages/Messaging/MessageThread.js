@@ -1,5 +1,5 @@
 // Reaact
-import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions } from "react-native";
+import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, KeyboardAvoidingView } from "react-native";
 import React, {useState} from "react";
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -63,6 +63,8 @@ export default function MessageThread(props) {
 
     const [reset, setReset] = useState(props.reset)
 
+    const [msgAreaHeight, setMsgAreaHeight] = useState(0.72)
+
 
 ///////////////////////
 ///                 ///
@@ -72,7 +74,6 @@ export default function MessageThread(props) {
 
     // Populates Contact State
     useEffect(() => {
-        console.log("Use Effect 75")
         setContact(chatroom.users.filter(person => {
             if (person.id !== user.id){
                 return person
@@ -82,7 +83,6 @@ export default function MessageThread(props) {
 
     // Utilizes Pusher API in order to refresh chat on newly recieved messages
     useEffect(() => {
-        console.log("Use Effect 85")
         // Creates a connection to pusher, which will send a signal here once IT recieves a signal from another message sender
         // For example, if this is a chat between person X and person Y, and this file is being used by person X, 
         // if person Y were to send a messaage, that message is now in the db (duh) and a signal is sent to pusher
@@ -102,13 +102,11 @@ export default function MessageThread(props) {
     
     // Backup for live refresh
     useEffect(() => {
-        console.log("Use Effect 105")
         fetchChatDetail();
     }, [chatroom.id]);
 
     // Handles Notification Dismissal
     useEffect(() => {
-        console.log("Use Effect 111")
         handleNotifications()
     }, [contact])
 
@@ -125,7 +123,6 @@ export default function MessageThread(props) {
 
     const fetchChatDetail = async () => {
         if (token) {
-          console.log("About to query chat (7 - 124)")
           await client
             .query({
               query: GET_CHAT_FROM_ID,
@@ -192,7 +189,7 @@ export default function MessageThread(props) {
             marginRight: 2, 
             marginLeft: 2, 
             borderColor: COLORS.iconLight, 
-            height: maxHeight * .75, 
+            height: maxHeight * 0.72,
             padding: 4, 
             borderColor: COLORS.iconLight, 
             borderWidth: 1, 
@@ -202,7 +199,7 @@ export default function MessageThread(props) {
         },
         textBubbleView: {
         //    position: 'relative',
-           height: maxHeight * .16,
+           height: maxHeight * .20,
            backgroundColor: COLORS.gradientColor1,
            flexDirection: 'row'
         },
@@ -443,6 +440,8 @@ export default function MessageThread(props) {
                     style={{height: '100%'}}
                     value={textEntered}
                     onChangeText={(content) => setTextEntered(content)}
+                    onChange={() => setMsgAreaHeight(0.5)}
+                    onEndEditing={() => setMsgAreaHeight(0.72)}
                     multiline={true}
                 />
             </View>
@@ -452,7 +451,7 @@ export default function MessageThread(props) {
     // Renders the Send Button
     function renderSendButton(){
         return(
-            <TouchableOpacity onPress={() => handleSendMessage()} style={{marginTop: 60}}>
+            <TouchableOpacity onPress={() => handleSendMessage()} style={{marginTop: 40}}>
                 <Gradient
                     style={{height: 50, width: 50, borderRadius: 100, justifyContent: 'center', borderColor: 'black', borderWidth: 1}}
                     colorOne={COLORS.gradientColor1}
@@ -467,10 +466,11 @@ export default function MessageThread(props) {
     // Combines the Text Input and Send Button into one display
     function renderInputSpace(){
         return(
-            <View style={Styles.textBubbleView}>
-                {renderTextInput()}
-                {renderSendButton()}
-            </View>
+
+                <View style={Styles.textBubbleView}>
+                    {renderTextInput()}
+                    {renderSendButton()}
+                </View>
         )
     }
 
@@ -479,7 +479,7 @@ export default function MessageThread(props) {
         return(
             <View>
                 {/* All messages */}
-                <ScrollView style={Styles.messageSpace} contentContainerStyle={{height: 'auto', paddingBottom: maxHeight * .10, }}>
+                <ScrollView style={Styles.messageSpace} contentContainerStyle={{height: maxHeight * 0.70, paddingBottom: maxHeight * .10}}>
                     {renderAllMessages()}
                 </ScrollView>
                 {renderInputSpace()}
@@ -550,17 +550,13 @@ export default function MessageThread(props) {
 
     // Does all the mutations, queries, and state changes related nwith sending a message
     function handleSendMessage(){
-        console.log("STARTING handleSendMessage (1 - 549)")
         if (textEntered === "" || !textEntered){
             return null
         }
         handleSendMessageMutation()
         .then( async (resolved) => {
-            console.log("setting text to be blank (3 - 555)")
             setTextEntered("")
-            console.log("Text is blank, running getAndSetUser (4 - 557")
             await getAndSetUser()
-            console.log("About to fetch chat details (6 - 559")
             await fetchChatDetail()
         })
     }
@@ -583,11 +579,7 @@ export default function MessageThread(props) {
             fetchPolicy: 'network-only'  
         })
         .then(async (resolved) => {
-            console.log("Got the user (5 - 582)")
-            console.log(user)
-            console.log(resolved.data.getUser)
             // setUser(resolved.data.getUser)
-            console.log("Set the user (5.5 - 589)")
         })
         .catch((error) => {
             console.log(error, "============\n591\n===========")
@@ -642,19 +634,22 @@ export default function MessageThread(props) {
 ///////////////////////
 
     return(
-        <KeyboardAwareScrollView
-            showsVerticalScrollIndicator={false}
-            bounces={false}
+        <Gradient
+        colorOne={COLORS.gradientColor1}
+        colorTwo={COLORS.gradientColor2}
+        style={{width: maxWidth * 1.00, height: '100%'}}
         >
-            <Gradient
-                colorOne={COLORS.gradientColor1}
-                colorTwo={COLORS.gradientColor2}
-                style={{width: maxWidth * 1.02}}
+             <KeyboardAwareScrollView 
+            enableAutomaticScroll={false}  
+            bounces={false} 
+            enableOnAndroid         
+            keyboardShouldPersistTaps='handled'
             >
                 {renderHeader()}
                 {MainRender()}
-            </Gradient>
-        </KeyboardAwareScrollView>
+            </KeyboardAwareScrollView>
+        </Gradient>
+
         
     )
 }

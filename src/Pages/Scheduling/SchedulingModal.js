@@ -21,10 +21,6 @@ import getAllTherapistClients from "../../Hooks/value_extractors/therapistValues
 import getAllTherapistClientGuardians from "../../Hooks/value_extractors/therapistValues/getAllTherapistClientGuardians"
 import convertMonthIntoNumber from "../../Hooks/date_and_time/convertMonthIntoNumber"
 
-// Dimensions
-let maxWidth = Dimensions.get('window').width
-let maxHeight = Dimensions.get('window').height
-
 
 export default function SchedulingModal({showAssignmentsModal, setShowAssignmentsModal, showMeetingsModal, setShowMeetingsModal, refresh, setRefresh, setLoading}) {
 ///////////////////////
@@ -79,6 +75,11 @@ export default function SchedulingModal({showAssignmentsModal, setShowAssignment
          // Resets DatePicker
          const [reset, setReset] = useState(false)
 
+    // Dropdowns
+
+        // Client Dropdown
+        const [showClientDropdown, setShowClientDropdown] = useState(false)
+
     // Scheduling //
 
         // Today's Date
@@ -95,15 +96,17 @@ export default function SchedulingModal({showAssignmentsModal, setShowAssignment
             // Tracks whether setting end date
             const [endDateOpen, setEndDateOpen] = useState(false)
 
-        // Videos //
-            const [startDate, setStartDate] = useState(today)
+        // Scheduling  //
 
-            const [endDate, setEndDate] = useState(today)
+            // Videos //
+                const [startDate, setStartDate] = useState(today)
 
-        // Meetings //
-            const [meetingDateObj, setMeetingDateObj] = useState(today)
+                const [endDate, setEndDate] = useState(today)
 
-            const [meetingType, setMeetingType] = useState(false)
+            // Meetings //
+                const [meetingDateObj, setMeetingDateObj] = useState(today)
+
+                const [meetingType, setMeetingType] = useState(false)
 
     ///////////////
     // Mutations //
@@ -646,7 +649,7 @@ export default function SchedulingModal({showAssignmentsModal, setShowAssignment
             let dateTimeDate = addLeadingZero(nDateObj.slice(4, 7))
 
             let dateTimeFormat = `${dateTimeYear}-${dateTimeMonth}-${dateTimeDate}${timeObj}`
-            return (new Date(dateObj).toISOString())
+            return ((new Date(dateObj).toLocaleString('en-US', { timeZone: 'America/New_York' })))
         }
 
 ///////////////////////
