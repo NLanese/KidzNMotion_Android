@@ -33,8 +33,6 @@ export default function MedalDisplay(props) {
 
         const medals = useRecoilValue(medalsDataState)
 
-        console.log(props.route.params)
-
         const [videos, setVideos] = useRecoilState(videoDataState)
 
         const [user, setUser] = useRecoilState(userState)

@@ -2,7 +2,6 @@
 import {ScrollView, StyleSheet, Text, View, TouchableOpacity, ImageBackground } from "react-native";
 import React, {useEffect} from "react";
 import { useNavigation } from "@react-navigation/native";
-import Modal from "react-native-modal";
 import { useState } from "react";
 
 // Nuton
@@ -23,7 +22,7 @@ import SelectionButton from "../../../OstrichComponents/SelectionButton";
 import TabBar from "../../../OstrichComponents/TabBar";
 import LoadingComponent from "../../Global/LoadingComponent";
 
-import { MedalBronze, MedalGold, MedalLarge, MedalSilver, MedalTab, LargeBronzeMedal } from "../../../svg";
+import { MedalLarge, MedalTab } from "../../../svg";
 
 export default function MyMedals(props) {
 
@@ -117,7 +116,7 @@ export default function MyMedals(props) {
                 XSelected = user
             }
             else if (user.role === "THERAPIST"){
-                XSelected = props.route.params.item
+                XSelected = props.route.params.item.user
             }    
 
             // The Child who is selected
@@ -139,7 +138,6 @@ export default function MyMedals(props) {
 
     // Populates earned medals on render
     useEffect(() => {
-        // sets just medals (Object of objects)
         getChildsMedals()
     }, [])
 
@@ -293,10 +291,9 @@ export default function MyMedals(props) {
             }
         }).then( (resolved) => {
             let newValue = resolved.data.getChildVideoStatistics.allTimeStats.individualVideoDetailedStats
-            console.log(newValue)
             setMedals(medals => ({...newValue}))
             return
-        }).catch(err => console.log(err))
+        }).catch(err => console.log("BINGO WINGO"))
     }
 
 
