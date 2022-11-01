@@ -159,7 +159,6 @@ export default function ConversationsThread() {
             // }
             // else{
             setActiveChat(getTherapistChatFronContacts(user, contact))
-            console.log(activeChat)
             navigation.navigate("MessageThread")
             // }
         }

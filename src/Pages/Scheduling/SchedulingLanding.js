@@ -172,17 +172,17 @@ export default function SchedulingLanding() {
 
     // Triggers the Requery when refresh is changed post mutation
     useEffect(() => {
-        const schedulingChannel = pusherClient.subscribe(
-            user.id.toString()
-        )
+        // const schedulingChannel = pusherClient.subscribe(
+        //     user.id.toString()
+        // )
 
-        schedulingChannel.bind("updated-schedule", function(data){
-            getAndSetUser()
-        })
+        // schedulingChannel.bind("updated-schedule", function(data){
+        //     getAndSetUser()
+        // })
 
-        return () => {
-            pusherClient.unsubscribe(user.id.toString())
-        }
+        // return () => {
+        //     pusherClient.unsubscribe(user.id.toString())
+        // }
 
         setLoading(false)
     }, [user.id])
@@ -340,7 +340,6 @@ const Styles = StyleSheet.create({
             }).map( (ass, index) => {
                 let ds = ass.dateStart
                 let de = ass.dateDue
-                console.log(ass)
                 return(
                     <TouchableOpacity key={index}>
                         <View style={{flexDirection: 'row', margin: 8, borderWidth: 1, borderRadius: 15, borderColor: COLORS.iconLight, padding: 8}}>

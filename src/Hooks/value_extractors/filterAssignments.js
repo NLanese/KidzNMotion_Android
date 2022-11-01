@@ -1,7 +1,6 @@
 import convertMonthToNumber from "../date_and_time/convertMonthIntoNumber"
 
 export default function filterAssignments(ass){
-    console.log(ass)
     return ass.filter(assign => {
         let dt = assign.dateDue
 
@@ -15,7 +14,6 @@ export default function filterAssignments(ass){
 
         // Is the current year lower than the meeting year
         if (y < my){
-            console.log(mm, md, my)
             return assign
         }
 
@@ -24,7 +22,6 @@ export default function filterAssignments(ass){
 
             // Is the Meeting Month further?
             if (m < mm){
-                console.log(mm, md, my)
                 return assign
             }
 
@@ -33,7 +30,6 @@ export default function filterAssignments(ass){
 
                 // As long as meeting date isnt less than current date
                 if (d <= md){
-                    console.log(mm, md, my)
                     return assign
                 }
             }

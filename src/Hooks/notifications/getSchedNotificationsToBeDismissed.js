@@ -8,7 +8,6 @@ export default function getSchedNotificationsToBeDismissed(notifications, date){
     let d = date.toString().split(" ")[2]
     let target = (`${m}/${d}`)
     let rArray = notifications.filter(noti => {
-        console.log(noti.description)
         if (noti.description.includes(target)){
             return noti
         }
