@@ -28,7 +28,7 @@ import ErrorBoundary from 'react-native-error-boundary'
 ////////////////////////
 // NOTIFICATION Stuff //
 ////////////////////////
-import registerNNPushToken from 'native-notify';
+// import registerNNPushToken from 'native-notify';
 
 ///////////
 // PAGES //
@@ -153,7 +153,7 @@ import {
 
 export default function App() {
 
-registerNNPushToken(4507, 'i6bSDKHHLii5DAhsIjDbgW');
+// registerNNPushToken(4507, 'i6bSDKHHLii5DAhsIjDbgW');
 
 let state
 
