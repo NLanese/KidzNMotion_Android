@@ -56,6 +56,8 @@ export default function VideoLibrary(props) {
     // Recoil //
     ////////////
 
+        console.log(userState)
+
         // User State
         const [user, setUser] = useRecoilState(userState)
 
@@ -367,8 +369,10 @@ export default function VideoLibrary(props) {
 
         // Renders an Individual Level Box
         function renderSingleLevelBox(obj) {
-            if (obj.id === 2 && childState.childCarePlans[0].level === 1){
-                return null
+            if (user.role !== "THERAPIST"){
+                if (obj.id === 2 && childState.childCarePlans[0].level === 1){
+                    return null
+                }
             }
             return(
                 <TouchableOpacity style={{
@@ -457,7 +461,7 @@ export default function VideoLibrary(props) {
 
         // I mean... duh?
         function renderRecordVideoButton(){
-            if (user.role !== "GUARDIAN"){
+            if (user.role !== "GUARDIAN" && user.role !== "THERAPIST"){
                 return null
             }
             return(
