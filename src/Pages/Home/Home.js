@@ -206,11 +206,12 @@ export default function Home() {
         const checkToken = async () => {
             const fcmToken = await messaging().getToken();
             if (fcmToken) {
-              console.log("FCM TOKEN: ", fcmToken);
-              return fcmToken
+                console.log("FCM TOKEN: ", fcmToken);
+                return fcmToken
             } 
             else{
-              return false
+                console.log("No token, we failed. O, you do not have the right!")
+                return false
             }
           }
           checkToken()
