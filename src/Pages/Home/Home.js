@@ -17,9 +17,12 @@ import { Heart, Logo, CalendarTab, Bell, Play, MedalTab, UserTab, SettingsLarge,
 import { COLORS as colorConstant }  from "../../../NutonConstants"
 import { DEFAULT_AVATAR } from '../../../NutonConstants';
 
+// Firebase
+import messaging from '@react-native-firebase/messaging';
+
 // GraphQL Apollo
 import { useMutation } from "@apollo/client";
-import { GET_USER, SWAP_TO_CHILD_ACCOUNT, USER_LOGIN, GET_NOTIFICATIONS } from "../../../GraphQL/operations";
+import { GET_USER, SWAP_TO_CHILD_ACCOUNT, USER_LOGIN, GET_NOTIFICATIONS, GET_CHILD_VIDEO_STATISTICS } from "../../../GraphQL/operations";
 import client from '../../utils/apolloClient';
 
 // Ostrich
@@ -34,6 +37,7 @@ import getAllTherapistAssignments from "../../Hooks/value_extractors/therapistVa
 import getUserChatroom from "../../Hooks/value_extractors/getChatroom"
 import filterAssignments from "../../Hooks/value_extractors/filterAssignments"
 import findAllAssignedVideos from "../../Hooks/value_extractors/childAndGuardianValues/findAllAssignedVideos"
+// import checkToken from "../../utils/firebase/checkToken"
 
 // Dimensions
 let maxWidth = Dimensions.get('window').width
@@ -198,6 +202,19 @@ export default function Home() {
         /////////////
         // Testing //
         /////////////
+
+        const checkToken = async () => {
+            const fcmToken = await messaging().getToken();
+            if (fcmToken) {
+              console.log("FCM TOKEN: ", fcmToken);
+              return fcmToken
+            } 
+            else{
+              return false
+            }
+          }
+          checkToken()
+
 
 ///////////////////////
 ///                 ///
@@ -823,6 +840,13 @@ export default function Home() {
 ///                 ///
 ///////////////////////
 
+
+
+
+////// TESTING //////// 
+
+
+
     return (
         <Gradient
             colorOne={COLORS.gradientColor1}
@@ -836,3 +860,8 @@ export default function Home() {
         </Gradient>
     );
 }
+
+
+
+
+
