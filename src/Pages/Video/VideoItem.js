@@ -127,7 +127,7 @@ export default function VideoItem(props) {
 ///////////////////////
 
     function handleVideoClick(){
-        if (isValid){
+        if (isValid || user.role === "THERAPIST"){
             navigation.navigate("WatchVideo", {item: video})
         }
         else{

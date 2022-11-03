@@ -69,7 +69,13 @@ const VisionComp = () => {
       const [user, setUser] = useRecoilState(userState)
 
       // Therapist of which the email is getting sent to
-      const therapist = user.children[0].childCarePlans[0].therapist
+      let therapist
+      if (user.role === "THERAPIST"){
+        therapist = user
+      }
+      else{
+        therapist = user.children[0].childCarePlans[0].therapist
+      }
 
       // Chatroom 
       const chatroom = getChatroomFromTherapist(user, therapist)

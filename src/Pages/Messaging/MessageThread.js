@@ -84,21 +84,21 @@ export default function MessageThread(props) {
 
     // Utilizes Pusher API in order to refresh chat on newly recieved messages
     useEffect(() => {
-        // Creates a connection to pusher, which will send a signal here once IT recieves a signal from another message sender
-        // For example, if this is a chat between person X and person Y, and this file is being used by person X, 
-        // if person Y were to send a messaage, that message is now in the db (duh) and a signal is sent to pusher
-        // which sends a signal to this new client. This will then allow me to trigger a rerender on signal recieving
-        const chatRoomChannel = pusherClient.subscribe(
-          chatroom.id.toString()
-        );
+        // // Creates a connection to pusher, which will send a signal here once IT recieves a signal from another message sender
+        // // For example, if this is a chat between person X and person Y, and this file is being used by person X, 
+        // // if person Y were to send a messaage, that message is now in the db (duh) and a signal is sent to pusher
+        // // which sends a signal to this new client. This will then allow me to trigger a rerender on signal recieving
+        // const chatRoomChannel = pusherClient.subscribe(
+        //   chatroom.id.toString()
+        // );
     
-        chatRoomChannel.bind("new-message", function (data) {
-          fetchChatDetail();
-        });
+        // chatRoomChannel.bind("new-message", function (data) {
+        //   fetchChatDetail();
+        // });
     
-        return () => {
-          pusherClient.unsubscribe(chatroom.id.toString());
-        };
+        // return () => {
+        //   pusherClient.unsubscribe(chatroom.id.toString());
+        // };
     }, [chatroom.id]);
     
     // Backup for live refresh
