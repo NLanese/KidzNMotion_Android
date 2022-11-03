@@ -125,9 +125,6 @@ export default function WatchVideo(props) {
             setIsFirstRender(false)
             return
         }
-        let temp = height
-        setHeight(width)
-        setWidth(temp)
         if (orientation === 'portrait'){
             setOrientation('landscape')
             Orientation.lockToLandscape()
@@ -137,6 +134,15 @@ export default function WatchVideo(props) {
             Orientation.lockToPortrait()
         }
     },[isFullscreen])
+
+    useEffect(() => {
+        if (isFirstRender){
+            return
+        }
+        let temp = height
+        setHeight(width)
+        setWidth(temp)
+    }, [isFullscreen])
         
     useEffect(() => {
         if (user.role === "THERAPIST"){
@@ -295,7 +301,7 @@ export default function WatchVideo(props) {
                     return renderMedalDescriptioms()
                 }
                 else if (tabState === 1){
-                    return renderTherapistComments()
+                    // return renderTherapistComments()
                 }
             }
 
@@ -310,6 +316,7 @@ export default function WatchVideo(props) {
                             subtitleColor={COLORS.iconDark}
                             icon={<MedalTab fillColor={'brown'} strokeColor={COLORS.iconDark}/>}
                             opaque={true}
+                            selectable={false}
                         />
                         <SelectionButton
                             title={`Silver Medals`}
@@ -318,6 +325,7 @@ export default function WatchVideo(props) {
                             subtitleColor={COLORS.iconDark}
                             icon={<MedalTab fillColor={'silver'} strokeColor={COLORS.iconDark}/>}
                             opaque={true}
+                            selectable={false}
                         />
                         <SelectionButton
                             title={`Gold Medals`}
@@ -327,6 +335,7 @@ export default function WatchVideo(props) {
                             subTitle
                             icon={<MedalTab fillColor={'gold'} strokeColor={COLORS.iconDark}/>}
                             opaque={true}
+                            selectable={false}
                         />
                     </View>
                 )
