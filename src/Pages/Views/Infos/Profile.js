@@ -70,23 +70,6 @@ export default function Profile(props) {
         }
         return(
             <View>
-                {/* <PersonasAvatar 
-                    characterSettings={{pic}}
-                    imageStyle={{ borderRadius: 60 }}
-                    style={{height: 50, width: 50, marginRight: 30}}
-                /> */}
-                <Text
-                    style={{
-                        textAlign: "center",
-                        ...FONTS.Title,
-                        color: COLORS.iconLight,
-                        lineHeight: 20 * 1.4,
-                        fontSize: 22,
-                        marginTop: -20
-                    }}
-                >
-                    {client.user.firstName} {client.user.lastName}
-                </Text>
                 <Text
                     style={{
                         textAlign: "center",
