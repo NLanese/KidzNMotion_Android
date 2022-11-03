@@ -22,7 +22,7 @@ import messaging from '@react-native-firebase/messaging';
 
 // GraphQL Apollo
 import { useMutation } from "@apollo/client";
-import { GET_USER, SWAP_TO_CHILD_ACCOUNT, USER_LOGIN, GET_NOTIFICATIONS, GET_CHILD_VIDEO_STATISTICS } from "../../../GraphQL/operations";
+import { GET_USER, SWAP_TO_CHILD_ACCOUNT, USER_LOGIN, GET_NOTIFICATIONS, GET_CHILD_VIDEO_STATISTICS, UPDATE_PHONE_TOKEN } from "../../../GraphQL/operations";
 import client from '../../utils/apolloClient';
 
 // Ostrich
@@ -59,6 +59,10 @@ export default function Home() {
 
     // User Type Determination
     const [userLogin, { loading: loadingType, error: errorType, data: typeData }] = useMutation(USER_LOGIN);
+
+    // Updates Firebase Token
+    const [updatePhoneToken, { loading: loadingToken, error: errorToken, data: dataToken }] = useMutation(UPDATE_PHONE_TOKEN);
+
 
     ///////////////
     // Constants //
@@ -199,22 +203,20 @@ export default function Home() {
                 setSchedNotisLen(schedNotis.length)
             }, [msgNotis, schedNotis])
 
+            // Resets the Firebase Token if needed
+            useEffect(() => {
+                if (user.fcmToken){
+                    return
+                }
+                else{
+                    handleUpdatePhoneToken()
+                }
+            }, [user])
+
         /////////////
         // Testing //
         /////////////
 
-        const checkToken = async () => {
-            const fcmToken = await messaging().getToken();
-            if (fcmToken) {
-                console.log("FCM TOKEN: ", fcmToken);
-                return fcmToken
-            } 
-            else{
-                console.log("No token, we failed. O, you do not have the right!")
-                return false
-            }
-          }
-          checkToken()
 
 
 ///////////////////////
@@ -833,6 +835,23 @@ export default function Home() {
                 setColors({...colorConstant.scheme4})
             }
             
+        }
+
+    //////////////////////
+    // FCM Token Update //
+    //////////////////////
+
+        async function handleUpdatePhoneToken(){
+            const fcmToken = await messaging().getToken();
+            return await updatePhoneToken({
+                variables: {
+                    token: fcmToken
+                }
+            })
+            .then((resolved) => {
+                console.log(resolved)
+            })
+            .catch(err => console.log(err))
         }
 
 ///////////////////////

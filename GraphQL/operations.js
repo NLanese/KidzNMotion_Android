@@ -839,6 +839,26 @@ const CREATE_COMMENT = gql`
   }
 `
 
+
+
+const UPDATE_PHONE_TOKEN = gql`
+  mutation Mutation(
+    $token: String!
+  ){
+    updatePhoneToken(
+      token: $token
+    )
+  }
+`
+
+
+
+
+
+
+
+
+
 /////////////
 // EXPORTS //
 export {   //
@@ -870,6 +890,7 @@ export {   //
   REQUEST_RESET_PASSWORD,
   CHANGE_CHILD_PASSWORD,
   CONFIRM_PASSWORD,
+  UPDATE_PHONE_TOKEN,
 
   CREATE_CHATROOM,
   SEND_MESSAGE,

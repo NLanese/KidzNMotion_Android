@@ -153,8 +153,6 @@ import {
 
 export default function App() {
 
-// registerNNPushToken(4507, 'i6bSDKHHLii5DAhsIjDbgW');
-
 let state
 
 ////////////////
