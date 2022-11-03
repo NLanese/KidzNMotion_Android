@@ -62,30 +62,6 @@ export default function Profile(props) {
 ///                 ///
 ///////////////////////
 
-    // Renders the Profile Picture and Name of the User
-    function renderImageAndName(){
-        let pic = DEFAULT_AVATAR
-        if (client.user.profilePic){
-            pic = client.user.profilePic
-        }
-        return(
-            <View>
-                <Text
-                    style={{
-                        textAlign: "center",
-                        ...FONTS.Lato_400Regular,
-                        fontSize: 16,
-                        color: COLORS.black,
-                        lineHeight: 16 * 1.7,
-                        marginBottom: 20,
-                    }}
-                >
-                    {client.user.email}
-                </Text>
-            </View>
-        )
-    }
-
     // Renders the Header
     function renderHeader() {
         return (
@@ -104,10 +80,9 @@ export default function Profile(props) {
        return(
         <View>
             {renderHeader()}
-            <ScrollView>
-                {renderImageAndName()}
+            <View style={{marginTop: 170}}>
                 {renderButtons()}
-            </ScrollView>
+            </View>
         </View>
        )
     }
@@ -122,11 +97,11 @@ export default function Profile(props) {
                         centerTitle={true}
                         onSelect={() => navigation.navigate("MyMedals", {item: client})}   
                     />
-                    <SelectionButton
+                    {/* <SelectionButton
                         title={"Video Settings"}
                         centerTitle={true}
                         onSelect={() => navigation.navigate("ProfileVideoSettings", {item: client})}
-                    />
+                    /> */}
                 </>
             )
         }
@@ -146,17 +121,22 @@ export default function Profile(props) {
                         onSelect={() => navigation.navigate("EditClientSettings", {item: client})}  
                     />
                     {renderChildOptionsButton()}
-                    <SelectionButton
+                    {/* <SelectionButton
                         title={"Message"}
-                        centerTitle={true}
-                        
-                        onSelect={() => navigation.navigate("/")}   
-                    />
+                        centerTitle={true}      
+                        onSelect={() => navigation.navigate("")}   
+                    /> */}
                     <SelectionButton
                         title={"Schedule a Meeting"}
                         centerTitle={true}
-                        
-                        onSelect={() => navigation.navigate("ScheduleMeeting", {item: client})}   
+                        onSelect={() => navigation.navigate("SchedulingLanding")}   
+                    />
+                    <SelectionButton
+                        title={"Documentation and Comments"}
+                        centerTitle={true}
+                        onSelect={() => navigation.navigate("Comments", {
+                            item: client
+                        })}
                     />
                 </View>
             )
@@ -164,6 +144,17 @@ export default function Profile(props) {
         else if (user.role === "ADMIN"){
 
         }
+    }
+
+///////////////////////
+///                 ///
+///     Handlers    ///
+///                 ///
+///////////////////////
+
+    // Handles the click when a message button is selected
+    function handleMessageClick(){
+
     }
 
 
