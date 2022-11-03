@@ -21,6 +21,7 @@ import {sizeState, userState, colorState, fontState, avatarState, tokenState, ac
 
 // Hooks
 import getMsgNotificationsToBeDismissed from "../../Hooks/notifications/getMsgNotificationsToBeDismissed";
+import sortMessagesBySendDate from "../../Hooks/messages/sortMessages";
 
 // Ostrich
 import Gradient from "../../../OstrichComponents/Gradient";
@@ -87,18 +88,18 @@ export default function MessageThread(props) {
         // For example, if this is a chat between person X and person Y, and this file is being used by person X, 
         // if person Y were to send a messaage, that message is now in the db (duh) and a signal is sent to pusher
         // which sends a signal to this new client. This will then allow me to trigger a rerender on signal recieving
-        // const chatRoomChannel = pusherClient.subscribe(
-        //   chatroom.id.toString()
-        // );
+        const chatRoomChannel = pusherClient.subscribe(
+          chatroom.id.toString()
+        );
     
-        // chatRoomChannel.bind("new-message", function (data) {
-        //   fetchChatDetail();
-        // });
+        chatRoomChannel.bind("new-message", function (data) {
+          fetchChatDetail();
+        });
     
-        // return () => {
-        //   pusherClient.unsubscribe(chatroom.id.toString());
-        // };
-      }, [chatroom.id]);
+        return () => {
+          pusherClient.unsubscribe(chatroom.id.toString());
+        };
+    }, [chatroom.id]);
     
     // Backup for live refresh
     useEffect(() => {
@@ -117,10 +118,13 @@ export default function MessageThread(props) {
 ///                 ///
 ///////////////////////
 
+    // Sends Message
     const [sendMessage, { loading: loadingAdd, error: errorAdd, data: typeAdd }] =useMutation(SEND_MESSAGE);
 
+    // Dismisses Notifications
     const [dismissNotifications, { loading: loadingDis, error: errorDis, data: typeDis }] =useMutation(DISMISS_NOTIFICATION);
 
+    // Refreshes the Chat when you send a message
     const fetchChatDetail = async () => {
         if (token) {
           await client
@@ -421,9 +425,12 @@ export default function MessageThread(props) {
 
         let messageArray = [...chatroom.messages]
 
+        messageArray = (sortMessagesBySendDate(messageArray))
+
         /////////////////////////////////////////
         // Gets all consecutive message clumps //
         let messageClumps = chopAtDifferentSenders(messageArray)
+
 
         //////////////////////////////////////////////////////////////////////////////////
         // Breaks up each message clump into an individual render to return all message //
@@ -504,6 +511,11 @@ export default function MessageThread(props) {
         let user2 = contact
         let returnArrayOfMessages = []
         let arrayOfSameSender = []
+
+        // messageArray.forEach( (msg, i) => {
+        //     console.log(i, " : ", msg.content, msg.createdAt)
+        //     console.log("\n---")
+        // })
 
         ///////////////////////////////////
         // Iterates through all messages //
