@@ -1,19 +1,30 @@
 import { View, Text, SafeAreaView, Image } from "react-native";
-import React from "react";
+import React, {useState} from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useNavigation } from "@react-navigation/native";
 
 import { Header, InputField, Button } from "../NutonComponents";
 import { AREA} from "../NutonConstants";
 
+import { useMutation } from "@apollo/client";
+import { REQUEST_RESET_PASSWORD } from "../GraphQL/operations";
+
 import { useRecoilValue } from "recoil";
 import { colorState, fontState, sizeState } from '../Recoil/atoms';
 
 export default function ForgotPassword() {
+
+
+
     const navigation = useNavigation();
     const COLORS = useRecoilValue(colorState)
     const FONTS = useRecoilValue(fontState)
     const SIZES = useRecoilValue(sizeState)
+
+    const [requestResetPassword, { loading: loadingType, error: errorType, data: typeData }] = useMutation(REQUEST_RESET_PASSWORD);
+
+
+    const [email, setEmail] = useState("")
 
     function renderHeader() {
         return (
@@ -47,10 +58,11 @@ export default function ForgotPassword() {
                     title="Email"
                     placeholder="kristinwatson@mail.com"
                     containerStyle={{ marginBottom: 20 }}
+                    onChangeText={(content) => setEmail(content)}
                 />
                 <Button
                     title="Send"
-                    onPress={() => navigation.navigate("ResetPassword")}
+                    onPress={() => resetPasswordFunction()}
                 />
             </KeyboardAwareScrollView>
         );
@@ -68,6 +80,28 @@ export default function ForgotPassword() {
                 }}
             />
         );
+    }
+
+    // Reset Password Mutation (not whole function)
+    const handleResetMutation = async () => {
+        return await requestResetPassword({
+            variables: {
+                email: email
+            }  
+        })
+        .catch(err => console.log(err))
+    }
+
+    // Handles the Confirmed Reset
+    const resetPasswordFunction = () => {
+        handleResetMutation().then( resolved => {
+            if (resolved){
+                console.log(resolved)
+            }
+            else{
+                console.log("ERROR")
+            }
+        })
     }
 
     return (
