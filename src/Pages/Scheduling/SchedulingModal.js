@@ -373,7 +373,7 @@ export default function SchedulingModal({showAssignmentsModal, setShowAssignment
             else{
                 return(
                     <View style={{marginTop: 20}}>
-                        <Text style={{marginBottom: 10, textAlign: 'center', ...FONTS.SubTitle}}>Select Clients to Assign Videos to</Text>
+                        <Text style={{marginBottom: 10, textAlign: 'center', ...FONTS.SubTitle}}>Select Parents to Schedule a Meeting with</Text>
                         <Dropdown
                             title={title}
                             titleStyle={{fontFamily: 'Gilroy-SemiBold', fontSize: 18, marginTop: 10}}
