@@ -189,6 +189,7 @@ export default function SchedulingLanding() {
 
     useEffect(() => {
         getAndSetUser()
+        console.log("should refresh")
         setLoading(false)
     }, [refresh])
 

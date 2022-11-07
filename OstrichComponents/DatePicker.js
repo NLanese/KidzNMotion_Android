@@ -202,7 +202,7 @@ export default function DatePicker({
     function renderValueBlock(getter){
         return (
             <View style={{...displayTileStyle, backgroundColor: displayTileColor}}>
-                <Text style={{textAlign: 'center', ...dateTextStyle}}>
+                <Text style={{textAlign: 'center', ...dateTextStyle, marginTop: -6}}>
                     {getter}
                 </Text>
             </View>

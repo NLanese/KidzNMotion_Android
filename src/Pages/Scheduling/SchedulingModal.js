@@ -439,7 +439,7 @@ export default function SchedulingModal({showAssignmentsModal, setShowAssignment
                 >
                     <TouchableOpacity
                         style={{width: 130, height: 48, backgroundColor: COLORS.buttonColorLight, borderRadius: 10, justifyContent: "center", alignItems: "center", marginTop: 10, marginHorizontal: 7.5, borderColor: COLORS.buttonColorDark, borderWidth: 1}}
-                        onPress={() => {handleAssignSubmissionClick()}}
+                        onPress={() => {handleMainSubmit("ass")}}
                     >
                         <Text style={{ color: COLORS.confirm, ...FONTS.Lato_700Bold, fontSize: 18, textTransform: "capitalize" }} >
                             Assign
@@ -488,7 +488,7 @@ export default function SchedulingModal({showAssignmentsModal, setShowAssignment
                 >
                     <TouchableOpacity
                         style={{width: 130, height: 48, backgroundColor: COLORS.buttonColorLight, borderRadius: 10, justifyContent: "center", alignItems: "center", marginTop: 10, marginHorizontal: 7.5, borderColor: COLORS.buttonColorDark, borderWidth: 1}}
-                        onPress={() => {handleMeetingSubmissionClick()}}
+                        onPress={() => {handleMainSubmit("meeting")}}
                     >
                         <Text style={{ color: COLORS.confirm, ...FONTS.Lato_700Bold, fontSize: 18, textTransform: "capitalize" }} >
                             Assign
@@ -652,11 +652,23 @@ export default function SchedulingModal({showAssignmentsModal, setShowAssignment
             return ((new Date(dateObj).toLocaleString('en-US', { timeZone: 'America/New_York' })))
         }
 
-///////////////////////
-///                 ///
-// Mutator + Helpers //
-///                 ///
-///////////////////////
+/////////////////////////
+///                   ///
+//  Mutator + Helpers  //
+///                   ///
+/////////////////////////
+
+    async function handleMainSubmit(type){
+        if (type === "meeting"){
+            return handleMeetingSubmissionClick()
+        }
+        else if (type === "ass"){
+            return handleAssignSubmissionClick()
+        }
+        else{
+            console.log("Error")
+        }
+    }
 
     // Handles Hitting Submit onn Assignments Modal
     async function handleAssignSubmissionClick(){
@@ -670,6 +682,9 @@ export default function SchedulingModal({showAssignmentsModal, setShowAssignment
             .then((resolved) => {
                 setShowAssignmentsModal(false)
                 setRefresh(!refresh)
+            })
+            .catch((err) => {
+                console.log("Error in Handle Assignment Submission", err)
             })
         })
     }
@@ -686,8 +701,12 @@ export default function SchedulingModal({showAssignmentsModal, setShowAssignment
                 videoIDs: extractIdsFromVideos()
             }
         })
+        .then((resolved) => {
+            console.log("Resolved in Handle Creater Assignment", resolved)
+        })
         .catch(err => {
             setLoading(false)
+            console.log("Error in creating the assignment", err)
         })
     }
 
@@ -704,9 +723,13 @@ export default function SchedulingModal({showAssignmentsModal, setShowAssignment
         await selectedClients.forEach((client) => {
            handleCreateMeeting(client)
            .then( (resolved) => {
+                console.log("Handle Meeting Submission", resolved)
            })
            .then(() => {
                 setRefresh(!refresh)
+           })
+           .catch((err) => {
+                console.log("Error in handleMeetingSubmission ", err)
            })
         })
         setShowMeetingsModal(false)
@@ -714,15 +737,30 @@ export default function SchedulingModal({showAssignmentsModal, setShowAssignment
 
     // Runs the create Meeting Mutation
     async function handleCreateMeeting(client){
+        let dateAsArray = (determineDateTimeConversion(meetingDateObj).split(",")[0].split("/"))
+        let timeArray = (determineDateTimeConversion(meetingDateObj).split(",")[1].split(" ")[1].split(":"))
+        let amPm = (determineDateTimeConversion(meetingDateObj).split(",")[1].split(" ")[2])
+        timeArray[0] = (parseInt(timeArray[0], 10) - 1).toString()
+        if (amPm === "PM"){
+            timeArray[0] = (parseInt(timeArray[0], 10) + 12).toString()
+        }
+        let submissionDate = new Date(`${dateAsArray[2]}-${dateAsArray[0]}-${dateAsArray[1]}T${timeArray[0]}:${timeArray[1]}:${timeArray[2]}.00Z`)
+        console.log(submissionDate)
+        console.log(timeArray)
+        console.log(amPm)
         return await createMeeting({
             variables: {
                 title: `${meetingDateObj} ${meetingType}`,
-                meetingDateTime: determineDateTimeConversion(meetingDateObj),
+                meetingDateTime: submissionDate,
                 type: meetingType,
                 participantIDs: [client.id],
             }
         })
+        .then((resolved) => {
+            console.log("handle Create Meeting", resolved)
+        })
         .catch(err => {
+            console.log("Error from handleCreateMeeting", err)
             setLoading(false)
         })
     }

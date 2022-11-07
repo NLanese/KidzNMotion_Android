@@ -12,6 +12,7 @@ const GET_USER = gql`
 query Query{
     getUser{
       id
+      fcmToken
       email
       username
       firstName
@@ -216,6 +217,7 @@ query Query{
         id
         content
         createdAt
+        videoId
       }
       child{
         id
@@ -250,6 +252,7 @@ query Query{
         childCarePlan{
           id
           child{
+            id
             firstName
             lastName
           }
@@ -272,6 +275,7 @@ query Query{
           phoneNumber
           role
           children{
+            id
             childCarePlans{
             therapist{
               id
@@ -492,6 +496,7 @@ const SWAP_TO_CHILD_ACCOUNT = gql`
 //         EDITORS AND SETTINGS         //   
 //                                      //
 //////////////////////////////////////////
+
 const EDIT_USER = gql `
   mutation Mutation(
       $email: String
@@ -729,7 +734,6 @@ const DISMISS_NOTIFICATION = gql`
   }
 `
 
-
 //////////////////////////////////////////
 //                                      //
 //              Security                //   
@@ -740,13 +744,12 @@ const REQUEST_RESET_PASSWORD = gql`
   mutation Mutation(
     $email: String!
   ){
-    request_reset_password(
+    requestResetPassword(
       email: $email
-    ){
-      Boolean
-    }
+    )
   }
 `
+
 
 const CHANGE_CHILD_PASSWORD = gql`
   mutation Mutation(
@@ -766,6 +769,16 @@ const CONFIRM_PASSWORD = gql`
   ){
     confirmPassword(
       password: $password
+    )
+  }
+`
+
+const UPDATE_PHONE_TOKEN = gql`
+  mutation Mutation(
+    $token: String!
+  ){
+    updatePhoneToken(
+      token: $token
     )
   }
 `
@@ -824,44 +837,66 @@ const CREATE_COMMENT = gql`
       commentContent: $commentContent,
       videoID: $videoID,
       assignmentID: $assignmentID
-    ){
-      id
-      level
-      active
-      allVideoStatus
-      blockedVideos
-      comments{
+    ) {  
         id
-        content
-        videoId
+        allVideoStatus
+        weeklyVideoStatus
+        active
+        level
+        childId
+        comments{
+          id
+          content
+          createdAt
+          videoId
+        }
+        child{
+          id
+          role
+          firstName
+          lastName
+          childDateOfBirth
+          profilePic
+          guardian{
+            role
+            id
+            username
+            firstName
+            lastName
+            email
+            profilePic
+          }
+          childCarePlans{
+            id
+          }
+        }
+        assignments{
+          id
+          dateStart
+          dateDue
+          title
+          description
+          videos{
+            id
+            contentfulID
+          }
+          childCarePlan{
+            id
+            child{
+              firstName
+              lastName
+            }
+          }
+        }
       }
     }
-  }
 `
-
-
-
-const UPDATE_PHONE_TOKEN = gql`
-  mutation Mutation(
-    $token: String!
-  ){
-    updatePhoneToken(
-      token: $token
-    )
-  }
-`
-
-
-
-
-
-
-
-
 
 /////////////
 // EXPORTS //
-export {   //
+/////////////
+
+export {  
   GET_USER,
   GET_MEETINGS,
   GET_VIDEOS,
