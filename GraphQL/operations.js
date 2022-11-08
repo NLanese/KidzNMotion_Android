@@ -117,6 +117,7 @@ query Query{
 
       ownedOrganization {
         id
+        phoneNumber
         organizationUsers{
           user{
             role
@@ -263,27 +264,28 @@ query Query{
     organizations {
       id
       organization{
+        id
         name
         phoneNumber
       	organizationUsers{
-        id
-        userId
-        user{
-          firstName
-          lastName
-          email
-          phoneNumber
-          role
-          children{
-            id
-            childCarePlans{
-            therapist{
+          id
+          userId
+          user{
+            firstName
+            lastName
+            email
+            phoneNumber
+            role
+            children{
               id
+              childCarePlans{
+                therapist{
+                  id
+                }
+              }
             }
           }
-          }
         }
-      }
       }
     }
     
@@ -496,7 +498,6 @@ const SWAP_TO_CHILD_ACCOUNT = gql`
 //         EDITORS AND SETTINGS         //   
 //                                      //
 //////////////////////////////////////////
-
 const EDIT_USER = gql `
   mutation Mutation(
       $email: String
@@ -750,7 +751,6 @@ const REQUEST_RESET_PASSWORD = gql`
   }
 `
 
-
 const CHANGE_CHILD_PASSWORD = gql`
   mutation Mutation(
     $childUserID: String!
@@ -894,9 +894,7 @@ const CREATE_COMMENT = gql`
 
 /////////////
 // EXPORTS //
-/////////////
-
-export {  
+export {   //
   GET_USER,
   GET_MEETINGS,
   GET_VIDEOS,
