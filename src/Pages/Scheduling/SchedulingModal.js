@@ -20,6 +20,7 @@ import OptionsButtons from "../../../OstrichComponents/OptionsButtons"
 import getAllTherapistClients from "../../Hooks/value_extractors/therapistValues/getAllTherapistClients"
 import getAllTherapistClientGuardians from "../../Hooks/value_extractors/therapistValues/getAllTherapistClientGuardians"
 import convertMonthIntoNumber from "../../Hooks/date_and_time/convertMonthIntoNumber"
+import sortVideosByLevel from "../../Hooks/videos/sortVideosByLevel";
 
 
 export default function SchedulingModal({showAssignmentsModal, setShowAssignmentsModal, showMeetingsModal, setShowMeetingsModal, refresh, setRefresh, setLoading}) {
@@ -45,7 +46,7 @@ export default function SchedulingModal({showAssignmentsModal, setShowAssignment
         const [user, setUser] = useRecoilState(userState)
 
         // Selectable Videos
-        const [videos, setVideos] = useRecoilState(videoDataState)
+        const [videos, setVideos] = useRecoilState(sortVideosByLevel(videoDataState))
 
         // All of the Meetings
         const [meetings, setMeetings] = useRecoilState(meetingState)
