@@ -77,6 +77,8 @@ export default function Dropdown({
 
     dropArray=[],                               // The Array of objects or values that will be dropdown items
     dropTitleProp=false,                        // If the array has objects, this will be the prop that is rendered and used to filter
+    secondDropTitleProp=false,                  // Second thing to display
+    thirdDropTitleProp=false,                   // Third
 
     dropIndexHeight=50,                         // Each Dropdown Item's height
     dropIndexStyle={...Styles.index},           // Each Dropdown Item's style
@@ -182,6 +184,12 @@ export default function Dropdown({
         let value = object
         if (dropTitleProp){
             value = object[dropTitleProp]
+        }
+        if (secondDropTitleProp){
+            value = `${value} ( ${object[secondDropTitleProp]} )`
+        }
+        if (thirdDropTitleProp){
+            value = `${value} ${object[thirdDropTitleProp]}`
         }
         return(
             <TouchableOpacity 

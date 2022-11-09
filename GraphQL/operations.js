@@ -26,6 +26,8 @@ query Query{
       colorSettings
       muteAllAssignments
       muteAllMessages
+      assignMuted
+      messagesMuted
       profilePic
       accessMessages
       accessSettings
@@ -38,10 +40,13 @@ query Query{
         lastName
         accessSettings
         accessMessages
+        assignMuted
         leaveApp
         guardian{
           role
           id
+          assignMuted
+          messagesMuted
           username
           firstName
           lastName
@@ -227,6 +232,7 @@ query Query{
         lastName
         childDateOfBirth
         profilePic
+        assignMuted
         guardian{
           role
           id
@@ -235,6 +241,8 @@ query Query{
           lastName
           email
           profilePic
+          messagesMuted
+          assignMuted
         }
         childCarePlans{
           id
@@ -551,6 +559,22 @@ const EDIT_USER_NOTIFICATION_SETTINGS = gql`
     editUserNotificationSettings(
       muteMessageNotifications: $muteMessageNotifications
       muteAssignmentNotifications: $muteAssignmentNotifications,
+    ){
+      id
+    }
+  }
+`
+
+const CHANGE_USER_NOTIFICATIONS = gql`
+  mutation Mutation(
+    $userID: String!,
+    $messagesMuted: Boolean!,
+    $assignMuted: Boolean!
+  ){
+    changeUserNotifications(
+      userID: $userID
+      messagesMuted: $messagesMuted
+      assignMuted: $assignMuted
     ){
       id
     }
@@ -892,6 +916,20 @@ const CREATE_COMMENT = gql`
     }
 `
 
+const TOGGLE_ASSGINMENT_SEEN = gql`
+    mutation Mutation(
+      $assignmentID: String!,
+      $hasSeen: Boolean!
+    ){
+      toggleAssignmentSeen(
+        assignmentID: $assignmentID,
+        hasSeen: $hasSeen
+      ){
+        id
+      }
+    }
+`
+
 /////////////
 // EXPORTS //
 export {   //
@@ -916,6 +954,7 @@ export {   //
   
   EDIT_CHILD_SETTINGS,
   EDIT_ORGANIZATION_SETTINGS,
+  CHANGE_USER_NOTIFICATIONS,
   EDIT_USER_NOTIFICATION_SETTINGS,
   CHANGE_PROFILE_PICTURE,
   EDIT_COLOR_SETTINGS,
@@ -934,6 +973,7 @@ export {   //
   CREATE_COMMENT,
 
   SET_VIDEO_COMPLETED,
+  TOGGLE_ASSGINMENT_SEEN
 }
 
 

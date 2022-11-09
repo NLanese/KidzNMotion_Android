@@ -184,12 +184,11 @@ export default function SchedulingLanding() {
         //     pusherClient.unsubscribe(user.id.toString())
         // }
 
-        setLoading(false)
+        // setLoading(false)
     }, [user.id])
 
     useEffect(() => {
         getAndSetUser()
-        console.log("should refresh")
         setLoading(false)
     }, [refresh])
 

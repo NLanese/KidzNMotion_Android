@@ -46,7 +46,7 @@ export default function SchedulingModal({showAssignmentsModal, setShowAssignment
         const [user, setUser] = useRecoilState(userState)
 
         // Selectable Videos
-        const [videos, setVideos] = useRecoilState(sortVideosByLevel(videoDataState))
+        const [videos, setVideos] = useRecoilState((videoDataState))
 
         // All of the Meetings
         const [meetings, setMeetings] = useRecoilState(meetingState)
@@ -410,8 +410,9 @@ export default function SchedulingModal({showAssignmentsModal, setShowAssignment
                         title={title}
                         titleStyle={{fontFamily: 'Gilroy-SemiBold', fontSize: 18, marginTop: 10}}
 
-                        dropArray={videos}
+                        dropArray={sortVideosByLevel(videos)}
                         dropTitleProp={"title"}
+                        secondDropTitleProp={"level"}
                         
                         onTitleClick={() => setShowClientDropdown(!showClientDropdown)}
                         onIndexClick={(content) => handleDropIndexClick(content, setSelectedVideos, selectedVideos)}
