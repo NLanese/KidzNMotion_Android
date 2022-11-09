@@ -379,8 +379,8 @@ export default function SettingsLanding() {
         return(
             <View>
                 {renderHeader()}
-                {/* {renderImageAndName()} */}
-                {/* {renderButtons()} */}
+                {renderImageAndName()}
+                {renderButtons()}
                 {renderSignOutModal()}
             </View>
         )
@@ -416,35 +416,66 @@ export default function SettingsLanding() {
         }
     }
 
+    function renderGuardianOptions(){
+        return(
+            <View style={{marginLeft: -4}}>
+                {/* <SelectionButton 
+                    title={"Edit Profile"}
+                    onSelect={() => navigation.navigate("ProfileEdit")}
+                    plainCenter={true}
+                /> */}
+                {/* <SelectionButton 
+                    title={"Settings"}
+                    plainCenter={true}
+                    onSelect={() => navigation.navigate("GeneralSettings")}
+                /> */}
+                {/* <SelectionButton 
+                    title={"Screen Color"}
+                    plainCenter={true}
+                    onSelect={()=> setShowColorModal(true)}
+                /> */}
+                {/* {renderRequestMeeting()} */}
+                {/* <SelectionButton 
+                    title={"Sign Out"}
+                    plainCenter={true}
+                    onSelect={() => setshowSignOutModal(true)}
+                /> */}
+            </View>
+        )
+    }
+
+    function renderTherapistOptions(){
+        return(
+            <View>
+                <SelectionButton 
+                    title={"Screen Color"}
+                    // plainCenter={true}
+                    onSelect={()=> setShowColorModal(true)}
+                />
+                {/* <SelectionButton
+                    title={"Account Settings"}
+                    plainCenter={true}
+                    onSelect={() => navigation.navigate("GeneralSettings")}
+                /> */}
+                {/* <SelectionButton 
+                    title={"Edit Profile"}
+                    onSelect={() => navigation.navigate("ProfileEdit")}
+                    plainCenter={true}
+                /> */}
+                {/* {renderOrganizationSettings()} */}
+                {/* <SelectionButton 
+                    title={"Sign Out"}
+                    plainCenter={true}
+                    onSelect={() => setshowSignOutModal(true)}
+                /> */}
+            </View>
+        )
+    }
+
     // Renders the inputs that are appropriate for user access
     function renderButtons(){
         if (user.role === "GUARDIAN" || (user.role === "CHILD" && user.accessSettings)){  //role === "GUARDIAN"
-            return(
-                <View style={{marginLeft: -4}}>
-                    <SelectionButton 
-                        title={"Edit Profile"}
-                        onSelect={() => navigation.navigate("ProfileEdit")}
-                        plainCenter={true}
-                    />
-                    <SelectionButton 
-                        title={"Settings"}
-                        plainCenter={true}
-                        onSelect={() => navigation.navigate("GeneralSettings")}
-                    />
-                    <SelectionButton 
-                        title={"Screen Color"}
-                        plainCenter={true}
-                        onSelect={()=> setShowColorModal(true)}
-                    />
-                    {renderRequestMeeting()}
-                    <SelectionButton 
-                        title={"Sign Out"}
-                        plainCenter={true}
-                        onSelect={() => setshowSignOutModal(true)}
-                    />
-                </View>
-                
-            )
+            return renderGuardianOptions()
         }
         else if (user.role === "CHILD"){
             return(
@@ -463,33 +494,7 @@ export default function SettingsLanding() {
             )
         }
         else if (user.role === "THERAPIST" || user.role === "ADMIN"){ //role === "THERAPIST"
-            return(
-                <>
-                    <SelectionButton 
-                        title={"Screen Color"}
-                        plainCenter={true}
-                        onSelect={()=> setShowColorModal(true)}
-                        
-                    />
-                    <SelectionButton
-                        title={"Account Settings"}
-                        plainCenter={true}
-                        onSelect={() => navigation.navigate("GeneralSettings")}
-                    />
-                    <SelectionButton 
-                        title={"Edit Profile"}
-                        onSelect={() => navigation.navigate("ProfileEdit")}
-                        plainCenter={true}
-                    />
-                    {renderOrganizationSettings()}
-                    <SelectionButton 
-                        title={"Sign Out"}
-                        plainCenter={true}
-                        onSelect={() => setshowSignOutModal(true)}
-                    />
-                </>
-                
-            )
+            return renderTherapistOptions()
         }
         else{
             // Error

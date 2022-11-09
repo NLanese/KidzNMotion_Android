@@ -130,7 +130,7 @@ const SelectionButton = ({ image,
     const mainRender = () => {
         if (plainCenter || centerTitle){
             return(
-                <View style={{...Style.main, borderColor: COLORS.buttonBorder, backgroundColor: `rgba(52, 52, 52, ${transparency})`, justifyContent: centerTitle ? "center" : ''}}>
+                <View style={{...Style.main, borderColor: COLORS.buttonBorder,  justifyContent: centerTitle ? "center" : '', backgroundColor: `rgba(52, 52, 52, ${transparency})`}}>
                     <TouchableOpacity 
                         onPress={() => handleOnPress()}
                     >
