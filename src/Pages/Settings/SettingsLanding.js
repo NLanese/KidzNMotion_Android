@@ -5,7 +5,6 @@ import { useNavigation } from "@react-navigation/native";
 import Modal from "react-native-modal";
 import BouncyCheckboxGroup, {} from "react-native-bouncy-checkbox-group";
 
-
 // Nuton
 import { Header } from "../../../NutonComponents";
 import { Edit } from "../../../svg";
@@ -23,6 +22,8 @@ import { LOGOUT_USER, EDIT_COLOR_SETTINGS } from "../../../GraphQL/operations";
 import Gradient from "../../../OstrichComponents/Gradient";
 import SelectionButton from "../../../OstrichComponents/SelectionButton";
 import PersonasAvatar from "./AvatarSettings/PersonasAvatar"
+
+import LoadingComponent from "../../Global/LoadingComponent"
 
 
 
@@ -99,9 +100,7 @@ export default function SettingsLanding() {
     function MAIN(){
         if (loading){
             return(
-                <View>
-
-                </View>
+                <LoadingComponent loading={loading} />
             )
         }
         else{
@@ -112,7 +111,7 @@ export default function SettingsLanding() {
                 style={{height: '100%'}}
                 >
                     <View style={{marginLeft: 3}}>
-                        {MainRender()}
+                        {/* {MainRender()} */}
                         {renderColorModal()}
                     </View>
                 </Gradient>
@@ -122,17 +121,10 @@ export default function SettingsLanding() {
 
     // Renders the header bar and back arrow
     function renderHeader() {
-        let title="Settings"
-        if (user.role === "THERAPIST"){ // role === "ADMIN"
-            title="Settings"
-        }
-        else if (user.role === "ADMIN"){ // role === "THERAPIST"
-            title="Settings"
-        }
         return(
             <View style={{marginTop: 40}}>
                 <Header 
-                    title={title}
+                    title={"Settings"}
                     onPress={() => navigation.navigate('/')}
                     goBack={true}
                 />
@@ -385,12 +377,12 @@ export default function SettingsLanding() {
     // Main Render Boi
     function MainRender() {
         return(
-            <ScrollView>
+            <View>
                 {renderHeader()}
                 {renderImageAndName()}
                 {renderButtons()}
                 {renderSignOutModal()}
-            </ScrollView>
+            </View>
         )
     }
 
