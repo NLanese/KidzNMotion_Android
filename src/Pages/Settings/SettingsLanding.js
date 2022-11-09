@@ -419,27 +419,27 @@ export default function SettingsLanding() {
     function renderGuardianOptions(){
         return(
             <View style={{marginLeft: -4}}>
-                {/* <SelectionButton 
+                <SelectionButton 
                     title={"Edit Profile"}
                     onSelect={() => navigation.navigate("ProfileEdit")}
                     plainCenter={true}
-                /> */}
-                {/* <SelectionButton 
+                />
+                <SelectionButton 
                     title={"Settings"}
                     plainCenter={true}
                     onSelect={() => navigation.navigate("GeneralSettings")}
-                /> */}
-                {/* <SelectionButton 
+                />
+                <SelectionButton 
                     title={"Screen Color"}
                     plainCenter={true}
                     onSelect={()=> setShowColorModal(true)}
-                /> */}
-                {/* {renderRequestMeeting()} */}
-                {/* <SelectionButton 
+                />
+                {renderRequestMeeting()}
+                <SelectionButton 
                     title={"Sign Out"}
                     plainCenter={true}
                     onSelect={() => setshowSignOutModal(true)}
-                /> */}
+                />
             </View>
         )
     }
@@ -449,25 +449,25 @@ export default function SettingsLanding() {
             <View>
                 <SelectionButton 
                     title={"Screen Color"}
-                    // plainCenter={true}
+                    plainCenter={true}
                     onSelect={()=> setShowColorModal(true)}
                 />
-                {/* <SelectionButton
+                <SelectionButton
                     title={"Account Settings"}
                     plainCenter={true}
                     onSelect={() => navigation.navigate("GeneralSettings")}
-                /> */}
-                {/* <SelectionButton 
+                />
+                <SelectionButton 
                     title={"Edit Profile"}
                     onSelect={() => navigation.navigate("ProfileEdit")}
                     plainCenter={true}
-                /> */}
-                {/* {renderOrganizationSettings()} */}
-                {/* <SelectionButton 
+                />
+                {renderOrganizationSettings()}
+                <SelectionButton 
                     title={"Sign Out"}
                     plainCenter={true}
                     onSelect={() => setshowSignOutModal(true)}
-                /> */}
+                />
             </View>
         )
     }
