@@ -13,12 +13,12 @@ import convertMonthToNumber from "../../Hooks/date_and_time/convertMonthIntoNumb
 import deslugVideoTitle from "../../Hooks/deslugVideoTitles";
 import fullStringToDateFormat from "../../Hooks/date_and_time/fullStringTimeToDateFormat";
 import getSchedNotificationsToBeDismissed from "../../Hooks/notifications/getSchedNotificationsToBeDismissed";
+import assignmentsToSee from "../../Hooks/findAssignmentsToSee"
 
 // GraphQL
 import { useMutation } from "@apollo/client";
 import client from "../../utils/apolloClient";
-import { GET_NOTIFICATIONS, DISMISS_NOTIFICATION } from "../../../GraphQL/operations";
-
+import { GET_NOTIFICATIONS, DISMISS_NOTIFICATION, TOGGLE_ASSGINMENT_SEEN } from "../../../GraphQL/operations";
 
 // Nuton
 import { Header, Button } from "../../../NutonComponents";
@@ -33,6 +33,7 @@ import TabBar from "../../../OstrichComponents/TabBar";
 
 // KNM
 import CalendarComponent from "./CalendarComponent"
+import findAssignmentsToSee from "../../Hooks/findAssignmentsToSee";
 
 let maxWidth = Dimensions.get('window').width
 let maxHeight = Dimensions.get('window').height
@@ -132,6 +133,7 @@ export default function CalendarPage() {
                 findAndSetAllTodaysMeetings()
                 findAndSetAllTodaysAssignments()
                 handleNotifications(selectedFullDate)
+                handleSeenAssignment(selectedFullDate)
                 
                 // Changes the 'today' marked indicator to the day you clicked on
                 let allDays = Object.keys(markedDateObjects)
@@ -171,6 +173,7 @@ export default function CalendarPage() {
             useEffect(() => {
                 if (tabState === "all"){
                     handleNotifications("all")
+                    handleSeenAssignment("all")
                 }
             }, [])
 
@@ -180,6 +183,9 @@ export default function CalendarPage() {
 
     // Dismisses Notifications
     const [dismissNotifications, { loading: loadingDis, error: errorDis, data: typeDis }] =useMutation(DISMISS_NOTIFICATION);
+
+    // Triggers Seen Assignments
+    const [toggleAssignmentSeen, { loading: loadingA, error: errorA, data: typeA }] =useMutation(TOGGLE_ASSGINMENT_SEEN);
 
 ///////////////////////
 ///                 ///
@@ -286,8 +292,6 @@ export default function CalendarPage() {
             if (all){
                 assForThisFunction = assignments
             }
-
-            console.log(assForThisFunction[0])
 
             ////////////////
             // Not Loaded //
@@ -591,6 +595,27 @@ export default function CalendarPage() {
             })
         }
 
+        // Takes Assignments of Today to Set as Seen
+        function handleSeenAssignment(date){
+            let assignmentsToSeen = findAssignmentsToSee(assignments, date)
+            assignmentsToSeen.forEach((ass) => {
+                seeAssignmentMutation(ass)
+            })
+        }
+
+        // Sets the assignment provided as seen
+        async function seeAssignmentMutation(ass){
+            return await toggleAssignmentSeen({
+                variables:{
+                    assignmentID: ass.id,
+                    hasSeen: true
+                }
+            })
+            .then(resolved => {
+                console.log(resolved)
+            })
+        }
+
     //////////////
     // Handlers //
     //////////////
@@ -691,7 +716,6 @@ export default function CalendarPage() {
             // Sets selected
             setSelectedAss([...todaysAssignments])
         }
-
 
 
 ///////////////////////
