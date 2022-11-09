@@ -111,7 +111,7 @@ export default function SettingsLanding() {
                 style={{height: '100%'}}
                 >
                     <View style={{marginLeft: 3}}>
-                        {/* {MainRender()} */}
+                        {MainRender()}
                         {renderColorModal()}
                     </View>
                 </Gradient>
@@ -379,8 +379,8 @@ export default function SettingsLanding() {
         return(
             <View>
                 {renderHeader()}
-                {renderImageAndName()}
-                {renderButtons()}
+                {/* {renderImageAndName()} */}
+                {/* {renderButtons()} */}
                 {renderSignOutModal()}
             </View>
         )
