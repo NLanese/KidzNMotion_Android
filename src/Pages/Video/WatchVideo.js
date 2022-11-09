@@ -330,7 +330,7 @@ export default function WatchVideo(props) {
                         <SelectionButton
                             title={`Gold Medals`}
                             titleColor={COLORS.gradientColor2}
-                            subtitle={"Complete the video without help, for a minute with no breaks"}
+                            subtitle={"Complete the video without help, for a full minute with no breaks"}
                             subtitleColor={COLORS.iconDark}
                             subTitle
                             icon={<MedalTab fillColor={'gold'} strokeColor={COLORS.iconDark}/>}
