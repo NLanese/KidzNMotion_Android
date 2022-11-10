@@ -22,6 +22,7 @@ import Gradient from "../../../OstrichComponents/Gradient";
 import TabBar from "../../../OstrichComponents/TabBar"
 import SelectionButton from "../../../OstrichComponents/SelectionButton"
 import OptionsButtons from "../../../OstrichComponents/OptionsButtons";
+import LoadingComponent from "../../Global/LoadingComponent";
 
 // SVG
 import { MedalTab } from "../../../svg";
@@ -64,6 +65,7 @@ export default function WatchVideo(props) {
         ////////////////////////////////////////////////////////////////////////////////////////
         // Both turns the video to fullscreen and changes its view boundaries and orientation //
         const [isFullscreen, setIsFullscreen] = useState(false)     
+        const [changeDems, setChangeDems] = useState(false)
 
         /////////////////////////////////////////////////
         // Changes whether video is shown or thumbnail //
@@ -84,8 +86,15 @@ export default function WatchVideo(props) {
         const [gotBreaks, setGotBreaks] = useState(true)
         const [timeCompleted, setTimecompleted] = useState(0)
 
-        // 0 = Medals, 1 = Comments
+        //////////////////////////////
+        // 0 = Medals, 1 = Comments //
         const [tabState, setTabState] = useState(0)
+
+        ////////////////
+        // Gif Status //
+        const [gif, setGif] = useState(false)
+
+        const [gifMedal, setGifMedal] = useState(0)
 
     //////////////////
     // Recoil State //
@@ -133,6 +142,8 @@ export default function WatchVideo(props) {
             setOrientation('portrait')
             Orientation.lockToPortrait()
         }
+        console.log("Changed orientation")
+        setChangeDems(!changeDems)
     },[isFullscreen])
 
     useEffect(() => {
@@ -142,7 +153,8 @@ export default function WatchVideo(props) {
         let temp = height
         setHeight(width)
         setWidth(temp)
-    }, [isFullscreen])
+        console.log("Reset height and width")
+    }, [changeDems])
         
     useEffect(() => {
         if (user.role === "THERAPIST"){
@@ -182,12 +194,33 @@ export default function WatchVideo(props) {
             if (isFullscreen){
                 return renderFullScreenVideo()
             }
+            else if (gif){
+                console.log(gif)
+                return(
+                    <Gradient
+                    colorOne={COLORS.gradientColor1}
+                    colorTwo={COLORS.gradientColor2}
+                    style={{paddingTop: 20, height: '100%'}}
+                    >
+                        {renderHeader()}
+                        <TouchableOpacity 
+                        onPress={() =>{
+                            setGif(false)
+                            console.log("dismiss gif")
+                        }}
+                        style={{height: maxHeight, width: maxWidth}}
+                        >
+                            <LoadingComponent loading={gif} source={gifMedal} label={"Congratulations!"} dismiss={true} setLoading={setGif}/>
+                        </TouchableOpacity>
+                    </Gradient>
+                )
+            }
             else{
                 return(
                     <Gradient
-                        colorOne={COLORS.gradientColor1}
-                        colorTwo={COLORS.gradientColor2}
-                        style={{paddingTop: 20, height: '100%'}}
+                    colorOne={COLORS.gradientColor1}
+                    colorTwo={COLORS.gradientColor2}
+                    style={{paddingTop: 20, height: '100%'}}
                     >  
                         {renderFirstView()}
                         {renderCompletionModal()}
@@ -330,7 +363,7 @@ export default function WatchVideo(props) {
                         <SelectionButton
                             title={`Gold Medals`}
                             titleColor={COLORS.gradientColor2}
-                            subtitle={"Complete the video without help, for a full minute with no breaks"}
+                            subtitle={"Complete the video without help, for a minute with no breaks"}
                             subtitleColor={COLORS.iconDark}
                             subTitle
                             icon={<MedalTab fillColor={'gold'} strokeColor={COLORS.iconDark}/>}
@@ -609,7 +642,20 @@ export default function WatchVideo(props) {
             .then((resolved) => {
             })
             .then(() => {
+                let medal = determineMedal()
+                let source
+                if (medal === "bronze"){
+                    source = 2
+                }
+                else if (medal === "silver"){
+                    source = 3
+                }
+                else if (medal === "gold"){
+                    source = 4
+                }
+                setGifMedal(source)
                 setShowComplete(false)
+                setGif(true)
             })
         }
 
