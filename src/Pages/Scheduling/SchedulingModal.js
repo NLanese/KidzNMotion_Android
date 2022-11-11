@@ -660,6 +660,7 @@ export default function SchedulingModal({showAssignmentsModal, setShowAssignment
 ///                   ///
 /////////////////////////
 
+    
     async function handleMainSubmit(type){
         if (type === "meeting"){
             return handleMeetingSubmissionClick()
@@ -704,7 +705,6 @@ export default function SchedulingModal({showAssignmentsModal, setShowAssignment
             }
         })
         .then((resolved) => {
-            console.log("Resolved in Handle Creater Assignment", resolved)
         })
         .catch(err => {
             setLoading(false)
@@ -725,7 +725,6 @@ export default function SchedulingModal({showAssignmentsModal, setShowAssignment
         await selectedClients.forEach((client) => {
            handleCreateMeeting(client)
            .then( (resolved) => {
-                console.log("Handle Meeting Submission", resolved)
            })
            .then(() => {
                 setRefresh(!refresh)
@@ -747,9 +746,9 @@ export default function SchedulingModal({showAssignmentsModal, setShowAssignment
             timeArray[0] = (parseInt(timeArray[0], 10) + 12).toString()
         }
         let submissionDate = new Date(`${dateAsArray[2]}-${dateAsArray[0]}-${dateAsArray[1]}T${timeArray[0]}:${timeArray[1]}:${timeArray[2]}.00Z`)
-        console.log(submissionDate)
-        console.log(timeArray)
-        console.log(amPm)
+        submissionDate = submissionDate.setHours(submissionDate.getHours() + 1)
+        submissionDate = new Date(submissionDate)
+        console.log("SUB DATE: ", submissionDate)
         return await createMeeting({
             variables: {
                 title: `${meetingDateObj} ${meetingType}`,
