@@ -1,6 +1,6 @@
 // React
 import React, { useState, useEffect } from "react";
-import { View,Text, Dimensions} from "react-native";
+import { View,Text, Dimensions, TouchableOpacity} from "react-native";
 
 import FastImage from "react-native-fast-image";
 import Modal from "react-native-modal";
@@ -46,6 +46,38 @@ export default function LoadingComponent({loading, setLoading=null, label, sourc
             return null
         }
     }
+
+    function MAIN(){
+        if (dismiss){
+            return(
+                <TouchableOpacity style={{postion: "absolute", top: 0, start: 0, left: '0%', zIndex: 999, height: maxHeight * 0.9, width: "100%", justifyContent: "center"}} onPress={() => handleDismiss()}>
+                    <FastImage
+                        style={{ width: 500, height: maxHeight*.5, alignSelf: "center", postion: "absolute" }}
+                        source={source}
+                        resizeMode={FastImage.resizeMode.contain}
+                    />
+                    <Text style={{alignSelf:"center", fontFamily: "Gilroy-Bold", color: 'white', fontSize: 24}}>
+                        {label}
+                    </Text>
+                </TouchableOpacity>
+            )
+        }
+        else{
+            return(
+                <View style={{postion: "absolute", top: 0, start: 0, left: '25%', zIndex: 999, height: maxHeight * 0.9, width: "50%", justifyContent: "center"}}>
+                    
+                <FastImage
+                    style={{ width: 500, height: maxHeight*.5, alignSelf: "center", postion: "absolute" }}
+                    source={source}
+                    resizeMode={FastImage.resizeMode.contain}
+                />
+                <Text style={{alignSelf:"center", fontFamily: "Gilroy-Bold", color: 'white', fontSize: 24, width: 300, textAlign: 'center'}}>
+                    {label}
+                </Text>
+            </View>
+            )
+        }
+    }
     
     return(
          <Modal
@@ -57,17 +89,7 @@ export default function LoadingComponent({loading, setLoading=null, label, sourc
                 animationIn="zoomIn"
                 animationOut="zoomOut"
             >
-            <View style={{postion: "absolute", top: 0, start: 0, left: '25%', zIndex: 999, height: maxHeight * 0.9, width: "50%", justifyContent: "center"}}>
-                    
-                    <FastImage
-                        style={{ width: 500, height: maxHeight*.5, alignSelf: "center", postion: "absolute" }}
-                        source={source}
-                        resizeMode={FastImage.resizeMode.contain}
-                    />
-                    <Text style={{alignSelf:"center", fontFamily: "Gilroy-Bold", color: 'white', fontSize: 24}}>
-                        {label}
-                    </Text>
-                </View>
+           {MAIN()}
         </Modal>
     )
     
