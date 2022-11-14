@@ -30,6 +30,12 @@ import { COLORS, FONTS, SIZES, DEFAULT_AVATAR } from '../NutonConstants';
 		default: []
 	});
 
+	// Tracks whether the app just opened or not
+	export const firstOpen = atom({
+		key: "firstOpen",
+		default: true
+	})
+
 /////////////////////
 // THERAPIST STATE //
 /////////////////////
