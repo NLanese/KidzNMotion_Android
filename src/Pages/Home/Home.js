@@ -37,7 +37,7 @@ import getAllTherapistAssignments from "../../Hooks/value_extractors/therapistVa
 import getUserChatroom from "../../Hooks/value_extractors/getChatroom"
 import filterAssignments from "../../Hooks/value_extractors/filterAssignments"
 import findAllAssignedVideos from "../../Hooks/value_extractors/childAndGuardianValues/findAllAssignedVideos"
-// import checkToken from "../../utils/firebase/checkToken"
+import checkToken from "../../utils/firebase/checkToken"
 
 // Dimensions
 let maxWidth = Dimensions.get('window').width
@@ -203,21 +203,11 @@ export default function Home() {
                 setSchedNotisLen(schedNotis.length)
             }, [msgNotis, schedNotis])
 
-            // Resets the Firebase Token if needed
-            useEffect(() => {
-                if (user.fcmToken){
-                    return
-                }
-                else{
-                    handleUpdatePhoneToken()
-                }
-            }, [user])
+
 
         /////////////
         // Testing //
         /////////////
-
-
 
 ///////////////////////
 ///                 ///
@@ -289,22 +279,24 @@ export default function Home() {
             <View style={{ marginBottom: 30 }}>
 
                 {/* Logo */}
-                <View style={{ marginTop: 40 }} >
-                    {/* <Image 
-                        source={require("../../../assets/images/background.png")}
+                <View style={{ marginTop: 70 }} >
+                    <Image 
+                        source={require("../../../assets/icon.png")}
                         style={{
-                            position: "absolute",
-                            width: SIZES.width,
-                            height: "100%",
+                            // position: "absolute",
+                            position: 'absolute',
+                            height: 70,
+                            width: 70,
+                            left: maxWidth * 0.5 - 35,
+                            borderRadius: 10
                         }}
-                    /> */}
+                    />
                    
                 </View>
                 
                 {/* Header Bar */}
                 <View style={{height: maxHeight * 0.1}}>
                     <Header
-                        title={<Logo fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight}/>}
                         goBack={false}
                         profile={true}
                         // Sends to Settings
@@ -500,7 +492,7 @@ export default function Home() {
                     />
                     <SelectionButton
                         title={"Videos"}
-                        subtitle={"Assign, Restrict, and Analyze Videos"}
+                        subtitle={"Assign, Watch, and Analyze Videos"}
                         image={"video"}
                         onSelect={() => navigation.navigate("VideoLibrary", )}
                         icon={<Play fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight}/>}
@@ -854,6 +846,8 @@ export default function Home() {
             .catch(err => console.log(err))
         }
 
+
+
 ///////////////////////
 ///                 ///
 ///       Main      ///
@@ -864,9 +858,6 @@ export default function Home() {
 
 
 ////// TESTING //////// 
-
-
-
     return (
         <Gradient
             colorOne={COLORS.gradientColor1}

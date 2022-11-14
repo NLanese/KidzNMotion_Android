@@ -2,6 +2,7 @@
 // REACT and Async //
 /////////////////////
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { Text, View, KeyboardAvoidingView } from 'react-native';
 import { RecoilRoot } from 'recoil';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -28,7 +29,12 @@ import ErrorBoundary from 'react-native-error-boundary'
 ////////////////////////
 // NOTIFICATION Stuff //
 ////////////////////////
-// import registerNNPushToken from 'native-notify';
+import messaging from '@react-native-firebase/messaging';
+// import { getFirebaseToken } from './src/utils/firebase/firebase';
+
+// import fb_auth from '@react-native-firebase/auth';
+// import firestore from '@react-native-firebase/firestore';
+
 
 ///////////
 // PAGES //
@@ -151,6 +157,8 @@ import {
 } from "./NutonScreens";
 
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 export default function App() {
 
 let state
@@ -190,6 +198,52 @@ const Stack = createNativeStackNavigator();
   });
 
 
+  // Firebase Push Notificiations
+
+  useEffect(() => {
+    handleUpdatePhoneToken()
+    notificationConfigure()
+}, [])
+
+  async function handleUpdatePhoneToken(){
+    const fcmToken = await messaging().getToken();
+    console.log("TOKEN:::: ", fcmToken)
+    console.log("TOKEN:::: ", fcmToken)
+    console.log("TOKEN:::: ", fcmToken)
+    console.log("TOKEN:::: ", fcmToken)
+    console.log("TOKEN:::: ", fcmToken)
+    console.log("TOKEN:::: ", fcmToken)
+    console.log("TOKEN:::: ", fcmToken)
+    console.log("TOKEN:::: ", fcmToken)
+}
+
+  notificationConfigure = async () => {
+    // check if we have permissions
+    let enabled = await messaging().hasPermission();
+
+    if (enabled === messaging.AuthorizationStatus.AUTHORIZED) {
+      const fcmToken = await messaging().getToken();
+      console.log("TOKEN", fcmToken);
+
+      if (fcmToken) {
+        console.log(fcmToken);
+      } else {
+        // user doesn't have a device token yet
+        console.warn("no token");
+      }
+    } else {
+      await messaging().requestPermission();
+      console.log("requested");
+
+      enabled = await messaging().hasPermission();
+      console.log("done", enabled);
+      if (!enabled) {
+        return false;
+      }
+    }
+
+    return true;
+  };
 
 
   return(
@@ -201,11 +255,10 @@ const Stack = createNativeStackNavigator();
         <RecoilRoot>
         
 
-        <KeyboardAvoidingView
-          keyboardVerticalOffset={10}
-          // behavior="padding"
+          <KeyboardAvoidingView
+          behavior="padding"
           enabled
-          style={{flexGrow:1,height:'0%'}}
+          style={{flexGrow:1,height:'100%'}}
           >
             <View style={{width: '100%', height: '100%'}}>
               <Stack.Navigator 

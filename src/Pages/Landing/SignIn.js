@@ -12,7 +12,7 @@ import client from '../../utils/apolloClient';
 
 // Recoil
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { userState, tokenState, clientListState, colorState, fontState, sizeState, videoDataState, avatarState, meetingState, assignState} from "../../../Recoil/atoms";
+import { userState, tokenState, clientListState, colorState, fontState, sizeState, videoDataState, avatarState, meetingState, assignState, firstOpen} from "../../../Recoil/atoms";
 
 // Renderings / Nuton 
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -32,7 +32,11 @@ import getAllTherapistAssignments from '../../Hooks/value_extractors/therapistVa
 import filterMeetings from '../../Hooks/value_extractors/filterMeetings';
 import filterAssignments from '../../Hooks/value_extractors/filterAssignments';
 
+// Loading
 import LoadingComponent from "./LoadingComponent"
+
+// Images
+
 
 
 let maxWidth = Dimensions.get('window').width
@@ -124,6 +128,12 @@ export default function SignIn() {
         // Assignments State
         const [assign, setAssign] = useRecoilState(assignState)
 
+        // First Open State
+        const [first, setFirst] = useRecoilState(firstOpen)
+
+        // Determmines whether or not we be splashing
+        const [splashing, setSplashing] = useState(first)
+
 ///////////////////////////
 ///                     ///
 ///      UseEffect      ///
@@ -190,6 +200,7 @@ export default function SignIn() {
                 query: GET_USER,
                 fetchPolicy: 'network-only'  
             })
+            .catch(err => {console.log(err)})
             .then(async(resolved) => {
                 // User //
                 await setUser(resolved.data.getUser)
@@ -356,6 +367,14 @@ export default function SignIn() {
             
         }
 
+        // Starts the Splash Countdown
+        function startSplashCountdown(){
+            setTimeout(function(){
+                console.log("hit splash stop")
+                setSplashing(false)
+            }, 3000)
+        }
+
 ///////////////////////////
 ///                     ///
 ///      Rendering      ///
@@ -377,15 +396,6 @@ export default function SignIn() {
                     flexGrow: 1,
                 }}
             >
-                {/* <Image
-                    source={require("../../../assets/images/other/logo.png")}
-                    style={{
-                        width: 30,
-                        height: 30,
-                        alignSelf: "center",
-                        marginBottom: 20,
-                    }}
-                /> */}
                 <Text
                     style={{
                         textAlign: "center",
@@ -526,6 +536,51 @@ export default function SignIn() {
         }
     }
 
+    function MAIN(){
+        if (splashing){
+            startSplashCountdown()
+            return(
+                // <View style={{backgroundColor: 'black', flex:1}}>
+                <Gradient
+                colorOne={COLORS.gradientColor1}
+                colorTwo={COLORS.gradientColor2}
+                style={{height: '100%'}}
+                >
+                    <View style={{
+                         flex: 1,
+                         justifyContent: 'center',
+                         alignItems: 'center'
+                    }}>
+                        <Image 
+                        source={require("../../../assets/icon.png")}
+                        style={{
+                            position: 'absolute',
+                            marginTop: '45%',
+                            width: '60%'
+                        }}
+                        resizeMode={'contain'}
+                    />
+                    </View>
+                </Gradient>
+            // </View>
+            )
+        }
+        else{
+            return(
+                <Gradient
+                colorOne={COLORS.gradientColor1}
+                colorTwo={COLORS.gradientColor2}
+                style={{height: '100%'}}
+                >
+                    <LoadingComponent loading={loading} label = "LOADING..."/>
+                    <View style={{marginTop: maxHeight * 0.05}} />
+                    {renderHeader()}
+                    {renderContent()}
+                </Gradient>
+            )
+        }
+    }
+
 ///////////////////////////
 ///                     ///
 ///     Main Render     ///
@@ -533,16 +588,5 @@ export default function SignIn() {
 ///////////////////////////
     
    
-    return (
-        <Gradient
-            colorOne={COLORS.gradientColor1}
-            colorTwo={COLORS.gradientColor2}
-            style={{height: '100%'}}
-        >
-            <LoadingComponent loading={loading} label = "LOADING..."/>
-            <View style={{marginTop: maxHeight * 0.05}} />
-            {renderHeader()}
-            {renderContent()}
-        </Gradient>
-    );
+    return MAIN()
 }
