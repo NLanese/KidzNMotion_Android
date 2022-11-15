@@ -432,7 +432,7 @@ useEffect(() => {
         {renderSendOrReplace()}
         <View>
           <Text style={{textAlign: 'center', fontSize: 30, marginTop: 30}}>
-            {cameraPerm}
+            {/* {cameraPerm} */}
           </Text>
         </View>
       </Gradient>
