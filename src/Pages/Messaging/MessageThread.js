@@ -651,7 +651,7 @@ export default function MessageThread(props) {
         colorTwo={COLORS.gradientColor2}
         style={{width: maxWidth * 1.00, height: '100%'}}
         >
-             <KeyboardAwareScrollView 
+            <KeyboardAwareScrollView 
             enableAutomaticScroll={false}  
             bounces={false} 
             enableOnAndroid         
@@ -661,7 +661,5 @@ export default function MessageThread(props) {
                 {MainRender()}
             </KeyboardAwareScrollView>
         </Gradient>
-
-        
     )
 }

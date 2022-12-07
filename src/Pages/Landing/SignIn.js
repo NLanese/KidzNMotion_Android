@@ -35,11 +35,7 @@ import filterAssignments from '../../Hooks/value_extractors/filterAssignments';
 // Loading
 import LoadingComponent from "./LoadingComponent"
 
-// Images
 
-
-
-let maxWidth = Dimensions.get('window').width
 let maxHeight = Dimensions.get('window').height
 
 export default function SignIn() {
