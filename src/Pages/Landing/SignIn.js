@@ -532,6 +532,7 @@ export default function SignIn() {
         }
     }
 
+    // Main
     function MAIN(){
         if (splashing){
             startSplashCountdown()
