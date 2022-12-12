@@ -38,33 +38,31 @@ export default function MessageThread(props) {
 ///                 ///
 ///////////////////////
 
-    const COLORS = useRecoilValue(colorState)
-    const FONTS = useRecoilValue(fontState)
-    const SIZES = useRecoilValue(sizeState)
-    const AVATAR = useRecoilValue(avatarState)
-    const token = useRecoilValue(tokenState)
-    const navigation = useNavigation();
+const COLORS = useRecoilValue(colorState)
+const FONTS = useRecoilValue(fontState)
+const SIZES = useRecoilValue(sizeState)
+const AVATAR = useRecoilValue(avatarState)
+const token = useRecoilValue(tokenState)
+const navigation = useNavigation();
 
-    // User
-    const [user, setUser] = useRecoilState(userState)
+// User
+const [user, setUser] = useRecoilState(userState)
 
-    // Chatroom (active)
-    const [chatroom, setChatroom] = useRecoilState(activeChatroom)
+// Chatroom (active)
+const [chatroom, setChatroom] = useRecoilState(activeChatroom)
 
-    // Contact Filler
-    const [contact, setContact] = useState({
-        firstName: false,
-        lastName: false,
-        profilePic: "null"
-    })
+// Contact Filler
+const [contact, setContact] = useState({
+    firstName: false,
+    lastName: false,
+    profilePic: "null"
+})
 
-    const [notis, setNotis] = useRecoilState(messageNotifications)
+const [notis, setNotis] = useRecoilState(messageNotifications)
 
-    const [textEntered, setTextEntered] = useState()
+const [textEntered, setTextEntered] = useState()
 
-    const [reset, setReset] = useState(props.reset)
-
-    const [msgAreaHeight, setMsgAreaHeight] = useState(0.72)
+const [reset, setReset] = useState(props.reset)
 
 
 ///////////////////////
@@ -152,76 +150,76 @@ export default function MessageThread(props) {
 ///                 ///
 ///////////////////////
 
-    const Styles = StyleSheet.create({
-        yourMessageBubble: {
-            padding: maxWidth * 0.01,
-            paddingLeft: maxWidth * 0.03,
-            backgroundColor: COLORS.gradientColor1,
-            borderRadius: 10,
-            flex: 7,
-            marginBottom: 8
-        },
-        yourMessageBubbleNA: {
-            padding: maxWidth * 0.01,
-            paddingLeft: maxWidth * 0.03,
-            marginLeft: maxWidth * 0.015,
-            borderRadius: 10,
-            flex: 7,
-            marginBottom: 8
-        },
-        messageProfilePic:{
-            flex: 2
-        },
-        theirMessageBubble: {
-            padding: maxWidth * 0.01,
-            marginRight: maxWidth * 0.015,
-            paddingLeft: maxWidth * 0.03,
-            backgroundColor: 'white',
-            borderRadius: 10,
-            flex: 7,
-            marginBottom: 8
-        },
-        theirMessageBubbleNA: {
-            padding: maxWidth * 0.01,
-            paddingRight: maxWidth * 0.03,
-            borderRadius: 10,
-            flex: 7,
-            marginBottom: 8
-        },
-        messageSpace: {
-            // position: 'relative',
-            marginRight: 2, 
-            marginLeft: 2, 
-            borderColor: COLORS.iconLight, 
-            height: maxHeight * 0.72,
-            padding: 4, 
-            borderColor: COLORS.iconLight, 
-            borderWidth: 1, 
-            borderRadius: 10,
-            paddingTop: 30, 
-            paddingBottom: 20,
-        },
-        textBubbleView: {
-        //    position: 'relative',
-           height: maxHeight * .20,
-           backgroundColor: COLORS.gradientColor1,
-           flexDirection: 'row'
-        },
-        textInput: {
-            borderWidth: 1,
-            borderRadius: 10,
-            borderColor: 'black',
-            marginLeft: maxWidth * 0.07,
-            margin: 10,
-            height: maxHeight * 0.12,
-            width: maxWidth * .75,
-            backgroundColor: 'white',
-            paddingRight: 20,
-            paddingLeft: 20,
-            paddingTop: 10,
-            paddingBottom: 15
-        }
-    })
+const Styles = StyleSheet.create({
+    yourMessageBubble: {
+        padding: maxWidth * 0.01,
+        paddingLeft: maxWidth * 0.03,
+        backgroundColor: COLORS.gradientColor1,
+        borderRadius: 10,
+        flex: 7,
+        marginBottom: 8
+    },
+    yourMessageBubbleNA: {
+        padding: maxWidth * 0.01,
+        paddingLeft: maxWidth * 0.03,
+        marginLeft: maxWidth * 0.015,
+        borderRadius: 10,
+        flex: 7,
+        marginBottom: 8
+    },
+    messageProfilePic:{
+        flex: 2
+    },
+    theirMessageBubble: {
+        padding: maxWidth * 0.01,
+        marginRight: maxWidth * 0.015,
+        paddingLeft: maxWidth * 0.03,
+        backgroundColor: 'white',
+        borderRadius: 10,
+        flex: 7,
+        marginBottom: 8
+    },
+    theirMessageBubbleNA: {
+        padding: maxWidth * 0.01,
+        paddingRight: maxWidth * 0.03,
+        borderRadius: 10,
+        flex: 7,
+        marginBottom: 8
+    },
+    messageSpace: {
+        // position: 'relative',
+        marginRight: 2, 
+        marginLeft: 2, 
+        borderColor: COLORS.iconLight, 
+        height: maxHeight * 0.72,
+        padding: 4, 
+        borderColor: COLORS.iconLight, 
+        borderWidth: 1, 
+        borderRadius: 10,
+        paddingTop: 30, 
+        paddingBottom: 20,
+    },
+    textBubbleView: {
+    //    position: 'relative',
+       height: maxHeight * .20,
+       backgroundColor: COLORS.gradientColor1,
+       flexDirection: 'row'
+    },
+    textInput: {
+        borderWidth: 1,
+        borderRadius: 10,
+        borderColor: 'black',
+        marginLeft: maxWidth * 0.07,
+        margin: 10,
+        height: maxHeight * 0.12,
+        width: maxWidth * .75,
+        backgroundColor: 'white',
+        paddingRight: 20,
+        paddingLeft: 20,
+        paddingTop: 10,
+        paddingBottom: 15
+    }
+})
    
 ///////////////////////
 ///                 ///
@@ -447,7 +445,7 @@ export default function MessageThread(props) {
                     style={{height: '100%'}}
                     value={textEntered}
                     onChangeText={(content) => setTextEntered(content)}
-                    onChange={() => setMsgAreaHeight(0.5)}
+                    // onChange={() => setMsgAreaHeight(0.5)}
                     onEndEditing={() => setMsgAreaHeight(0.72)}
                     multiline={true}
                 />
@@ -486,7 +484,7 @@ export default function MessageThread(props) {
         return(
             <View>
                 {/* All messages */}
-                <ScrollView style={Styles.messageSpace} contentContainerStyle={{height: maxHeight * 0.70, paddingBottom: maxHeight * .10}}>
+                <ScrollView style={Styles.messageSpace} contentContainerStyle={{paddingBottom: 40}}>
                     {renderAllMessages()}
                 </ScrollView>
                 {renderInputSpace()}
@@ -638,7 +636,6 @@ export default function MessageThread(props) {
         })
     }
 
-
 ///////////////////////
 ///                 ///
 ///    Main Render  ///
@@ -651,15 +648,15 @@ export default function MessageThread(props) {
         colorTwo={COLORS.gradientColor2}
         style={{width: maxWidth * 1.00, height: '100%'}}
         >
-            <KeyboardAwareScrollView 
+            <KeyboardAvoidingView 
             enableAutomaticScroll={false}  
-            bounces={false} 
             enableOnAndroid         
             keyboardShouldPersistTaps='handled'
+            behavior="padding"
             >
                 {renderHeader()}
                 {MainRender()}
-            </KeyboardAwareScrollView>
+            </KeyboardAvoidingView>
         </Gradient>
     )
 }
