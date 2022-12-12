@@ -203,6 +203,11 @@ export default function Home() {
                 setSchedNotisLen(schedNotis.length)
             }, [msgNotis, schedNotis])
 
+            // Updates Phone Token for Firebase Notis
+            useEffect(() => {
+                handleUpdatePhoneToken()
+            }, [user])
+
 
 
         /////////////
@@ -835,6 +840,12 @@ export default function Home() {
 
         async function handleUpdatePhoneToken(){
             const fcmToken = await messaging().getToken();
+            console.log("TOKEN \\ TOKEN \\ TOKEN \\ TOKEN \\")
+            console.log(fcmToken)
+            console.log(fcmToken)
+            console.log(fcmToken)
+            console.log(fcmToken)
+            console.log(fcmToken)
             return await updatePhoneToken({
                 variables: {
                     token: fcmToken
@@ -845,8 +856,6 @@ export default function Home() {
             })
             .catch(err => console.log(err))
         }
-
-
 
 ///////////////////////
 ///                 ///
@@ -860,9 +869,9 @@ export default function Home() {
 ////// TESTING //////// 
     return (
         <Gradient
-            colorOne={COLORS.gradientColor1}
-            colorTwo={COLORS.gradientColor2}
-            style={{height: '110%', paddingTop: 5}}
+        colorOne={COLORS.gradientColor1}
+        colorTwo={COLORS.gradientColor2}
+        style={{height: '110%', paddingTop: 5}}
         >
             {renderHeader()}
             <ScrollView contentContainerStyle={{height: '120%', paddingBottom: '10%'}}>
