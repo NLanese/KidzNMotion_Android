@@ -561,6 +561,8 @@ const EDIT_USER_NOTIFICATION_SETTINGS = gql`
       muteAssignmentNotifications: $muteAssignmentNotifications,
     ){
       id
+      assignMuted
+      messagesMuted
     }
   }
 `
@@ -755,6 +757,22 @@ const DISMISS_NOTIFICATION = gql`
   ){
     dismissNotification(
       notificationID: $notificationID
+    )
+  }
+`
+
+const CREATE_USER_TO_USER_NOTIFICATION = gql`
+  mutation Mutation(
+    $title: String!
+    $description: String!,
+    $type: String!
+    $toUserId: String!
+  ){
+    createUserToUserNotification(
+      title: $title
+      description: $description
+      type: $type
+      toUserId: $toUserId
     )
   }
 `
@@ -967,6 +985,7 @@ export {   //
   CREATE_CHATROOM,
   SEND_MESSAGE,
   DISMISS_NOTIFICATION,
+  CREATE_USER_TO_USER_NOTIFICATION,
 
   CREATE_ASSIGNMENT,
   CREATE_MEETING,
