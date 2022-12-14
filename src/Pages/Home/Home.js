@@ -1,3 +1,4 @@
+
 // Async
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -18,6 +19,7 @@ import { COLORS as colorConstant }  from "../../../NutonConstants"
 import { DEFAULT_AVATAR } from '../../../NutonConstants';
 
 // Firebase
+import { firebase } from '@react-native-firebase/messaging';
 import messaging from '@react-native-firebase/messaging';
 
 // GraphQL Apollo
@@ -37,6 +39,7 @@ import getAllTherapistAssignments from "../../Hooks/value_extractors/therapistVa
 import getUserChatroom from "../../Hooks/value_extractors/getChatroom"
 import filterAssignments from "../../Hooks/value_extractors/filterAssignments"
 import findAllAssignedVideos from "../../Hooks/value_extractors/childAndGuardianValues/findAllAssignedVideos"
+import findMissedAssignments from '../../Hooks/value_extractors/findMissedAssignments';
 import checkToken from "../../utils/firebase/checkToken"
 
 // Dimensions
@@ -73,6 +76,9 @@ export default function Home() {
         const SIZES = useRecoilValue(sizeState)
         const AVATAR = useRecoilValue(avatarState)
         const navigation = useNavigation();
+
+        // Firebase Constant
+        const defaultAppMessaging = firebase.messaging();
 
     ////////////
     //  State //
@@ -157,14 +163,29 @@ export default function Home() {
             useEffect(() => {
                 handleColorInput(user.colorSettings)
                 setAvatar(user.profilePic)
+
+                // CHILD
                 if (user.role === "CHILD"){
+
+                    let missed = findMissedAssignments(getAllChildAssignments(user))
+                    console.log(missed)
+
                     let assign = filterAssignments(getAllChildAssignments(user))
                     setAssign(assign)
                 }
+
+                // GUARDIAN
                 else if (user.role === "GUARDIAN"){
+
+                    let missed = findMissedAssignments(getAllGuardianAssignments(user)[0])
+                    console.log(missed)
+
+
                     let assign = filterAssignments(getAllGuardianAssignments(user)[0])
                     setAssign(assign)
                 }
+
+                // THERAPIST
                 else if (user.role === "THERAPIST"){
                     let assign = filterAssignments(getAllTherapistAssignments(user))
                     setAssign(assign)
@@ -190,6 +211,9 @@ export default function Home() {
                 setSchedNotis( schedNotis => ([...clear]))
             } 
 
+            // Registers the Device for Firebase Token
+            // firebase.messaging().registerDeviceForRemoteMessages()
+
             // Fires every reload in order to retain notifications
             useEffect(() => {
                 getAndSetNotifications()
@@ -203,8 +227,8 @@ export default function Home() {
                 setSchedNotisLen(schedNotis.length)
             }, [msgNotis, schedNotis])
 
-            // Updates Phone Token for Firebase Notis
-            useEffect(() => {
+             // Updates Phone Token for Firebase Notis
+             useEffect(() => {
                 handleUpdatePhoneToken()
             }, [user])
 
@@ -286,14 +310,16 @@ export default function Home() {
                 {/* Logo */}
                 <View style={{ marginTop: 70 }} >
                     <Image 
-                        source={require("../../../assets/wIcon.png")}
+                        source={require("../../../assets/icon.png")}
                         style={{
                             // position: "absolute",
                             position: 'absolute',
                             height: 70,
                             width: 70,
                             left: maxWidth * 0.5 - 35,
-                            borderRadius: 10
+                            borderRadius: 10,
+                            marginTop: -15,
+                            marginBottom: 15
                         }}
                     />
                    
@@ -649,7 +675,7 @@ export default function Home() {
                     childUserID: selectedChild.id
                 }
             })
-            .catch(err => {console.log(err)})
+            .catch(err => {throw new Error(err)})
         }
 
     ////////////////////////
@@ -760,7 +786,7 @@ export default function Home() {
                     username: email,
                     password: password,
                 }
-            }).catch(err => {console.log(err)})
+            }).catch(err => {throw new Error(err)})
         }
     
     /////////////////////////////
@@ -839,23 +865,19 @@ export default function Home() {
     //////////////////////
 
         async function handleUpdatePhoneToken(){
-            const fcmToken = await messaging().getToken();
-            console.log("TOKEN \\ TOKEN \\ TOKEN \\ TOKEN \\")
-            console.log(fcmToken)
-            console.log(fcmToken)
-            console.log(fcmToken)
-            console.log(fcmToken)
-            console.log(fcmToken)
+            const fcmToken = await defaultAppMessaging.getToken();
             return await updatePhoneToken({
                 variables: {
                     token: fcmToken
                 }
             })
             .then((resolved) => {
-                console.log(resolved)
+                // console.log("resolved updatePhoneToken Mutation:", resolved)
             })
             .catch(err => console.log(err))
         }
+
+
 
 ///////////////////////
 ///                 ///
@@ -863,15 +885,27 @@ export default function Home() {
 ///                 ///
 ///////////////////////
 
+    async function printToken(){
+        let token = "Nothing yet"
+        await defaultAppMessaging.getToken()
+        .then(resolved => {
+            token = resolved
+            // console.log("TOKEN :", token)
+        })
+    }
+
 
 
 
 ////// TESTING //////// 
+
+    printToken()
+
     return (
         <Gradient
-        colorOne={COLORS.gradientColor1}
-        colorTwo={COLORS.gradientColor2}
-        style={{height: '110%', paddingTop: 5}}
+            colorOne={COLORS.gradientColor1}
+            colorTwo={COLORS.gradientColor2}
+            style={{height: '110%', paddingTop: 5}}
         >
             {renderHeader()}
             <ScrollView contentContainerStyle={{height: '120%', paddingBottom: '10%'}}>
@@ -880,8 +914,3 @@ export default function Home() {
         </Gradient>
     );
 }
-
-
-
-
-
