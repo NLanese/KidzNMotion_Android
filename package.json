@@ -28,6 +28,7 @@
     "expo-linear-gradient": "^11.4.0",
     "expo-mail-composer": "^11.3.0",
     "expo-media-library": "^14.2.0",
+    "expo-modules-core": "^1.0.3",
     "graphql": "^16.6.0",
     "install": "^0.13.0",
     "jest-expo": "^46.0.1",
