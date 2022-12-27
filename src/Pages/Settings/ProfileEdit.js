@@ -1,6 +1,6 @@
 // React
-import { View, Text, SafeAreaView, ScrollView, Image, TouchableOpacity, Dimensions } from "react-native";
-import React, { useState } from "react";
+import { View, Text, SafeAreaView, ScrollView, Image, TouchableWithoutFeedback, TouchableOpacity, Dimensions } from "react-native";
+import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
@@ -81,6 +81,26 @@ export default function ProfileEdit() {
         // Whether Deletion Modal is open
         const [deleteModal, setDeleteModal] = useState(false)
 
+        // In Input to ddetermine keyboard activity
+        const [keyboard, setKeyBoard] = useState(false)
+
+        // Padding between keyboard and page
+        const [bottomPad, setBottomPad] = useState(0)
+
+
+        // Manual KeyboardAwareView
+        useEffect(() => {
+            console.log("changed")
+            if (keyboard){
+                console.log("padding")
+                setBottomPad(-155)
+            }
+            else{
+                console.log("none")
+                setBottomPad(0)
+            }
+        }, [keyboard])
+
 
 ///////////////////////////
 ///                     ///
@@ -114,18 +134,6 @@ export default function ProfileEdit() {
     function renderProfileAndChange(){
         return(
             <View>
-                {/* <ImageBackground
-                    source={{ uri: "https://via.placeholder.com/360x360" }}
-                    style={{
-                        width: 120,
-                        height: 120,
-                        alignSelf: "center",
-                        marginTop: 20,
-                        marginBottom: 20,
-                    }}
-
-                    imageStyle={{ borderRadius: 60 }}
-                /> */}
                 <PersonasAvatar 
                     style={{
                             width: 120,
@@ -150,28 +158,33 @@ export default function ProfileEdit() {
     // Inputs that literally everyone (BUT CHILDREN) have
     function renderStaticInputs() {
         return (
-            <ScrollView
-                contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 20 }}
-                showsVerticalScrollIndicator={false}
-            >
-                {renderDynamicInputs()}
-                <ProfileEditCategoryComponent
-                    title="First Name"
-                    placeholder={`${user.firstName}`}
-                    onChangeText={(e) => onChangeText(e,'firstName')}
-                />
-                <ProfileEditCategoryComponent
-                    title="Last Name"
-                    placeholder={`${user.lastName}`}
-                    onChangeText={(e) => onChangeText(e,'lastName')}
-                />
-                <ProfileEditCategoryComponent
-                    title="Phone Number"
-                    placeholder={user.phoneNumber}
-                    onChangeText={(e) => onChangeText(e,'phoneNumber')}
-                />
-                
-            </ScrollView>
+            <View>
+            <TouchableOpacity onPress={() => setKeyBoard(false)}>
+                <View style={{marginRight: '10%', marginLeft: '5%'}}>
+                    {renderDynamicInputs()}
+                    <ProfileEditCategoryComponent
+                        title="First Name"
+                        placeholder={`${user.firstName}`}
+                        onChangeText={(e) => onChangeText(e,'firstName')}
+                        // onPressIn={() => setKeyBoard(true)}
+                    />
+                    <ProfileEditCategoryComponent
+                        title="Last Name"
+                        placeholder={`${user.lastName}`}
+                        onChangeText={(e) => onChangeText(e,'lastName')}
+                        // onPressIn={() => setKeyBoard(true)}
+                    />
+                    <ProfileEditCategoryComponent
+                        title="Phone Number"
+                        placeholder={user.phoneNumber}
+                        onChangeText={(e) => onChangeText(e,'phoneNumber')}
+                        // onPressIn={() => setKeyBoard(true)}
+                    />
+                </View>
+            </TouchableOpacity>
+                    
+            </View>
+            
         );
     }
 
@@ -286,7 +299,7 @@ export default function ProfileEdit() {
         )
     }
 
-    // facial hair?
+    // Facial hair?
     function renderFacialHair(){
         return(
             <View style={{flexDirection: "row"}}>
@@ -455,6 +468,7 @@ export default function ProfileEdit() {
                         title="Username"
                         placeholder={user.username}
                         onChangeText={(e) => onChangeText(e,'username')}
+                        // onPressIn={() => setKeyBoard(true)}
                     />
                 </>
             )
@@ -466,11 +480,13 @@ export default function ProfileEdit() {
                         title="Username"
                         placeholder={user.username}
                         onChangeText={(e) => onChangeText(e,'username')}
+                        // onPressIn={() => setKeyBoard(true)}
                     />
                     <ProfileEditCategoryComponent
                         title="Email"
                         placeholder={user.email}
                         onChangeText={(e) => onChangeText(e,'email')}
+                        // onPressIn={() => setKeyBoard(true)}
                     />
                 </>
 
@@ -498,8 +514,9 @@ export default function ProfileEdit() {
     // Renders Save and Delete Buttons
     function renderButtons(){
         return(
-            <View style={{width: '80%', marginLeft: '10%'}}>
+            <View style={{width: '80%', marginLeft: '10%', marginTop: 30, marginBottom: 30}}>
                 <Button
+                    style={{marginTop: 10}}
                     title="Save changes"
                     onPress={() => {
                         handleEditMutation()
@@ -600,8 +617,6 @@ export default function ProfileEdit() {
         )
     }
 
-    
-
 ///////////////////////////
 ///                     ///
 ///       Handler       ///
@@ -693,6 +708,8 @@ export default function ProfileEdit() {
         }).catch(err => console.log(err))
     }
 
+    // 
+
 
 ///////////////////////////
 ///                     ///
@@ -702,22 +719,31 @@ export default function ProfileEdit() {
 
     return (
         <KeyboardAwareScrollView
-            showsVerticalScrollIndicator={false}
-            bounces={false}
-            style={{paddingBottom: 0}}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+        style={{paddingBottom: 0}}
         >
              <Gradient
-                colorOne={COLORS.gradientColor1}
-                colorTwo={COLORS.gradientColor2}
-                style={{height: maxHeight}}
+            colorOne={COLORS.gradientColor1}
+            colorTwo={COLORS.gradientColor2}
+            style={{height: maxHeight, marginTop: bottomPad}}
             >
-                <View style={{marginTop: 45}} />
-                {renderHeader()}
-                {renderProfileAndChange()}
-                {renderStaticInputs()}
-                {renderAvatarModal()}
-                {renderDeletionModal()}
-                {renderButtons()}
+                <TouchableWithoutFeedback onPress={() => setKeyBoard(false)}>
+                    <View style={{marginTop: 45}}>
+                        {renderHeader()}
+                        <ScrollView
+                        contentContainerStyle={{paddingBottom: 40}}
+                        showsVerticalScrollIndicator={false}
+                        style={{paddingBottom: 40}}
+                        >
+                            {renderProfileAndChange()}
+                            {renderStaticInputs()}
+                            {renderButtons()}
+                        </ScrollView>
+                        {renderAvatarModal()}
+                        {renderDeletionModal()}
+                    </View>
+                </TouchableWithoutFeedback>
             </Gradient>
         </KeyboardAwareScrollView>
     );
