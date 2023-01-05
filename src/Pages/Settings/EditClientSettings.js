@@ -1,4 +1,4 @@
-// Reaact
+// React
 import { View, Text, SafeAreaView, ScrollView, Image, ImageBackground, TouchableOpacity, Dimensions, Switch} from "react-native";
 import React, {useState} from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -6,7 +6,6 @@ import Modal from "react-native-modal";
 
 // Nuton
 import { Header, Button, ProfileEditCategoryComponent } from "../../../NutonComponents";
-
 
 // Loading
 import LoadingComponent from "../../Global/LoadingComponent"
@@ -48,7 +47,8 @@ export default function EditClientSettings(props) {
         // The Account Whose Settings You Are On
         const client = props.route.params?.item
 
-        console.log(client.user)
+        console.log("-=-=-=-=-=-=-=-=-=-=-")
+        console.log("THIS USER: ", {assignMuted: client.user.assignMuted, messagesMuted: client.user.messagesMuted})
 
     /////////////////
     // Local State //
@@ -74,7 +74,7 @@ export default function EditClientSettings(props) {
         const [messageNotis, setMessageNotis] = useState(!msgOg)
 
         // Assignment Notifications
-        const [assNotis, setAssNotis] = useState(!client.user.assignMuted)
+        const [assNotisMuted, setassNotisMuted] = useState(client.user.assignMuted)
 
 
     //////////////////
@@ -283,13 +283,14 @@ export default function EditClientSettings(props) {
                     <Text
                         style={{
                             textAlign: "center",
-                            ...FONTS.H2,
-                            lineHeight: 20 * 1.5,
+                            fontFamily: "Gilroy-Bold",
                             marginBottom: 30,
-                            textTransform: "capitalize",
                         }}
                     >
-                        {`Do you really want to remove ${client.firstName} ${client.lastName} from your network? \n Warning: This cannot be undone`}
+                        {`Do you really want to remove ${client.user.firstName} ${client.user.lastName} from your network?`}
+                    </Text>
+                    <Text style={{ textAlign: "center", fontFamily: "Gilroy-SemiBold", marginBottom: 30, marginTop: -20}}>
+                        Warning: This cannot be undone
                     </Text>
                     <View
                         style={{
@@ -309,10 +310,11 @@ export default function EditClientSettings(props) {
                                 marginHorizontal: 7.5,
                                 borderColor: COLORS.buttonBorder,
                                 borderWidth: 1,
+                                borderColor: 'black',
+                                borderWidth: 1,
                             }}
                             onPress={() => {
                                 setShowDropClient(false);
-                                // navigation.navigate("SignIn");
                             }}
                         >
                             <Text
@@ -369,9 +371,9 @@ export default function EditClientSettings(props) {
             }
         }
         else if (type === "ass"){
-            caption = "Assignment Notifications"
-            valueFunction = setAssNotis 
-            existingValue = assNotis
+            caption = "Assignments Muted"
+            valueFunction = setassNotisMuted 
+            existingValue = assNotisMuted
         }
         return(
             <View style={{flexDirection: 'row', width: '90%', marginLeft: '3%', marginBottom: 15 }}>
@@ -411,17 +413,7 @@ export default function EditClientSettings(props) {
                     }}
                 >
                     {/* Announcement */}
-                    <Text
-                        style={{
-                            textAlign: "center",
-                            fontFamily: 'Gilroy-Bold',
-                            fontSize: 17,
-                            letterSpacing: 0.5,
-                            lineHeight: 20 * 1.5,
-                            marginBottom: 30,
-                            textTransform: "capitalize",
-                        }}
-                    >
+                    <Text style={{ textAlign: "center", fontFamily: 'Gilroy-Bold', fontSize: 17, letterSpacing: 0.5, lineHeight: 20 * 1.5, marginBottom: 30,  textTransform: "capitalize", }}>
                         Set your notifications for this user
                     </Text>
 
@@ -557,19 +549,18 @@ export default function EditClientSettings(props) {
 
     // Handles the Change Notifications Mutation
     function handleNotificationMutation(){
-        console.log(client.user.id)
-        console.log(messageNotis)
-        console.log(assNotis)
+        console.log("Messages Muted? :", messageNotis)
+        console.log("Assignment Muted? :", assNotisMuted)
         setLoading(true)
         changeUserNotifications({
             variables: {
                 userID: client.user.id,
                 messagesMuted: messageNotis,
-                assignMuted: assNotis,
+                assignMuted: assNotisMuted,
             }
         })
         .then(resolved => {
-            console.log(resolved)
+            console.log("RESOLVED: ", resolved)
             getAndSetUser()
         })
         .catch(err => {
