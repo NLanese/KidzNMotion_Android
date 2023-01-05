@@ -9,7 +9,7 @@ import { AndroidSafeArea } from "../../../../NutonConstants";
 
 // Recoil
 import { useRecoilValue, useRecoilState } from "recoil";
-import { colorState, sizeState, fontState, userState } from '../../../../Recoil/atoms';
+import { colorState, sizeState, fontState, userState, selectedClientState } from '../../../../Recoil/atoms';
 
 // Ostrich
 import Gradient from "../../../../OstrichComponents/Gradient";
@@ -52,6 +52,8 @@ export default function ClientList() {
         const [user, setUser] = useRecoilState(userState)
 
         const [clientPlans, setClientPlans] = useState(user.patientCarePlans)
+
+        const [selectedClient, setSelectedClient] = useRecoilState(selectedClientState)
         
         // 0 = Child 1 = Guardian
         const [clientType, setClientType] = useState(0)
@@ -218,6 +220,7 @@ export default function ClientList() {
         }
     }
 
+    // Renders the Selection Tab for Children or Parents
     function renderParentOrChildTabBar(){
         return(
             <View style={{justifyContent: 'center', alignItems: 'center'}}>
@@ -232,7 +235,6 @@ export default function ClientList() {
             </View>
         )
     }
-
 
     // Renders Clients
     function renderClients() {
@@ -253,11 +255,10 @@ export default function ClientList() {
                     subtitle={`${client.user.role}`}
                     hasProfilePic={true}
                     profilePic={client.user.profilePic}
-                    onSelect={() =>
-                        navigation.navigate("Profile", {
-                            item: client,
-                        })
-                    }
+                    onSelect={() => {
+                        setSelectedClient(client)
+                        navigation.navigate("Profile")
+                    }}
                 />
             )
         }) 
