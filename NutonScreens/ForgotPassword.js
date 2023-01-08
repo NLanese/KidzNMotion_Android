@@ -1,30 +1,37 @@
 import { View, Text, SafeAreaView, Image } from "react-native";
-import React, {useState} from "react";
+import React , {useEffect, useState}from "react";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useNavigation } from "@react-navigation/native";
+import Modal from "react-native-modal";
 
 import { Header, InputField, Button } from "../NutonComponents";
 import { AREA} from "../NutonConstants";
 
-import { useMutation } from "@apollo/client";
 import { REQUEST_RESET_PASSWORD } from "../GraphQL/operations";
+import { useMutation } from "@apollo/client";
 
 import { useRecoilValue } from "recoil";
 import { colorState, fontState, sizeState } from '../Recoil/atoms';
 
 export default function ForgotPassword() {
-
-
-
     const navigation = useNavigation();
     const COLORS = useRecoilValue(colorState)
     const FONTS = useRecoilValue(fontState)
     const SIZES = useRecoilValue(sizeState)
 
-    const [requestResetPassword, { loading: loadingType, error: errorType, data: typeData }] = useMutation(REQUEST_RESET_PASSWORD);
+    // Mutation
+    const [requestReset, { loading: loadingR, error: errorR, data: dataR }] =useMutation(REQUEST_RESET_PASSWORD);
 
 
-    const [email, setEmail] = useState("")
+    // Entered in Input
+    const [email, setEmail] = useState(false)
+
+    // Boolean Modal Status
+    const [modal, setModal] = useState(false)
+
+    ////////////////
+    // RENDERINGS //
+    ////////////////
 
     function renderHeader() {
         return (
@@ -62,7 +69,7 @@ export default function ForgotPassword() {
                 />
                 <Button
                     title="Send"
-                    onPress={() => resetPasswordFunction()}
+                    onPress={() => handleRequestReset()}
                 />
             </KeyboardAwareScrollView>
         );
@@ -82,32 +89,58 @@ export default function ForgotPassword() {
         );
     }
 
-    // Reset Password Mutation (not whole function)
-    const handleResetMutation = async () => {
-        return await requestResetPassword({
+    function renderModal(){
+        return(
+            <Modal
+            isVisible={modal}
+            onBackdropPress={() => setModal(!modal)}
+            hideModalContentWhileAnimating={true}
+            backdropTransitionOutTiming={0}
+            style={{ margin: 0 }}
+            animationIn="zoomIn"
+            animationOut="zoomOut"
+            >
+                <View
+                style={{
+                    width: SIZES.width - 40,
+                    backgroundColor: COLORS.white,
+                    marginHorizontal: 20,
+                    borderRadius: 10,
+                    paddingHorizontal: 20,
+                    paddingTop: 40,
+                    paddingBottom: 30,
+                }}
+                >
+                    <Text style={{...FONTS.Title, textAlign: 'center'}}>
+                        The email has been sent!
+                    </Text>
+                </View>
+            </Modal>
+        )
+    }
+
+    //////////////
+    // HANDLERS //
+    //////////////
+
+    async function handleRequestReset(){
+        return await requestReset({
             variables: {
                 email: email
-            }  
-        })
-        .catch(err => console.log(err))
-    }
-
-    // Handles the Confirmed Reset
-    const resetPasswordFunction = () => {
-        handleResetMutation().then( resolved => {
-            if (resolved){
-                console.log(resolved)
             }
-            else{
-                console.log("ERROR")
-            }
+        }).then(() => {
+            setModal(true)
         })
     }
 
+    //////////
+    // MAIN //
+    //////////
     return (
         <SafeAreaView style={{ ...AREA.AndroidSafeArea }}>
             {renderBackground()}
             {renderHeader()}
+            {renderModal()}
             {renderContent()}
         </SafeAreaView>
     );
