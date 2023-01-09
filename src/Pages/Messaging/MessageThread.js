@@ -1,8 +1,7 @@
 // Reaact
-import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, KeyboardAvoidingView } from "react-native";
+import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Dimensions, TouchableWithoutFeedback } from "react-native";
 import React, {useState} from "react";
 import { useNavigation } from "@react-navigation/native";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 // Pusher
 import pusherClient from "../../utils/pusherClient";
@@ -58,11 +57,20 @@ const [contact, setContact] = useState({
     profilePic: "null"
 })
 
+// Notifications
 const [notis, setNotis] = useRecoilState(messageNotifications)
 
+// Text Entered in Message Space
 const [textEntered, setTextEntered] = useState()
 
+// Not sure anymore
 const [reset, setReset] = useState(props.reset)
+
+// For paddingBottom
+const [inMessageSpace, setInMessageSpace] = useState(false)
+
+// Padding for the bottom of the view when keyboard comes up since KeyboardAvoidingView is the worst thing since aids
+const [bottomPad, setBottomPad] = useState(0)
 
 
 ///////////////////////
@@ -108,6 +116,19 @@ const [reset, setReset] = useState(props.reset)
     useEffect(() => {
         handleNotifications()
     }, [contact])
+
+    // Adds padding to the bottom since KeyboardAvoidingView is absolutely gay as fuck
+    useEffect(() => {
+        console.log("changed")
+        if (inMessageSpace){
+            console.log("padding")
+            setBottomPad(-155)
+        }
+        else{
+            console.log("none")
+            setBottomPad(0)
+        }
+    }, [inMessageSpace])
 
 
 ///////////////////////
@@ -444,7 +465,8 @@ const Styles = StyleSheet.create({
                 <TextInput
                     style={{height: '100%'}}
                     value={textEntered}
-                    onChangeText={(content) => setTextEntered(content)}
+                    onPressIn={() => setInMessageSpace(true)}
+                    onChangeText={(content) => { setTextEntered(content) }}
                     multiline={true}
                 />
             </View>
@@ -482,9 +504,11 @@ const Styles = StyleSheet.create({
         return(
             <View>
                 {/* All messages */}
+                <TouchableWithoutFeedback onPress={() => setInMessageSpace(false)}>
                 <ScrollView style={Styles.messageSpace} contentContainerStyle={{paddingBottom: 40}}>
-                    {renderAllMessages()}
+                        {renderAllMessages()}
                 </ScrollView>
+                </TouchableWithoutFeedback>
                 {renderInputSpace()}
             </View>
         )
@@ -641,20 +665,23 @@ const Styles = StyleSheet.create({
 ///////////////////////
 
     return(
-        <KeyboardAvoidingView 
-        enableAutomaticScroll={false}  
-        enableOnAndroid         
-        keyboardShouldPersistTaps='handled'
-        >
-            <Gradient
-            colorOne={COLORS.gradientColor1}
-            colorTwo={COLORS.gradientColor2}
-            style={{width: maxWidth * 1.00, height: '100%'}}
-            >
-                {renderHeader()}
-                {MainRender()}
-            </Gradient>
-        </KeyboardAvoidingView>
-        
+        // <SafeAreaView style={{ flex: 1 }}>
+        // <KeyboardAvoidingView
+        // behavior={Platform.OS === "ios" ? "padding" : "height"}
+        // style={{flex: 1}}
+        // enabled
+        // >
+            <View>
+                <Gradient
+                colorOne={COLORS.gradientColor1}
+                colorTwo={COLORS.gradientColor2}
+                style={{marginTop: bottomPad}}
+                >
+                    {renderHeader()}
+                    {MainRender()}
+                </Gradient>
+            </View>
+        // </KeyboardAvoidingView>
+        // </SafeAreaView>
     )
 }
