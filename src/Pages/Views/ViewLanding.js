@@ -1,16 +1,12 @@
 // React
 import {  View, Text, ImageBackground, Image, TextInput, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator,Dimensions} from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 import Gradient from "../../../OstrichComponents/Gradient";
 
 // Nuton
-import { categories, promo, courses, popular } from "../../../NutonConstants";
 import { useRecoilValue } from "recoil";
 import { colorState, fontState, sizeState, userState } from '../../../Recoil/atoms';
 
 // Other Views
-import ViewClients from "./Views/ViewClients";
-import ViewTherapists from "./Views/ViewTherapists";
 
 
 const ViewLanding = () => {
