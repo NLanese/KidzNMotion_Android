@@ -13,10 +13,11 @@ import { COLORS as colorConstant }  from "../../../NutonConstants"
 // Recoil
 import { useRecoilState, useRecoilValue } from "recoil";
 import { colorState, fontState, sizeState, userState, tokenState, avatarState } from '../../../Recoil/atoms';
+import client from "../../utils/apolloClient";
 
 // Mutation
 import { useMutation } from "@apollo/client";
-import { LOGOUT_USER, EDIT_COLOR_SETTINGS } from "../../../GraphQL/operations";
+import { LOGOUT_USER, EDIT_COLOR_SETTINGS, GET_USER } from "../../../GraphQL/operations";
 
 // Gradient
 import Gradient from "../../../OstrichComponents/Gradient";
@@ -110,10 +111,10 @@ export default function SettingsLanding() {
                 colorTwo={COLORS.gradientColor2}
                 style={{height: '100%'}}
                 >
-                    <View style={{marginLeft: 3}}>
+                    <ScrollView style={{marginLeft: 3}}>
                         {MainRender()}
                         {renderColorModal()}
-                    </View>
+                    </ScrollView>
                 </Gradient>
             )
         }
@@ -368,10 +369,24 @@ export default function SettingsLanding() {
                     <Text style={{...FONTS.Title, fontSize: 34, textAlign: 'center', color: COLORS.headerTitle, marginBottom: 15}}>
                         {user.firstName} {user.lastName}
                     </Text>
+                    {renderOrgCode()}
                 </View>
                 
             </View>
         )
+    }
+
+    function renderOrgCode(){
+        // if (user.role === "THERAPIST"){
+        //     console.log({...user, chatRooms: [], fcmToken: "", ownedOrganization: ""})
+        //     console.log(user.organizations)
+        //     return(
+        //         <Text style={{...FONTS.Title, fontSize: 28, textAlign: 'center', color: "#777", marginBottom: 15}}>
+        //             SignUp Code: 
+        //         </Text>
+        //     )
+        // }
+        return null
     }
 
     // Main Render Boi
@@ -416,6 +431,7 @@ export default function SettingsLanding() {
         }
     }
 
+    // Renders the Button Seelction for Guardians
     function renderGuardianOptions(){
         return(
             <View style={{marginLeft: -4}}>
@@ -444,6 +460,7 @@ export default function SettingsLanding() {
         )
     }
 
+    // Renders the Button Seelction for Therapists
     function renderTherapistOptions(){
         return(
             <View>
@@ -462,7 +479,7 @@ export default function SettingsLanding() {
                     onSelect={() => navigation.navigate("ProfileEdit")}
                     plainCenter={true}
                 />
-                {renderOrganizationSettings()}
+                {/* {renderOrganizationSettings()} */}
                 <SelectionButton 
                     title={"Sign Out"}
                     plainCenter={true}
@@ -534,13 +551,15 @@ export default function SettingsLanding() {
             }
             else{
                 setShowColorModal(false)
+                setColors(colors)
             }
         }
 
         // if CONFIRM
         else if (input === "confirm"){
             setShowColorModal(false)
-            colorMutation()
+            await colorMutation()
+            await getAndSetUser()
             .then((resolved) => {
             })
         }
@@ -553,6 +572,23 @@ export default function SettingsLanding() {
                 colorSettings: colorString
             }
         }).catch(err => console.log(err))
+        .then((resolved) => {
+            console.log(resolved)
+        })
+    }
+
+    // Gets the user obj and resets the userState
+    async function getAndSetUser(){
+        await client.query({
+            query: GET_USER,
+            fetchPolicy: 'network-only'  
+        })
+        .then(async (resolved) => {
+            await setUser(resolved.data.getUser)
+        })
+        .catch((error) => {
+            console.log(error)
+        })
     }
 
     return MAIN()
