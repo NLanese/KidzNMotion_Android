@@ -105,8 +105,8 @@ const SelectionButton = ({ image,
             return(
                 <View style={{...Style.rowOfTwo, marginTop: 2}}>
                     <View style={{flex: 2}}>
-                        <Text style={{...FONTS.Title, color: titColor }}>{title}</Text>
-                        <Text style={{...FONTS.SubTitle, color: subColor }}>{subtitle}</Text>
+                        <Text style={{...FONTS.Title, color: titColor, flexWrap: 'wrap' }}>{title}</Text>
+                        <Text style={{...FONTS.SubTitle, color: subColor, flexWrap: 'wrap' }}>{subtitle}</Text>
                     </View>
                 </View>
             )
@@ -117,9 +117,9 @@ const SelectionButton = ({ image,
                     {renderIconOrImage()}
                     <View style={{...Style.textInRow}  }>
                         <Text style={{...FONTS.Title, color: titColor }}>{title}</Text>
-                        {!!subtitle && <Text style={{...FONTS.SubTitle, color: subColor }}>{subtitle}</Text>}
-                        {!!subtitle2 && <Text style={{...FONTS.SubTitle, color: subColor }}>{subtitle2}</Text>}
-                        {!!subtitle3 && <Text style={{...FONTS.SubTitle, color: subColor }}>{subtitle3}</Text>}
+                        {!!subtitle && <Text style={{...FONTS.SubTitle, color: subColor, flexWrap: 'wrap' }}>{subtitle}</Text>}
+                        {!!subtitle2 && <Text style={{...FONTS.SubTitle, color: subColor, flexWrap: 'wrap' }}>{subtitle2}</Text>}
+                        {!!subtitle3 && <Text style={{...FONTS.SubTitle, color: subColor, flexWrap: 'wrap' }}>{subtitle3}</Text>}
                     </View>
                 </View>
             )
@@ -130,12 +130,12 @@ const SelectionButton = ({ image,
     const mainRender = () => {
         if (plainCenter || centerTitle){
             return(
-                <View style={{...Style.main, borderColor: COLORS.buttonBorder,  justifyContent: centerTitle ? "center" : 'flex-start', backgroundColor: `rgba(52, 52, 52, ${transparency})`}}>
+                <View style={{...Style.main, borderColor: COLORS.buttonBorder, backgroundColor: `rgba(52, 52, 52, ${transparency})`, justifyContent: centerTitle ? "center" : ''}}>
                     <TouchableOpacity 
                         onPress={() => handleOnPress()}
                     >
                         <View style={{ height: '100%', justifyContent: 'center'}}>
-                            <Text style={{...FONTS.Title, color: titColor, textAlign: 'center', alignContent: 'center', alignItems: 'center'}}>{title}</Text>
+                            <Text style={{...FONTS.Title, color: titColor, textAlign: 'center', alignContent: 'center', alignItems: 'center', flexWrap: 'wrap'}}>{title}</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
