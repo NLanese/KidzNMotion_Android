@@ -147,6 +147,7 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
+        multiDexEnabled true
         applicationId "com.kidznmotionnative"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
@@ -264,6 +265,10 @@ android {
 }
 
 dependencies {
+
+    // Too many packages to import at once now, this is intended to fix that
+    implementation 'com.android.support:multidex:2.0.1' //enter the latest multidex version
+
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
     // Import the Firebase BoM

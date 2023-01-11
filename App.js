@@ -5,7 +5,7 @@ import * as React from 'react';
 import { useState, useEffect } from 'react';
 import { Text, View, KeyboardAvoidingView } from 'react-native';
 import { RecoilRoot } from 'recoil';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-community/async-storage';
 
 
 //////////////////////
