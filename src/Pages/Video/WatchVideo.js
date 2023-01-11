@@ -156,7 +156,7 @@ export default function WatchVideo(props) {
         
     useEffect(() => {
         if (user.role === "THERAPIST"){
-            setTabState(1)
+            setTabState(0)
         }
     }, [])
 
