@@ -151,7 +151,7 @@ export default function Home() {
 
             const [token, setToken] = useRecoilState(tokenState)
 
-            console.log("JWT TOKEN: ", token)
+            console.log("JWT TOKEN:::::: ", token)
 
             const [avatar, setAvatar] = useRecoilState(avatarState)
 
@@ -249,10 +249,6 @@ export default function Home() {
                     })
                 }
             }, [missedAss])
-
-            useEffect(() => {
-            }, [])
-
 
 
         /////////////
@@ -480,36 +476,36 @@ export default function Home() {
                 </>
             )
         }
-        else if(user.role === "ADMIN"){      // role === "ADMIN"
-            return(
-                <>
-                    <SelectionButton
-                        title={"Therapists"}
-                        subtitle={"View Therapists"}
-                        image={"therapist"}
-                        onSelect={() => navigation.navigate("TherapistList")}
-                        icon={<UserTab fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight}/>}
-                    />
-                    <SelectionButton
-                        title={"Clients"}
-                        subtitle={"View or Add Clients"}
-                        image={"client"}
-                        onSelect={() => navigation.navigate("ClientList")}
-                        icon={<UserTab fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight}/>}
-                    />
-                    <SelectionButton
-                        title={"Messaging"}
-                        subtitle={"Communicate with your Clients and Therapists"}
-                        image={"notification"}
-                        onSelect={() => navigation.navigate("/")}
-                        icon={<Bell fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} style={{transform: [{ scale: 2 }, {translateX: 3.5}]}}/>}
-                        notificationCount={msgNotisLen}
-                    />
+        // else if(user.role === "ADMIN"){      // role === "ADMIN"
+        //     return(
+        //         <>
+        //             <SelectionButton
+        //                 title={"Therapists"}
+        //                 subtitle={"View Therapists"}
+        //                 image={"therapist"}
+        //                 onSelect={() => navigation.navigate("TherapistList")}
+        //                 icon={<UserTab fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight}/>}
+        //             />
+        //             <SelectionButton
+        //                 title={"Clients"}
+        //                 subtitle={"View or Add Clients"}
+        //                 image={"client"}
+        //                 onSelect={() => navigation.navigate("ClientList")}
+        //                 icon={<UserTab fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight}/>}
+        //             />
+        //             <SelectionButton
+        //                 title={"Messaging"}
+        //                 subtitle={"Communicate with your Clients and Therapists"}
+        //                 image={"notification"}
+        //                 onSelect={() => navigation.navigate("/")}
+        //                 icon={<Bell fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} style={{transform: [{ scale: 2 }, {translateX: 3.5}]}}/>}
+        //                 notificationCount={msgNotiLen}
+        //             />
                     
-                </>
-            )
-        }
-        else if (user.role === "THERAPIST"){ // role === "THERAPIST"
+        //         </>
+        //     )
+        // }
+        else if (user.role === "THERAPIST" || user.role === "ADMIN"){ // role === "THERAPIST"
             return(
                 <>
                     <SelectionButton
@@ -666,7 +662,7 @@ export default function Home() {
                 variables: {
                     title: `${user.firstName.slice(0,1)} ${user.lastName} did not complete an Assignment`,
                     description: `The Assignment had ${findVideosMissing(missedAss)}/${missedAss.videos.length} completed.`,
-                    type: "Missed Assignment",
+                    type: missedAss.id,
                     toUserId: findTherapist(user, missedAss.childCarePlan.childId).id
                 }
             })

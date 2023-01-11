@@ -1,8 +1,8 @@
 // Async
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-community/async-storage';
 
 // React shit
-import { View, Text, SafeAreaView, Image, TouchableOpacity, ScrollView, Dimensions } from "react-native";
+import { View, Text, Image, TouchableOpacity, Dimensions } from "react-native";
 import React, {useState, useEffect} from "react";
 
 // Recoil
@@ -11,7 +11,7 @@ import { colorState, fontState, sizeState, userState, tokenState, clientListStat
 
 // Mutations
 import { useMutation, useQuery } from '@apollo/client';
-import { USER_SIGN_UP, GET_USER } from "../../../GraphQL/operations";
+import { USER_SIGN_UP, GET_USER, GET_VIDEOS } from "../../../GraphQL/operations";
 
 // Queries
 import client from "../../utils/apolloClient";
@@ -22,7 +22,6 @@ import TabBar from "../../../OstrichComponents/TabBar";
 // Nuton 
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Header, InputField, Button } from "../../../NutonComponents";
-import { AndroidSafeArea} from "../../../NutonConstants";
 import { Check, EyeOff, Eye } from "../../../svg";
 import { DEFAULT_AVATAR } from '../../../NutonConstants';
 
@@ -125,7 +124,7 @@ const SignUp = ({ navigation })  => {
                 firstName: "",        // Mandatory
                 lastName: "",         // Mandatory
                 phoneNumber: "",      // Optional
-                role: "ADMIN",        // DEFAULT
+                role: "THERAPIST",        // DEFAULT
 
                 organizationName: "", // Mandatory
                 organizationType: "", // Mandatory
@@ -956,17 +955,17 @@ const SignUp = ({ navigation })  => {
                     }
                 }
                 else if (userType === 2){
-                    mutationObj = adminInputs.filter(value => {
-                        if (value !== ""){
-                            return value
-                        }
-                    })
+                    mutationObj = adminInputs
                     if (adminValidator(mutationObj).error){
                         // error handler
                         assignErrors(adminValidator(mutationObj).error, "admin")
                         return
                     }
+                    mutationObj.role = "THERAPIST"
+                    mutationObj.title = "Administrator"
                 }
+
+                console.log("MUTATION OBJECT:::::", mutationObj)
 
                 // MUTATION //
                 return handleMutation(mutationObj).then( async (resolved)=>  {
@@ -975,10 +974,11 @@ const SignUp = ({ navigation })  => {
                         await AsyncStorage.setItem('@token', resolved.data.signUpUser.token)
                         setToken(resolved.data.signUpUser.token)
 
-                        // Get User
+                        //////////////
+                        // Get User //
                         await client.query({
-                                query: GET_USER,
-                                fetchPolicy: 'network-only'  
+                            query: GET_USER,
+                            fetchPolicy: 'network-only'  
                         })
                         .then(async (resolved) => {
                             setUser(resolved.data.getUser)
@@ -998,6 +998,7 @@ const SignUp = ({ navigation })  => {
                             await setVideos(resolved.data.getAllVideoFiles)
                             await console.log("Setting Videos, moving on")
                         })
+                        .catch(err => console.log(err))
 
                         // If Therapist User
                         if (user.role === "THERAPIST"){     
@@ -1009,6 +1010,7 @@ const SignUp = ({ navigation })  => {
                     }
                 }).catch(error => {
                     if (error === "Error: Email already exists"){
+                        console.log("EMAIL ALREADY EXISTS")
                         setError({...errors, email: "This Email is Taken" })
                     }
                 })
@@ -1016,12 +1018,16 @@ const SignUp = ({ navigation })  => {
 
             // Determines which mutation to run based on userType
             const handleMutation = async (mutationObj) => {
+                console.log(mutationObj)
                 return await userSignupMutation({
                     variables: {
                         ...mutationObj
                     }
                 }).catch(error => {
                     console.log(error)
+                }).then((resolved) => {
+                    console.log("handle mutation --- RESOLVED::::::", resolved)
+                    return resolved
                 })
             }
 
