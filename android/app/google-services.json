@@ -1,48 +1,41 @@
 {
   "project_info": {
-    "project_number": "848810672627",
-    "project_id": "kidznmotion-43590",
-    "storage_bucket": "kidznmotion-43590.appspot.com"
+    "project_number": "938145635927",
+    "project_id": "kidznmotionios",
+    "storage_bucket": "kidznmotionios.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:848810672627:android:225b7e10caf17fbdd21286",
+        "mobilesdk_app_id": "1:938145635927:android:e9adc9dcb008af198e0d12",
         "android_client_info": {
           "package_name": "com.kidznmotionnative"
         }
       },
       "oauth_client": [
         {
-          "client_id": "848810672627-cg39qmeut7pd7hrsv98793gkmpal647i.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.kidznmotionnative",
-            "certificate_hash": "91810eba420bc4370d946d22223bc218f5e0b4a5"
-          }
-        },
-        {
-          "client_id": "848810672627-nuf9otonoq3aovumilh4njcluv12ps3c.apps.googleusercontent.com",
+          "client_id": "938145635927-t3c5jgqmeinb1o4r6rgvni536rfq0jkp.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyClWwhElD1VPFXCtB04wtqp_IKyV_NltqU"
+          "current_key": "AIzaSyDOXfW9-ZjfLlAMq1cBxfHD9oMx_eG_vgo"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "848810672627-nuf9otonoq3aovumilh4njcluv12ps3c.apps.googleusercontent.com",
+              "client_id": "938145635927-t3c5jgqmeinb1o4r6rgvni536rfq0jkp.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "848810672627-ude4p0b5cuqevmje891t1negpuecl2gb.apps.googleusercontent.com",
+              "client_id": "938145635927-bgdptpgm0k900pilktvmib74pdlvqa7g.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "org.reactjs.native.example.KidzNMotionNative"
+                "bundle_id": "org.reactjs.native.example.KNM",
+                "app_store_id": "1661352847"
               }
             }
           ]
