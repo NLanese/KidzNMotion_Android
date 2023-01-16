@@ -63,7 +63,11 @@ export default function ClientList() {
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         // Goes through each ChildCarePlan to extrapolate child users and their plans, as well as parents //
-        const childClients = clientPlans.map(cp => {
+        let childClients = []
+        if (clientPlans.length <= 0){
+            return null
+        }
+        childClients = clientPlans.map(cp => {
 
             if (!cp.child){
                 return 
@@ -152,29 +156,28 @@ export default function ClientList() {
     function renderSearch() {
         return (
             <View
-            style={{
-            height: 50,
-            backgroundColor: "rgba(255,255,255,0.5)",
-            borderRadius: 10,
-            padding: 20,
-            marginBottom: 20,
-            marginHorizontal: 20,
-            }}
+                style={{
+                    height: 50,
+                    backgroundColor: "rgba(255,255,255,0.5)",
+                    borderRadius: 10,
+                    padding: 20,
+                    marginBottom: 20,
+                    marginHorizontal: 20,
+                }}
             >
                 
                  <View style={{ marginLeft: 5, flexDirection: "row" }}>
                     <InputSearch flex={1} fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} />
                     <TextInput
-                    flex={5}
-                    placeholder="Search"
-                    onChangeText={setSearchUser}
-                    value={searchUser}
-                    style={{
-                        flex: 10,
-                        marginLeft: 8,
-                        flex: 1,
-                        marginRight: 16,
-                    }}
+                        flex={5}
+                        placeholder="Search"
+                        onChangeText={setSearchUser}
+                        style={{
+                            flex: 10,
+                            marginLeft: 8,
+                            flex: 1,
+                            marginRight: 16,
+                        }}
                     />
                 </View>
                
