@@ -471,9 +471,6 @@ const Styles = StyleSheet.create({
         // Gets all consecutive message clumps //
         let messageClumps = chopAtDifferentSenders(messageArray)
 
-        console.log(messageClumps)
-
-
         //////////////////////////////////////////////////////////////////////////////////
         // Breaks up each message clump into an individual render to return all message //
         return messageClumps.map(messageClump => {
@@ -523,6 +520,13 @@ const Styles = StyleSheet.create({
     }
 
     function renderTimeStamp(time){
+        console.log("-=-=-=-=-=-=-=")
+        console.log(time)
+        console.log(time.toString())
+        let strDate = time.toString()
+        let localDate = new Date(strDate)
+        localDate = (localDate.toLocaleString())
+        console.log(localDate.toString())
         time = time.toString()
         time = time.slice(0, 25)
         timeArr = time.split(" ")
@@ -532,13 +536,14 @@ const Styles = StyleSheet.create({
         let timeClock = timeArr[4] 
         let timeClockSplit = timeClock.split(":")
         timeClockSplit[0] = parseInt(timeClockSplit[0], 10) + 6
+        console.log(parseInt(timeClockSplit[0]))
         if (parseInt(timeClockSplit[0], 10) > 12){
             timeClockSplit[0] = parseInt(timeClockSplit[0], 10) - 12 
         }
         time = `${day} ${month} ${date} - ${timeClockSplit[0]}:${timeClockSplit[2]}`
         return(
             <Text style={{marginBottom: 10, marginTop: 10, fontFamily: 'Gilroy-SemiBold'}}>
-                {time}
+                {localDate.toString()}
             </Text>
         )
     }
@@ -576,10 +581,6 @@ const Styles = StyleSheet.create({
         let returnArrayOfMessages = []
         let arrayOfSameSender = []
 
-        // messageArray.forEach( (msg, i) => {
-        //     console.log(i, " : ", msg.content, msg.createdAt)
-        //     console.log("\n---")
-        // })
 
         ///////////////////////////////////
         // Iterates through all messages //
@@ -588,8 +589,6 @@ const Styles = StyleSheet.create({
             ///////////////////////////////////////////////////////////////////////////
             // Final iteration, one beyond legth. This pushes all remaining messaged //
             if (!(i < messageArray.length)){
-                    console.log("Last iteration")
-                    console.log("-----")
                 returnArrayOfMessages.push(arrayOfSameSender)
             }
 
@@ -600,27 +599,18 @@ const Styles = StyleSheet.create({
                 /////////////////////////////////////
                 // First time accessing this array //
                 if (arrayOfSameSender.length === 0){
-                    console.log("First Dude")
-                    console.log(messageArray[i])
-                    console.log("-----")
                     arrayOfSameSender.push(messageArray[i])
                 }
 
                 ////////////////////////////////
                 // Another of the Same Sender //
                 else if (messageArray[i].sentBy.userID === arrayOfSameSender[0].sentBy.userID){
-                    console.log("Same Dude")
-                    console.log(messageArray[i])
-                    console.log("-----")
                     arrayOfSameSender.push(messageArray[i])
                 }
 
                 //////////////////////
                 // Different Sender //
                 else if (messageArray[i].sentBy.userID !== arrayOfSameSender[0].sentBy.userID){
-                    console.log("Different Dude")
-                    console.log(messageArray[i])
-                    console.log("-----")
                     returnArrayOfMessages.push(arrayOfSameSender)
                     arrayOfSameSender = []
                     arrayOfSameSender.push(messageArray[i])
@@ -642,6 +632,7 @@ const Styles = StyleSheet.create({
         }
         handleSendMessageMutation()
         .then( async (resolved) => {
+            console.log(resolved)
             setTextEntered("")
             await getAndSetUser()
             await fetchChatDetail()
