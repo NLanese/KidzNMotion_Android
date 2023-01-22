@@ -1,11 +1,12 @@
 // Reaact
-import { View, Text, ScrollView, TouchableOpacity, TextInput } from "react-native";
+import { View, Text, SafeAreaView, ScrollView, Image, ImageBackground, TouchableOpacity } from "react-native";
 import React, {useEffect, useState} from "react";
 import { useNavigation } from "@react-navigation/native";
 
 // Nuton
-import { Header, Button, InputField } from "../../../NutonComponents";
+import { Header, Button, ProfileEditCategoryComponent } from "../../../NutonComponents";
 import { AREA, COLORS, FONTS } from "../../../NutonConstants";
+import { Camera } from "../../../svg";
 
 // Apollo / GraphQL
 import { useMutation } from "@apollo/client";
@@ -44,36 +45,32 @@ export default function OrganizationSettings() {
         // Organization Settings
         const [org, setOrg] = useRecoilState(organizationState)
 
+
     /////////////////
     // Local State //
     /////////////////
 
-        // Entered Name
-        const [newName, setNewName] = useState(org.name)     
+        const [orgUsers, setOrgUsers] = useState(org.organizationUsers)
+
+        const [therapists, setTherapists] = useState([])
         
-        // Entered Number
-        let ogNum = "No Number Entered"
-        if (org.phoneNumber){
-            ogNum = org.phoneNumber
-        }
-        const [newNumber, setNewNumber] = useState(ogNum)
-
-        // UseEffect to waive off null phoneNumbers
         useEffect(() => {
-            if (org.phoneNumber){
-                setNewNumber(org.phoneNumber)
-            }
-            else{
-                // setNewNumber("Please Fill This In")
-            }
-        }, [org])
+            orgUsers.forEach(orgUser => {
+                if (orgUser.user.role === "THERAPIST"){
+                    if (orgUser.user.email === user.email){
+                        console.log("Thats me")
+                        return null
+                    }
+                    else{
+                        setTherapists(therapists => ([...therapists, orgUser.user]))
+                    }
+                }
+            });
+        }, [])
 
-
-    ///////////////
-    // Mutations //
-    ///////////////
-
-        const [saveSettingsMutation, {loading: loadingMeeting, error: errorMeeting, data: meetingData}] = useMutation(EDIT_ORGANIZATION_SETTINGS)
+        useEffect(() => {
+            console.log(therapists)
+        }, [therapists])
 
 //////////////////////
 ///                 ///
@@ -81,10 +78,10 @@ export default function OrganizationSettings() {
 ///                 ///
 ///////////////////////
 
-    // Renders the header bar and back arrow
-    function renderHeader() {
+   // Renders the header bar and back arrow
+   function renderHeader() {
         return(
-            <View style={{marginTop: 40, marginBottom: 30}}>
+            <View style={{marginTop: 40}}>
                 <Header 
                     onPress={() => navigation.goBack()}
                     goBack={true}
@@ -96,51 +93,20 @@ export default function OrganizationSettings() {
 
     // Renders any text fields for the org
     function renderOrganizationTextFields() {
-        return(
-            <View style={{marginTop: 40}}>
-                <View style={{width: '80%', marginLeft: '10%'}}>
-                <Text style={{...FONTS.Title, color: COLORS.iconLight, marginBottom: 10.}}>
-                    Name: {org.name}
-                </Text>
-                <InputField
-                    placeholder={newName}
-                    title="Name"
-                    containerStyle={{ marginBottom: 10 }}
-                    onChangeText={(content) => setNewName(content) }
-                />
-            </View>
-
-            <View style={{width: '80%', marginLeft: '10%', marginTop: 50}}>
-                <Text style={{...FONTS.Title, color: COLORS.iconLight, marginBottom: 10.}}>
-                    Phone Number: {org.phoneNumber}
-                </Text>
-                <InputField
-                    placeholder={newNumber}
-                    title="Phone Number"
-                    containerStyle={{ marginBottom: 10 }}
-                    onChangeText={(content) => setNewNumber(content) }
-                />
-            </View>
-            </View>
-        )
-    }
-
-    // Renders the Save Button
-    function renderSaveSettingsButton(){
-        return(
-            <View style={{marginLeft: 30, marginRight: 30, marginTop: 50}}>
-                <Button
-                    title={"Save Settings"}
-                    onPress={() => saveOrgSettings()}
+    return(
+            <View style={{width: '80%', marginLeft: '5%', marginRight: '10%'}}>
+                <ProfileEditCategoryComponent
+                    title="Organization Name"
+                    placeholder={org.name}
+                    onChangeText={(e) => onChangeText(e,'phoneNumer')}
                 />
             </View>
         )
     }
 
-    // Renders the Button to Dissolve the Organization
     function renderDissolveOrganization() {
         return(
-            <View style={{marginLeft: -5, marginTop: -75}}>
+            <View style={{marginLeft: -5}}>
                 <SelectionButton
                     title={"Delete Organization"}
                     subtitle={"This will delete your account, as well as any connected to this organization"}
@@ -150,44 +116,39 @@ export default function OrganizationSettings() {
         )
     }
 
+        // Renders Clients
+        function renderTherapists() {
+            let clients
+            if (clientType === 0){
+                clients = childClients
+            }
+            else if (clientType === 1){
+                clients = guardianClients
+            }
+            return filterClients(clients).map( (client, index) => {
+                if (!client){
+                    return null
+                }
+                 return(
+                    <SelectionButton
+                        title={`${client.user.firstName} ${client.user.lastName}`}
+                        subtitle={`${client.user.role}`}
+                        hasProfilePic={true}
+                        profilePic={client.user.profilePic}
+                        onSelect={() => {
+                            setSelectedClient(client)
+                            navigation.navigate("Profile")
+                        }}
+                    />
+                )
+            }) 
+        } 
+
 ///////////////////////
 ///                 ///
 ///     Handlers    ///
 ///                 ///
 ///////////////////////
-
-
-    function saveOrgSettings(){
-        editOrgSettings()
-        .then(resolved => {
-            if (resolved === -1){
-                console.log(resolved)
-            }
-            else{
-                console.log(resolved)
-            }
-        })
-    }
-
-    // Fires the mutation
-    async function editOrgSettings(){
-      
-        // No Phone Number
-        if (newNumber === "Please Fill This In"){
-            return false
-        }
-        // Yes Phone Number
-        return await saveSettingsMutation({
-            variables: {
-                name: newName,
-                phoneNumber: newNumber
-            }
-        })
-        .catch( err => {
-            console.log(err)
-            return false
-        })
-    }
 
 
 ///////////////////////
@@ -202,19 +163,25 @@ export default function OrganizationSettings() {
             style={{height: '100%'}}
         >
             {renderHeader()}
-            {renderOrganizationTextFields()}
-            {/* <View style={{marginLeft: '10%', marginRight: '10%', marginTop: 25, marginBottom: 40}}>
+            <View style={{marginLeft: '10%', marginRight: '10%', marginTop: 25, flexDirection: 'row'}}>
                 <Text style={{...FONTS.Title, color: COLORS.iconLight}}>
-                    Organization Code: {user.ownedOrganization.name}
+                    Name: 
                 </Text>
                 <Text style={{...FONTS.Title, fontSize: 22, color: COLORS.iconDark}}>
-                    kjfhgoaeijrggoa
+                    {user.ownedOrganization.name}
                 </Text>
-            </View>   */}
-            {renderSaveSettingsButton()}  
-            <View style={{marginTop: '50%'}}>
-                {renderDissolveOrganization()}
             </View>
+            {renderOrganizationTextFields()}
+
+            <View style={{marginLeft: '10%', marginRight: '10%', marginTop: 25, marginBottom: 40}}>
+                {/* <Text style={{...FONTS.Title, color: COLORS.iconLight}}>
+                    Organization Therapists: {user.ownedOrganization.name}
+                </Text> */}
+                
+            </View>    
+            {/* <View style={{marginTop: '70%'}}>
+                {renderDissolveOrganization()}
+            </View> */}
         </Gradient>
     )
 }
