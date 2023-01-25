@@ -64,28 +64,21 @@ export default function ClientList() {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         // Goes through each ChildCarePlan to extrapolate child users and their plans, as well as parents //
         let childClients = []
-        if (clientPlans.length <= 0){
-            return null
-        }
-        childClients = clientPlans.map(cp => {
-
-            if (!cp.child){
-                return 
-            }
-
-            if (!(guardianClientIds.includes(cp.child.guardian.id))){
-                guardianClientIds.push(cp.child.guardian.id)
-                guardianClients.push({user: cp.child.guardian})
-            }
-            
-            return({
-                plan: cp,
-                user: cp.child
+        if (clientPlans.length > 0){
+            childClients = clientPlans.map(cp => {
+                if (!cp.child){
+                    return 
+                }
+                if (!(guardianClientIds.includes(cp.child.guardian.id))){
+                    guardianClientIds.push(cp.child.guardian.id)
+                    guardianClients.push({user: cp.child.guardian})
+                }       
+                return({
+                    plan: cp,
+                    user: cp.child
+                })
             })
-        })
-
-
-
+        }
 
        
 ///////////////////////
@@ -299,14 +292,20 @@ export default function ClientList() {
             </View>
         );
     }
-  
+
+
+///////////////////////
+///                 ///
+///      MAIN       ///
+///                 ///
+///////////////////////
+
 
     return (
-        // <SafeAreaView style={{ ...AndroidSafeArea.AndroidSafeArea }}>
             <Gradient
-                colorOne={COLORS.gradientColor1}
-                colorTwo={COLORS.gradientColor2}
-                style={{height: '105%'}}
+            colorOne={COLORS.gradientColor1}
+            colorTwo={COLORS.gradientColor2}
+            style={{height: '105%'}}
             >
                 {renderHeader()}
                 <View style={{marginTop: -15}}>
@@ -318,7 +317,6 @@ export default function ClientList() {
                     </ScrollView>
                 </View>
             </Gradient>
-        // </SafeAreaView>
     );
 }
 
