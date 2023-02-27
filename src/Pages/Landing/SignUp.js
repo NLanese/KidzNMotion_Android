@@ -7,7 +7,7 @@ import React, {useState, useEffect} from "react";
 
 // Recoil
 import { useRecoilState, useRecoilValue } from "recoil";
-import { colorState, fontState, sizeState, userState, tokenState, clientListState, videoDataState } from  "../../../Recoil/atoms";
+import { colorState, fontState, sizeState, userState, tokenState, clientListState, videoDataState, subscriptionstate } from  "../../../Recoil/atoms";
 
 // Mutations
 import { useMutation, useQuery } from '@apollo/client';
@@ -67,6 +67,9 @@ const SignUp = ({ navigation })  => {
 
             // Video
             const [videos, setVideos] = useRecoilState(videoDataState)
+
+            // Subscription
+            const [subState, setSubState] = useRecoilState(subscriptionstate)
 
         /////////////////
         // Local State //
@@ -181,6 +184,10 @@ const SignUp = ({ navigation })  => {
         // Defucnct
         useEffect(() => {
         }, [errors]) 
+
+        useEffect(() => {
+            // AsyncStorage.clear()
+        }, [])
 
     ///////////////////////
     ///                 ///
@@ -965,8 +972,6 @@ const SignUp = ({ navigation })  => {
                     mutationObj.title = "Administrator"
                 }
 
-                console.log("MUTATION OBJECT:::::", mutationObj)
-
                 // MUTATION //
                 return handleMutation(mutationObj).then( async (resolved)=>  {
                     if (resolved){
@@ -982,10 +987,10 @@ const SignUp = ({ navigation })  => {
                         })
                         .then(async (resolved) => {
                             setUser(resolved.data.getUser)
-
                         })
                         .catch((error) => {
-                            console.log(error)
+                            console.error("GET_USER failed!")
+                            console.error(error)
                         });
 
                         ////////////////
@@ -996,21 +1001,23 @@ const SignUp = ({ navigation })  => {
                         })
                         .then(async (resolved) => {
                             await setVideos(resolved.data.getAllVideoFiles)
-                            await console.log("Setting Videos, moving on")
                         })
-                        .catch(err => console.log(err))
+                        .catch(err => console.error(err))
 
                         // If Therapist User
                         if (user.role === "THERAPIST"){     
                             setClientList(user.patientCarePlans)     // Sets Client List
                         }
 
+                        // SubState
+                        setSubState("trial")
+
                         // Navigation
                         navigation.navigate("Home")
                     }
                 }).catch(error => {
                     if (error === "Error: Email already exists"){
-                        console.log("EMAIL ALREADY EXISTS")
+                        console.error("EMAIL ALREADY EXISTS")
                         setError({...errors, email: "This Email is Taken" })
                     }
                 })
@@ -1018,15 +1025,13 @@ const SignUp = ({ navigation })  => {
 
             // Determines which mutation to run based on userType
             const handleMutation = async (mutationObj) => {
-                console.log(mutationObj)
                 return await userSignupMutation({
                     variables: {
                         ...mutationObj
                     }
                 }).catch(error => {
-                    console.log(error)
+                    console.error(error)
                 }).then((resolved) => {
-                    console.log("handle mutation --- RESOLVED::::::", resolved)
                     return resolved
                 })
             }
