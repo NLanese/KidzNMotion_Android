@@ -1,28 +1,28 @@
 // Async
-import AsyncStorage from "@react-native-community/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 // React
 import React, { useState, useEffect } from "react";
-import { View,Text, ImageBackground, SafeAreaView, Image, TouchableOpacity, Dimensions} from "react-native";
+import { View,Text, Image, TouchableOpacity, Dimensions} from "react-native";
 import Modal from "react-native-modal";
 
 // Apollo graphQL
-import { useMutation, useQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { USER_LOGIN, GET_USER, GET_VIDEOS, GET_MEETINGS } from "../../../GraphQL/operations";
 import client from '../../utils/apolloClient';
 
 // Firebase
-import { firebase } from '@react-native-firebase/messaging';
 import messaging from '@react-native-firebase/messaging';
 
 // Recoil
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { userState, tokenState, clientListState, colorState, fontState, sizeState, videoDataState, avatarState, meetingState, assignState, firstOpen} from "../../../Recoil/atoms";
+import { userState, tokenState, clientListState, colorState, fontState, sizeState, videoDataState, avatarState, meetingState, assignState, firstOpen, subscriptionstate} from "../../../Recoil/atoms";
 
 // Renderings / Nuton 
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useNavigation } from "@react-navigation/native";
 import { Header, InputField, Button } from "../../../NutonComponents";
-import { Check, EyeOff, CheckSmall, Facebook, Twitter, Google, Eye } from "../../../svg";
+import { Check, EyeOff, CheckSmall, Eye } from "../../../svg";
 import { DEFAULT_AVATAR } from '../../../NutonConstants';
 import { COLORS as colorConstant }  from "../../../NutonConstants"
 
@@ -131,6 +131,9 @@ export default function SignIn() {
         // First Open State
         const [first, setFirst] = useRecoilState(firstOpen)
 
+        // SubscriptionState
+        const [subState, setSubState] = useRecoilState(subscriptionstate)
+
         // Determmines whether or not we be splashing
         const [splashing, setSplashing] = useState(first)
 
@@ -226,7 +229,10 @@ export default function SignIn() {
                 query: GET_USER,
                 fetchPolicy: 'network-only'  
             })
-            .catch(err => {console.log(err)})
+            .catch(err => {
+                console.error(err)
+                setLoading(false)
+            })
             .then(async(resolved) => {
                 // User //
                 await setUser(resolved.data.getUser)
@@ -262,7 +268,8 @@ export default function SignIn() {
                 await setAssign(assign)
             }
             else{
-                console.log("findUserAssignments failed, there was no user.role for some reason")
+                console.error("findUserAssignments failed, there was no user.role for some reason")
+                setLoading(false)
             }
         }
 
@@ -297,15 +304,17 @@ export default function SignIn() {
         const handleSignIn = async (localEmail = false, localPassword = false) => {
             setLoading(true)
 
-            console.log(localEmail, " LOCAL EMAIL 1")
-            console.log(localPassword, " LOCAL PASSWORD 1")
-
             // MUTATION //
             handleLoginMutation(localEmail, localPassword)
 
             //////////////////////
             // Successful Login //   
             .then( async (resolved) => {
+
+                console.log("Login Resolved: ", resolved.data.loginUser.user)
+
+                setSubState(resolved.data.loginUser.user.soloSubscriptionStatus)
+
                 // Successful Login //
                 if (resolved){
 
@@ -350,7 +359,6 @@ export default function SignIn() {
                 /////////////////////////
                 // SUBSCRIPTION STATUS //
                 // if (user.subscriptionStatus !== "active"){
-                //     console.log(user.subscriptionStatus)
                 //     setLoading(false)
                 //     setNoSubModal(true)
                 //     setNoSubType(user.subscriptionStatus)
@@ -368,10 +376,8 @@ export default function SignIn() {
         // Determines which login Mutation to use 
         const handleLoginMutation = async (localEmail = false, localPassword = false) => {
 
-            console.log(localEmail, " LOCAL EMAIL 2")
-            console.log(localPassword, " LOCAL PASSWORD 2")
-
-
+            //////////////////////
+            // INIT CREDENTIALS //
             let loginEmail 
             let loginPassword
 
@@ -400,18 +406,19 @@ export default function SignIn() {
                 AsyncStorage.setItem('@password', password)
             }
 
-            console.log(password, " LOCAL EMAIL 3")
-            console.log(username_or_email, " LOCAL PASSWORD 3")
-
             return await userLogin({
                 variables: {
                     username: loginEmail,
                     password: loginPassword
                 }
             })
+            .then((resolved) => {
+                return resolved
+            })
             ///////////////////
             // Catches Error //
             .catch(error => {
+                console.error(error)
                 if (error.toString().includes("Error: Email/Password are incorrect.")){
                     setErrors({
                         email: "Email and Password do not match any users",
@@ -474,7 +481,6 @@ export default function SignIn() {
                     password: password,
                     remember: remember
                 }
-                console.log("INSIDE GETDATA::::::" ,data)
                 return data
             } catch (error) {
                 throw new Error(error)
