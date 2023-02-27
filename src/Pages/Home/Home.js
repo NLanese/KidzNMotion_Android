@@ -10,13 +10,15 @@ import Modal from "react-native-modal";
 
 // Recoil
 import { useRecoilState, useRecoilValue } from "recoil";
-import { colorState, fontState, sizeState, userState, avatarState, tokenState, videoDataState, assignState, meetingState, activeChatroom, messageNotifications, scheduleNotifications, organizationState, accessibleVideos } from '../../../Recoil/atoms';
+import { colorState, fontState, sizeState, userState, avatarState, tokenState, videoDataState, assignState, meetingState, activeChatroom, messageNotifications, scheduleNotifications, organizationState, accessibleVideos, subscriptionstate } from '../../../Recoil/atoms';
 
 // Nuton
 import { Header, ProfileCategoryComponent, Button } from "../../../NutonComponents";
 import { Heart, Logo, CalendarTab, Bell, Play, MedalTab, UserTab, SettingsLarge, Message } from "../../../svg";
 import { COLORS as colorConstant }  from "../../../NutonConstants"
 import { DEFAULT_AVATAR } from '../../../NutonConstants';
+
+import NoAccess from './NoAccess';
 
 // Firebase
 import { firebase } from '@react-native-firebase/messaging';
@@ -151,8 +153,6 @@ export default function Home() {
 
             const [token, setToken] = useRecoilState(tokenState)
 
-            console.log("JWT TOKEN:::::: ", token)
-
             const [avatar, setAvatar] = useRecoilState(avatarState)
 
             const [colors, setColors] = useRecoilState(colorState)
@@ -164,6 +164,8 @@ export default function Home() {
             const [org, setOrg] = useRecoilState(organizationState)
 
             const [validVids, setValidVids] = useRecoilState(accessibleVideos)
+
+            const [subState, setSubState] = useRecoilState(subscriptionstate)
 
             // Fires wehen switching accounts
             useEffect(() => {
@@ -196,12 +198,13 @@ export default function Home() {
                     let assign = filterAssignments(getAllTherapistAssignments(user))
                     setAssign(assign)
                 }
-                setOrg(user.organizations[0].organization)
+                // setOrg(user.organizations[0].organization)
             }, [user])
 
         ///////////////////
         // NOTIFICATIONS //
         ///////////////////
+
 
             const [msgNotis, setMsgNotis] = useRecoilState(messageNotifications)
 
@@ -251,9 +254,13 @@ export default function Home() {
             }, [missedAss])
 
 
-        /////////////
-        // Testing //
-        /////////////
+        ////////////////
+        // Sub Status //
+        ////////////////
+
+        useEffect(() => {
+            console.log(subState)
+        }, [subState])
 
 ///////////////////////
 ///                 ///
@@ -279,14 +286,15 @@ export default function Home() {
             )
         }
 
+        if (subState.includes("expire")){
+            return <NoAccess expiredStatus={subState} />
+        }
+
         if (user.role === "GUARDIAN" || user.role === "CHILD"){
             return renderUserContent()
         }
         else if (user.role === "ADMIN" || user.role === "THERAPIST"){
             return renderAdminContent()
-        }
-        else if(user.role === "THERAPIST"){
-            return 
         }
         else{
             // Error
@@ -476,35 +484,6 @@ export default function Home() {
                 </>
             )
         }
-        // else if(user.role === "ADMIN"){      // role === "ADMIN"
-        //     return(
-        //         <>
-        //             <SelectionButton
-        //                 title={"Therapists"}
-        //                 subtitle={"View Therapists"}
-        //                 image={"therapist"}
-        //                 onSelect={() => navigation.navigate("TherapistList")}
-        //                 icon={<UserTab fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight}/>}
-        //             />
-        //             <SelectionButton
-        //                 title={"Clients"}
-        //                 subtitle={"View or Add Clients"}
-        //                 image={"client"}
-        //                 onSelect={() => navigation.navigate("ClientList")}
-        //                 icon={<UserTab fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight}/>}
-        //             />
-        //             <SelectionButton
-        //                 title={"Messaging"}
-        //                 subtitle={"Communicate with your Clients and Therapists"}
-        //                 image={"notification"}
-        //                 onSelect={() => navigation.navigate("/")}
-        //                 icon={<Bell fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight} style={{transform: [{ scale: 2 }, {translateX: 3.5}]}}/>}
-        //                 notificationCount={msgNotiLen}
-        //             />
-                    
-        //         </>
-        //     )
-        // }
         else if (user.role === "THERAPIST" || user.role === "ADMIN"){ // role === "THERAPIST"
             return(
                 <>
@@ -512,7 +491,9 @@ export default function Home() {
                         title={"Clients"}
                         subtitle={"View or Add Clients"}
                         image={"client"}
-                        onSelect={() => navigation.navigate("ClientList")}
+                        onSelect={() => {
+                            navigation.navigate("ClientList")}
+                        }
                         icon={<UserTab fillColor={COLORS.iconLight} strokeColor={COLORS.iconLight}/>}
                     />
                     <SelectionButton
@@ -667,9 +648,8 @@ export default function Home() {
                 }
             })
             .then((resolved) => {
-                console.log("MISSED ASSIGN MUTATION: ", resolved)
             })
-            .catch((err) => console.log(err))
+            .catch((err) => console.error(err))
         }
 
     /////////////////////
@@ -765,7 +745,7 @@ export default function Home() {
                     await handleColorInput(user.colorSettings)
                 })
                 .catch((error) => {
-                    console.log(error)
+                    console.error(error)
                 })
 
 
@@ -838,7 +818,7 @@ export default function Home() {
                 setUser(resolved.data.getUser)
             })
             .catch((error) => {
-                console.log(error)
+                console.error(error)
             })
         }
 
@@ -849,7 +829,7 @@ export default function Home() {
                 query: GET_NOTIFICATIONS,
                 fetchPolicy: 'network-only'
             })
-            .catch(err => console.log(err))
+            .catch(err => console.error(err))
             .then((resolved) => {
                 let msgN = resolved.data.getNotifications.filter((noti, index) => {
                     if (noti.title.includes("New Message")){
@@ -907,9 +887,8 @@ export default function Home() {
                 }
             })
             .then((resolved) => {
-                // console.log("resolved updatePhoneToken Mutation:", resolved)
             })
-            .catch(err => console.log(err))
+            .catch(err => console.error(err))
         }
 
 
@@ -925,7 +904,6 @@ export default function Home() {
         await defaultAppMessaging.getToken()
         .then(resolved => {
             token = resolved
-            // console.log("TOKEN :", token)
         })
     }
 
@@ -949,3 +927,5 @@ export default function Home() {
         </Gradient>
     );
 }
+
+
