@@ -353,18 +353,18 @@ export default function SignIn() {
 
                 // If failed login, do not reroute
                 if (!resolved){
-                    return "Error, you done goofed"
+                    return "Error, login attempt failed"
                 }
 
                 /////////////////////////
                 // SUBSCRIPTION STATUS //
-                // if (user.subscriptionStatus !== "active"){
-                //     setLoading(false)
-                //     setNoSubModal(true)
-                //     setNoSubType(user.subscriptionStatus)
-                //     setUser(false)
-                //     return false
-                // }
+                if (user.subscriptionStatus !== "active"){
+                    setLoading(false)
+                    setNoSubModal(true)
+                    setNoSubType(user.subscriptionStatus)
+                    setUser(false)
+                    return false
+                }
 
                 // On Successful Login, reroute
                 setLoading(false)
