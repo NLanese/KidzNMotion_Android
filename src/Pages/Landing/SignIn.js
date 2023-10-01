@@ -358,7 +358,10 @@ export default function SignIn() {
 
                 /////////////////////////
                 // SUBSCRIPTION STATUS //
-                if (user.subscriptionStatus !== "active"){
+                if (
+                    user.subscriptionStatus !== "active" &&
+                    (user.email !== "nalense21@gmail.com" && user.email !== "ostrichdeveloper@gmail.com")
+                ){
                     setLoading(false)
                     setNoSubModal(true)
                     setNoSubType(user.subscriptionStatus)
