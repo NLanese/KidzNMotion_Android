@@ -64,3 +64,16 @@ buck-out/
 /vendor/bundle/
 android/.gradle/7.5.1/checksums/sha1-checksums.bin
 android/.gradle/7.5.1/executionHistory/executionHistory.bin
+*.lock
+android/.gradle/7.5.1/checksums/checksums.lock
+android/.gradle/7.5.1/checksums/md5-checksums.bin
+android/.gradle/7.5.1/checksums/checksums.lock
+android/.gradle/7.5.1/checksums/md5-checksums.bin
+android/.gradle/7.5.1/checksums/sha1-checksums.bin
+android/.gradle/7.5.1/executionHistory/executionHistory.bin
+android/.gradle/7.5.1/executionHistory/executionHistory.lock
+android/.gradle/7.5.1/fileHashes/fileHashes.bin
+android/.gradle/7.5.1/fileHashes/fileHashes.lock
+android/.gradle/7.5.1/fileHashes/resourceHashesCache.bin
+android/.gradle/buildOutputCleanup/buildOutputCleanup.lock
+android/.gradle/buildOutputCleanup/outputFiles.bin
